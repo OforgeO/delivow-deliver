@@ -1,0 +1,68 @@
+{
+  "expo": {
+    "name": "DELIVOW-デリバー用",
+    "slug": "delivow-deliver",
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
+    "android" : {
+      "package" : "com.delivow.deliver.jp",
+      "versionCode" : 1,
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyBXplopD94llbU1eWEjlPdonENRFC82fR0"
+        }
+      },
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "data": [{
+            "scheme": "delivowdelivery"
+          }],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        }
+      ]
+    },
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "delivowdelivery",
+    "splash": {
+      "image": "./assets/images/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.delivow.deliver.jp",
+      "buildNumber" : "8",
+      "config" : {
+        "googleMapsApiKey" : "AIzaSyDKnoMsrfivglgqGV875Q-emWYkIBHvBWs"
+      },
+      "infoPlist": {
+        "UIBackgroundModes": [
+          "location",
+          "fetch"
+        ]
+      }
+    },
+    "web": {
+      "favicon": "./assets/images/favicon.png"
+    },
+    "packagerOpts": {
+      "config": "metro.config.js",
+      "sourceExts": ["js", "jsx", "svg", "ts", "tsx"]
+    }
+  }
+}

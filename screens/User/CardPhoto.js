@@ -39,14 +39,12 @@ class CardPhoto extends React.Component {
             await registerBankPhoto(this.state.insuranceImage, this.state.anyImage, this.props.phone)
                 .then(async (response) => {
                 this.setState({loaded: true});
-                console.log(response)
                 if(response.status == 1)
                     Actions.push("registercomplete", {phone: this.props.phone})
                 else
                     showToast(response.message)
             })
             .catch((error) => {
-                console.log(error)
                 this.setState({loaded: true});
                 showToast();
             });

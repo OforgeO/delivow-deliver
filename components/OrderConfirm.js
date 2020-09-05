@@ -21,7 +21,12 @@ class OrderConfirm extends React.Component {
     }
     async confirmStatus(type) {
         let status = store.getState().showDeliver
-        Actions.push("bookrequestdetail", { order_uid: status.orderUid, type: type, confirm: 'false'})       
+        if(status.orderBookUid && status.orderBookUid.length > 1 && type == 'book')
+            Actions.push("bookrequest")
+        else if(status.orderUid && status.orderUid.length == 1)
+            Actions.push("bookrequestdetail", { order_uid: status.orderUid[0], type: type, confirm: 'false'})       
+        else if(status.orderBookUid && status.orderBookUid.length == 1)
+            Actions.push("bookrequestdetail", { order_uid: status.orderBookUid[0], type: type, confirm: 'false'})       
     }
     render() {
         return (
@@ -32,7 +37,7 @@ class OrderConfirm extends React.Component {
                     </View>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={store.getState().showDeliver.showBookDeliver ? [styles.container, {backgroundColor: '#D93DCD'}]: {height: 0}} onPress={() => this.confirmStatus('book')}>
+                <TouchableOpacity style={store.getState().showDeliver.showBookDeliver ? [styles.container, {backgroundColor: '#D93DCD', marginTop: store.getState().showDeliver.showDeliver ? 10 : 0}]: {height: 0}} onPress={() => this.confirmStatus('book')}>
                     <View>
                         <BoldText style={[{ color: 'white' }, fonts.size14]}>予約の依頼内容を確認 »</BoldText>
                     </View>

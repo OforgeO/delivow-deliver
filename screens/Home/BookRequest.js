@@ -15,24 +15,36 @@ import { showToast } from '../../shared/global';
 import { dayNamesShort } from '../../constants/Global';
 import moment from 'moment';
 import Back from '../../components/Back';
+import store from '../../store/configuteStore';
+import { connect } from "react-redux";
+import { setShowDeliver } from '../../actions';
 TouchableOpacity.defaultProps = { activeOpacity: 0.8 };
 
-export default class BookRequest extends React.Component {
+class BookRequest extends React.Component {
     constructor(props){
         super(props);
         this.state = {
             bookList: [
             ],
             noDeliverCnt: 0,
-            loaded: true
+            loaded: true,
         };
     }
     async componentDidMount(){
+        this.refresh();
+        
+        const { status: existingStatus } = await Permissions.getAsync(
+            Permissions.NOTIFICATIONS
+        );
+        if (existingStatus !== 'granted') {
+            await Permissions.askAsync(Permissions.NOTIFICATIONS);
+        }
+    }
+    async refresh() {
         this.setState({loaded: false})
         await getReservationList()
         .then(async (response) => {
             if(response.status == 1) {
-                console.log(response)
                 this.setState({bookList: response.list})
                 let noDeliverCnt = 0
                 response.list.map((order) => {
@@ -50,13 +62,6 @@ export default class BookRequest extends React.Component {
             this.setState({loaded: true});
             showToast();
         });
-        
-        const { status: existingStatus } = await Permissions.getAsync(
-            Permissions.NOTIFICATIONS
-        );
-        if (existingStatus !== 'granted') {
-            await Permissions.askAsync(Permissions.NOTIFICATIONS);
-        }
     }
     goBookRequestDetail(order_uid, deliver_uid) {
         Actions.push("bookrequestdetail", {order_uid: order_uid, type: 'confirm', confirm: deliver_uid ? true : false })
@@ -65,7 +70,11 @@ export default class BookRequest extends React.Component {
         Alert.alert("この予約注文の配達を担当しますか？", "", [
             { text: "いいえ"},
             { text: "はい", onPress: () => {
-                this.confirm(order_uid, store_name, area, cooking_time)
+                var _self = this
+                setTimeout(function() {
+                    _self.confirm(order_uid, store_name, area, cooking_time)
+                }, 200)
+                
             }}
         ])
         
@@ -75,24 +84,16 @@ export default class BookRequest extends React.Component {
         await confirmOrder(order_uid)
         .then(async (response) => {
             if(response.status == 1) {
-                /*Notifications.scheduleNotificationAsync({
-                    content: {
-                        title: store_name,
-                        body: store_name+'\n・調理目安時間：約'+cooking_time+'分\n・町名：'+area,
-                        data: {
-                            body: {
-                                "type": "delivery_decide",
-                                "title": "あなたがこの注文のデリバーに決まりました！",
-                                "body": store_name+'\n・調理目安時間：約'+cooking_time+'分\n・町名：'+area,
-                                "order_uid" : order_uid
-                            }
-                        }
-                    },
-                    trigger: {
-                        seconds: 5,
-                        repeats: false
-                    },
-                });*/
+                Alert.alert("ありがとうございます！\nあなたがこの注文の配達担当者となりました。", "");
+                let status = store.getState().showDeliver
+                status.orderBookUid.push(order_uid)
+                this.props.setShowDeliver({
+                    showDeliver: status.showDeliver,
+                    showBookDeliver: true,
+                    orderUid: status.order_uid,
+                    orderBookUid: status.orderBookUid
+                })
+                this.refresh();
             } else {
                 showToast(response.message)
             }
@@ -111,8 +112,8 @@ export default class BookRequest extends React.Component {
                 <View style={[styles.section, { borderColor: Colors.secColor, borderWidth: deliver.deliver_uid ? 0 : 2}]}>
                     <View style={[shared.flexCenter, {justifyContent: 'space-between'}]}>
                         <View style={shared.flexCenter}>
-                            <BoldText style={[{width: 80,paddingTop: 0}, fonts.size14]}>{moment(deliver.date_time).format("M/D")+"("+dayNamesShort[moment(deliver.date_time).format("d")]+"）"}</BoldText>
-                            <BoldText style={[{color: Colors.secColor,paddingTop: 0}, fonts.size14]}>{moment(deliver.date_time).format("HH:mm")}</BoldText>
+                            <BoldText style={[{width: 80,paddingTop: 0}, fonts.size14]}>{deliver.book_date ? moment(deliver.book_date).format("M/D")+"("+dayNamesShort[moment(deliver.book_date).format("d")]+"）" : ''}</BoldText>
+                            <BoldText style={[{color: Colors.secColor,paddingTop: 0}, fonts.size14]}>{deliver.book_date ? moment(deliver.book_date).format("HH:mm") : null}</BoldText>
                         </View>
                         <RegularText style={{color: Colors.secColor}}>にお客様にお届けするご予約です</RegularText>
                     </View>
@@ -121,8 +122,8 @@ export default class BookRequest extends React.Component {
                         <RegularText style={fonts.size14}>{deliver.order_uid}</RegularText>
                     </View>
                     <View style={[shared.flexCenter, margin.mt2]}>
-                        <View style={[shared.flexCenter, {width: 180, justifyContent: 'space-between'}]}>
-                            <BoldText style={fonts.size14}>エリア</BoldText>
+                        <View style={[shared.flexCenter, {width: 180}]}>
+                            <BoldText style={[fonts.size14, {width: 80}]}>エリア</BoldText>
                             <RegularText style={{color: '#848484'}}>{deliver.area}</RegularText>
                         </View>
                         <View style={[shared.flexCenter, margin.ml4]}>
@@ -140,6 +141,11 @@ export default class BookRequest extends React.Component {
                     </View>
                     <View style={[shared.flexCenter, margin.mt4, {justifyContent: 'space-between', alignItems: 'flex-end'}]}>
                         {
+                            store.getState().user.uid == deliver.deliver_uid ?
+                            <TouchableOpacity style={[styles.deliverBtn, {backgroundColor: '#ED0E0E'}]}>
+                                <BoldText style={[fonts.size16, {color: 'white'}]}>店着時間　{deliver.book_date && deliver.delivery_distance ? moment(deliver.book_date).subtract(deliver.delivery_distance.duration, 'seconds').format("HH:mm") : moment(deliver.book_date).format("HH:mm")}</BoldText>
+                            </TouchableOpacity>
+                            :
                             deliver.deliver_uid ?
                             <View style={[styles.deliverBtn, {backgroundColor: '#F2F2F2'}]}>
                                 <BoldText style={[fonts.size16, {color: 'black'}]}>デリバー確定済み</BoldText>
@@ -159,7 +165,7 @@ export default class BookRequest extends React.Component {
                                 :
                                 null
                             }
-                            <TouchableOpacity onPress={() => this.goBookRequestDetail(deliver.order_uid, deliver.deliver_uid)}>
+                            <TouchableOpacity onPress={() => this.goBookRequestDetail(deliver.order_uid, deliver.deliver_uid, deliver.delivery_distance)}>
                                 <BoldText style={[fonts.size14, {color: '#155CCE'}]}>注文内容を見る</BoldText>
                             </TouchableOpacity>
                         </View>
@@ -201,7 +207,17 @@ export default class BookRequest extends React.Component {
         );
     }
 }
-
+const mapDispatchToProps = dispatch => {
+    return {
+        setShowDeliver : showDeliver => { dispatch(setShowDeliver(showDeliver))}
+    }
+}
+const mapStateToProps = (state) => {
+    return {
+        showDeliver: state.showDeliver
+    }
+}
+export default connect(mapStateToProps,mapDispatchToProps)(BookRequest)
 const styles = StyleSheet.create({
     whiteSection: {
         backgroundColor: 'white',

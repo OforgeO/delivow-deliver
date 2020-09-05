@@ -28,7 +28,6 @@ class ForgotEmailReceive extends React.Component {
         //this.setState({loaded: false})
         await forgot(this.props.email)
         .then(async (response) => {
-            //console.log(response)
             //this.setState({loaded: true});
             if(response.status == 0){
                 showToast(response.message)

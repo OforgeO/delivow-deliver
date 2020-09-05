@@ -40,17 +40,13 @@ class BookRequestDetail extends React.Component {
             orderInfo: null,
             arriveStore: null,
             arriveTarget: null,
+            is_cutlery: true,
             cutleryCheck: false,
             admin_phone: null,
             is_attend: false
         }
     }
     async componentDidMount() {
-
-        let { status } = await Permissions.askAsync(Permissions.LOCATION);
-        if (status !== 'granted') {
-            return;
-        }
         this.refresh()
 
     }
@@ -70,11 +66,14 @@ class BookRequestDetail extends React.Component {
 
         await getOrderDetails(this.props.order_uid)
         .then(async (response) => {
-            console.log('here', response)
             if (response.status == 1) {
                 this.setState({ orderInfo: response.info })
                 if(response.info.status == 'delivering')
                     this.setState({orderStauts: 4})
+                if(!response.info.is_cutlery){
+                    this.setState({is_cutlery: false})
+                    this.setState({cutleryCheck: true})
+                }
                 this.setState({ customerInfo: response.customer })
                 this.getAddress(response.my_location, response.customer.location, response.info.store_location)
                 this.setState({ orderList: response.info.products })
@@ -105,29 +104,12 @@ class BookRequestDetail extends React.Component {
         });
     }
     async getAddress(my_location, customer_location, store_location) {
-        //let location = await Location.getCurrentPositionAsync({accuracy : Location.Accuracy.BestForNavigation});
-        await calcDistance(my_location[0], my_location[1], store_location[0], store_location[1])
-        .then(async (response) => {
-            console.log(response)
-            if (response.status == "OK" && response.rows[0].elements[0].duration.value) {
-                let time = response.rows[0].elements[0].duration.value
-
-                this.setState({ arriveStore: moment().add(time, "seconds").format("HH:mm") })
-                await calcDistance(store_location[0], store_location[1], customer_location[0], customer_location[1])
-                    .then(async (result) => {
-                        if (result.status == "OK" && result.rows[0].elements[0].duration.value) {
-                            let time1 = result.rows[0].elements[0].duration.value
-                            this.setState({ arriveTarget: moment().add(time1 + time + 600, "seconds").format("HH:mm") })
-                            this.setState({ loaded: true });
-                        } else {
-                            this.setState({ loaded: true });
-                            showToast();
-                        }
-                    })
-                    .catch((error) => {
-                        this.setState({ loaded: true });
-                        showToast();
-                    });
+        await calcDistance(store_location[0], store_location[1], customer_location[0], customer_location[1])
+        .then(async (result) => {
+            if (result.status == "OK" && result.rows[0].elements[0].duration.value) {
+                let time = result.rows[0].elements[0].duration.value
+                this.setState({ arriveTarget: time })
+                this.setState({ loaded: true });
             } else {
                 this.setState({ loaded: true });
                 showToast();
@@ -137,9 +119,10 @@ class BookRequestDetail extends React.Component {
             this.setState({ loaded: true });
             showToast();
         });
+                
     }
     checkOption(id) {
-        if ((!this.props.confirm && this.state.orderStauts <= 2) || this.state.orderInfo.status == 'accepted') {
+        if (this.state.orderStauts <= 2 || this.state.orderInfo.status == 'accepted') {
             if (this.state.orderStauts == 0)
                 this.setState({ orderStauts: 1 })
             let temp = this.state.orderList
@@ -161,7 +144,7 @@ class BookRequestDetail extends React.Component {
                     })
                 }
             }
-            if(checkAll == 1) 
+            if(checkAll == 1 && this.state.cutleryCheck) 
                 this.setState({orderStauts: 2})
             else
                 this.setState({orderStauts: 1})
@@ -169,17 +152,35 @@ class BookRequestDetail extends React.Component {
         }
     }
     checkCultleryOption() {
-        if(!this.props.confirm || this.state.orderInfo.status == 'accepted')
+        if (this.state.orderStauts <= 2 || this.state.orderInfo.status == 'accepted')
             this.setState({cutleryCheck : !this.state.cutleryCheck})
+        let temp = this.state.orderList
+        let checkAll = 1
+        for (var i = 0; i < temp.length; i++) {
+            if (!temp[i].selected)
+                checkAll = 0;
+            if(temp[i].options && temp[i].options.length > 0) {
+                temp[i].options.map((option, j) => {
+                    if(option.list && option.list.length > 0) {
+                        option.list.map((list, index) => {
+                            if(!list.selected)
+                                checkAll = 0;
+                        })
+                    }
+                })
+            }
+        }
+        
+        if(checkAll == 1 && !this.state.cutleryCheck) {
+            this.setState({orderStauts: 2})
+        } else {
+            this.setState({orderStauts: 1})
+        }
     }
     nextStep() {
-        console.log(this.props.type, this.props.confirm)
-        if(this.props.type == 'confirm' || this.props.confirm == true) {
-            console.log('here')
+        let my_id = store.getState().user.uid
+        if(my_id != this.state.orderInfo.deliver_uid) {
             Actions.pop();
-            setTimeout(function() {
-                Actions.refresh();
-            }, 10)
         } else {
             if (this.state.orderStauts < 3) {
                 let temp = this.state.orderList
@@ -206,7 +207,6 @@ class BookRequestDetail extends React.Component {
                         },
                         {
                             text: "はい", onPress: () => {
-                                
                                 this.departStore()
                             }
                         }
@@ -233,6 +233,7 @@ class BookRequestDetail extends React.Component {
                 );
             }
         }
+        
     }
     renderOrderList(products) {
         return products.map((product, index) => {
@@ -293,12 +294,11 @@ class BookRequestDetail extends React.Component {
                     })
                 }
             }
-            if(checkAll == 1) 
+            if(checkAll == 1 && this.state.cutleryCheck) 
                 this.setState({orderStauts: 2})
             else
                 this.setState({orderStauts: 1})
             this.setState({ orderList: temp })
-            //console.log(temp)
         }
     }
     async sendMessage(params ) {
@@ -429,7 +429,8 @@ class BookRequestDetail extends React.Component {
                             _self.props.setShowDeliver({
                                 showDeliver: false,
                                 showBookDeliver: store.getState().showBookDeliver,
-                                orderUid: null
+                                orderUid: [],
+                                orderBookUid: store.getState().orderBookUid
                             })
                             Actions.reset("root")
                         } }
@@ -445,8 +446,8 @@ class BookRequestDetail extends React.Component {
         });
         
     }
-    showMap(order_uid, type) {
-        Actions.push("checkmap", { order_uid: order_uid, mapType: type })
+    showMap(order_uid, type, store_name) {
+        Actions.push("checkmap", { order_uid: order_uid, mapType: type, store_name: store_name })
     }
     render() {
         return (
@@ -468,15 +469,15 @@ class BookRequestDetail extends React.Component {
                                                     <MaterialCommunityIcons color={Colors.secColor} size={14} name={"clock"} />
                                                     <RegularText style={[margin.ml1, fonts.size14, { color: '#848484' }]}>店着時間</RegularText>
                                                 </View>
-                                                <RegularText style={fonts.size50}>{this.state.orderInfo && this.state.orderInfo.accepted_time ? moment(this.state.orderInfo.accepted_time).format("HH:mm") : null}</RegularText>
-                                                <Tag name={"cutlery"} text={"マクドナルド豊橋店"} font5={false} />
+                                                <RegularText style={fonts.size50}>{this.state.orderInfo && this.state.orderInfo.book_date ? moment(this.state.orderInfo.book_date).subtract(this.state.arriveTarget ? this.state.arriveTarget : 0, 'seconds').format("HH:mm") : null }</RegularText>
+                                                <Tag name={"cutlery"} text={this.state.orderInfo ? this.state.orderInfo.store_name : ''} font5={false} />
                                             </View>
                                             <View style={{ flex: 1 }}>
                                                 <View style={shared.flexCenter}>
                                                     <MaterialCommunityIcons color={Colors.secColor} size={14} name={"clock"} />
                                                     <RegularText style={[margin.ml1, fonts.size14, { color: '#848484' }]}>お届け時間</RegularText>
                                                 </View>
-                                                <RegularText style={fonts.size50}>{this.state.arriveTarget}</RegularText>
+                                                <RegularText style={fonts.size50}>{this.state.orderInfo && this.state.orderInfo.book_date ? moment(this.state.orderInfo.book_date).format("HH:mm") : null }</RegularText>
                                                 <RegularText>※前後15分以上ずれ込む場合は、必ずお客様に連絡</RegularText>
                                             </View>
                                         </View>
@@ -489,7 +490,7 @@ class BookRequestDetail extends React.Component {
                                         </View>
                                         <View style={[shared.flexCenter, { justifyContent: 'space-between', paddingVertical: 15 }]}>
                                             <TouchableOpacity onPress={() => Actions.push("todayshifttime")}>
-                                                <RegularText style={fonts.size50}>{this.state.arriveStore}</RegularText>
+                                                <RegularText style={fonts.size50}>{this.state.orderInfo ? moment(this.state.orderInfo.accepted_time).format("HH:mm") : null}</RegularText>
                                             </TouchableOpacity>
                                             {
                                                 this.state.is_attend ?
@@ -502,7 +503,7 @@ class BookRequestDetail extends React.Component {
                                             
                                         </View>
                                         <View style={[shared.flexCenter, { flexWrap: 'wrap' }]}>
-                                            <Tag name={"cutlery"} text={"マクドナルド豊橋店"} font5={false} />
+                                            <Tag name={"cutlery"} text={this.state.orderInfo ? this.state.orderInfo.store_name : null} font5={false} />
                                             {
                                                 this.state.orderInfo && this.state.orderInfo.cooking_time ?
                                                     <Tag name={"clock"} text={"調理目安時間：" + this.state.orderInfo.cooking_time + "分"} font5={true} />
@@ -510,10 +511,16 @@ class BookRequestDetail extends React.Component {
                                                     null
                                             }
                                         </View>
-                                        <TouchableOpacity style={[shared.flexCenter, margin.mt2]} onPress={() => this.showMap(this.state.orderInfo.order_uid, 'deliver_store')}>
-                                            <FontAwesome5 name={"map-marker-alt"} color={Colors.secColor} size={14} />
-                                            <BoldText style={[fonts.size14, {color:Colors.secColor}]}>飲食店までをMAPで確認</BoldText>
-                                        </TouchableOpacity>
+                                        {
+                                            this.state.orderInfo ?
+                                            <TouchableOpacity style={[shared.flexCenter, margin.mt2]} onPress={() => this.showMap(this.state.orderInfo.order_uid, 'deliver_store')}>
+                                                <FontAwesome5 name={"map-marker-alt"} color={Colors.secColor} size={14} />
+                                                <BoldText style={[fonts.size14, {color:Colors.secColor}]}>飲食店までをMAPで確認</BoldText>
+                                            </TouchableOpacity>
+                                            :
+                                            null
+                                        }
+                                        
                                     </View>
                             }
 
@@ -541,13 +548,19 @@ class BookRequestDetail extends React.Component {
                                         :
                                         null
                                 }
-                                <TouchableOpacity style={[shared.flexCenter, { justifyContent: 'space-between', borderTopWidth: 1, borderTopColor: '#f2f2f2', paddingVertical: 13 }]} onPress={() => this.checkCultleryOption()}>
-                                    <View style={[shared.flexCenter, { flex: 1, alignItems: 'flex-start' }]}>
-                                        <FontAwesome name={"check-circle"} size={20} color={this.state.cutleryCheck || (this.state.orderInfo && this.state.orderInfo.status == 'delivering') ? Colors.secColor : '#848484'} />
-                                        <BoldText style={[fonts.size14, margin.ml1, { color: this.state.cutleryCheck || (this.state.orderInfo && this.state.orderInfo.status == 'delivering') ? 'black' : '#848484', paddingTop: 2 }]}>カトラリー</BoldText>
-                                    </View>
-                                    <RegularText style={[fonts.size14, { color: this.state.cutleryCheck || (this.state.orderInfo && this.state.orderInfo.status == 'delivering') ? 'black' : '#848484', width: 120, textAlign: 'right' }]}>{this.state.orderInfo && this.state.orderInfo.is_cutlery ? 'あり' : 'いいえ'}</RegularText>
-                                </TouchableOpacity>
+                                {
+                                    this.state.is_cutlery ?
+                                    <TouchableOpacity style={[shared.flexCenter, { justifyContent: 'space-between', borderTopWidth: 1, borderTopColor: '#f2f2f2', paddingVertical: 13 }]} onPress={() => this.checkCultleryOption()}>
+                                        <View style={[shared.flexCenter, { flex: 1, alignItems: 'flex-start' }]}>
+                                            <FontAwesome name={"check-circle"} size={20} color={this.state.cutleryCheck || (this.state.orderInfo && this.state.orderInfo.status == 'delivering') ? Colors.secColor : '#848484'} />
+                                            <BoldText style={[fonts.size14, margin.ml1, { color: this.state.cutleryCheck || (this.state.orderInfo && this.state.orderInfo.status == 'delivering') ? 'black' : '#848484', paddingTop: 2 }]}>カトラリー</BoldText>
+                                        </View>
+                                        <RegularText style={[fonts.size14, { color: this.state.cutleryCheck || (this.state.orderInfo && this.state.orderInfo.status == 'delivering') ? 'black' : '#848484', width: 120, textAlign: 'right' }]}>{this.state.orderInfo && this.state.orderInfo.is_cutlery ? 'あり' : 'いいえ'}</RegularText>
+                                    </TouchableOpacity>
+                                    :
+                                    null
+                                }
+                                
                             </View>
                             <View style={[styles.section, { backgroundColor: '#f2f2f2' }]}>
                                 <BoldText style={[fonts.size14]}>住所と受け取り方法</BoldText>
@@ -592,7 +605,7 @@ class BookRequestDetail extends React.Component {
                                         }
                                         {
                                             this.state.orderInfo && this.state.orderInfo.order_uid ?
-                                                <TouchableOpacity style={[shared.flexCenter, margin.mt3, { justifyContent: 'flex-end' }]} onPress={() => this.showMap(this.state.orderInfo.order_uid, 'deliver_customer')}>
+                                                <TouchableOpacity style={[shared.flexCenter, margin.mt3, { justifyContent: 'flex-end' }]} onPress={() => this.showMap(this.state.orderInfo.order_uid, this.props.type == "confirm" ? 'store_customer' : 'deliver_customer', this.state.orderInfo.store_name)}>
                                                     <FontAwesome5 name={"map-marker-alt"} size={14} color={Colors.secColor} />
                                                     <BoldText style={[fonts.size14, { color: Colors.secColor}]}>{this.props.type == "confirm" ? "MAPで見る" : "お届け先までをMAPで確認"}</BoldText>
                                                 </TouchableOpacity>
@@ -681,7 +694,7 @@ class BookRequestDetail extends React.Component {
                             null
                             :
                             <View style={styles.btn}>
-                                <TouchableOpacity onPress={() => this.nextStep()} style={[shared.flexCenter, styles.btnText, { backgroundColor: this.props.type == 'confirm' ? Colors.mainColor: this.state.orderStauts == 1 ? '#D3D3D3' : Colors.mainColor, justifyContent: 'center' }]}>
+                                <TouchableOpacity onPress={() => this.nextStep()} style={[shared.flexCenter, styles.btnText, { backgroundColor: this.state.orderStauts == 1 ? '#D3D3D3' : Colors.mainColor, justifyContent: 'center' }]}>
                                     <FontAwesome name="check-circle" color="white" size={14} />
                                     <RegularText style={[fonts.size14, margin.ml1, { color: 'white' }]}>
                                         {

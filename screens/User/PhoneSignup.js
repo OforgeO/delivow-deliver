@@ -8,10 +8,12 @@ import { setUser } from '../../actions';
 import {Actions} from 'react-native-router-flux';
 import Spinner_bar from 'react-native-loading-spinner-overlay';
 import Colors from '../../constants/Colors';
-import { registerSms } from '../../api';
+import { registerSms, updatePhone } from '../../api';
 import { RegularText, BoldText } from '../../components/StyledText';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Constants from 'expo-constants';
+import store from '../../store/configuteStore';
+
 TouchableOpacity.defaultProps = { activeOpacity: 0.8 };
 
 class PhoneSignup extends React.Component {
@@ -33,26 +35,49 @@ class PhoneSignup extends React.Component {
         if(this.state.phone != ''){
             this.setState({phoneError: false})
             this.setState({loaded: false})
-            await registerSms(this.state.phone)
+            if(this.props.type == 'update_phone') {
+                await updatePhone(this.state.phone)
                 .then(async (response) => {
-                this.setState({loaded: true});
-                console.log(response)
-                if(response.code == 400){
-                    showToast(response.errors[0]['messages'][0])
-                    return;
-                }else{
+                    this.setState({loaded: true});
                     if(response.status == 1){
-                        showToast(response.message, 'success')
-                        Actions.push("smsverify", {phone: this.state.phone})
+                        let info = store.getState().user
+                        info.phone = this.state.phone
+                        this.props.setUser(info)
+
+                        Actions.pop()
+                        setTimeout(function() {
+                            Actions.refresh();
+                        }, 10)
                     } else{
                         showToast(response.message)
                     }
-                }
-            })
-            .catch((error) => {
-                this.setState({loaded: true});
-                showToast();
-            });
+                })
+                .catch((error) => {
+                    this.setState({loaded: true});
+                    showToast();
+                });
+            } else {
+                await registerSms(this.state.phone)
+                .then(async (response) => {
+                    this.setState({loaded: true});
+                    if(response.code == 400){
+                        showToast(response.errors[0]['messages'][0])
+                        return;
+                    }else{
+                        if(response.status == 1){
+                            showToast(response.message, 'success')
+                            Actions.push("smsverify", {phone: this.state.phone})
+                        } else{
+                            showToast(response.message)
+                        }
+                    }
+                })
+                .catch((error) => {
+                    this.setState({loaded: true});
+                    showToast();
+                });
+            }
+            
         }
     }
     render(){
@@ -66,7 +91,12 @@ class PhoneSignup extends React.Component {
                         <View style={[shared.container, {paddingHorizontal: normalize(20)}]}>
                             <View style={{flex: 1, justifyContent: 'flex-end'}}>
                                 <BoldText style={[fonts.size32]}>携帯番号を入力</BoldText>
-                                <RegularText style={[fonts.size16, {paddingTop: 0}]}>SMSで認証コードが届きます</RegularText>
+                                {
+                                    this.props.type == "update_phone" ?
+                                    null
+                                    :
+                                    <RegularText style={[fonts.size16, {paddingTop: 0}]}>SMSで認証コードが届きます</RegularText>
+                                }
                                 
                                 <Item rounded style={ this.state.phoneError ?[form.item, styles.error , {position: 'relative', marginTop: 15}] : [form.item , {position: 'relative', marginTop: 15}] }>
                                     <Input

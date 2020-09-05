@@ -97,6 +97,12 @@ class Login extends React.Component {
             else if(notify_data.body.type == "delivery_no_entry")
                 notify.delivery_no_entry = true
             this.props.setNotify(notify)
+        } else if(notify_data.body.type == "cancel_delivering") {
+            let notify = store.getState().notify
+            notify.cancel_delivering = true
+            notify.title = notify_data.body.title
+            notify.subtitle = notify_data.body.body
+            this.props.setNotify(notify)
         }
         if(notify_data.body.type == "delivery_order_request" || notify_data.body.type == "delivery_order_car" || notify_data.body.type == "delivery_order_serveral") {
             Notifications.scheduleNotificationAsync({
@@ -129,7 +135,7 @@ class Login extends React.Component {
             Actions.push("forgotpwd", {token: queryParams.token})
         }
     }
-    componentWillUnmount() {
+    UNSAFE_componentWillMount() {
         Linking.removeEventListener('url', this.handleOpenURL);
     }
     render(){

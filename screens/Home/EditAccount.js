@@ -13,7 +13,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { RegularText, BoldText } from '../../components/StyledText';
 import store from '../../store/configuteStore';
 import { connect } from "react-redux";
-import { setUser } from '../../actions';
+import { setUser, setShowDeliver } from '../../actions';
 import { updateAvatar, getUser } from '../../api';
 import Spinner_bar from 'react-native-loading-spinner-overlay';
 import { showToast } from '../../shared/global';
@@ -45,7 +45,6 @@ class EditAccount extends React.Component {
         this.setState({ loaded: false })
         await getUser()
         .then(async (response) => {
-            console.log(response)
             if(response.status == 1) {
                 this.setState({myInfo: response.user})
             } else {
@@ -111,7 +110,6 @@ class EditAccount extends React.Component {
                     _self.setState({ loaded: false })
                     await updateAvatar(pickerResult.uri)
                         .then(async (response) => {
-                            console.log(response)
                             if (response.status == 1) {
                                 let info = store.getState().user
                                 info.photo = response.avatar_link
@@ -173,6 +171,12 @@ class EditAccount extends React.Component {
         );
     }
     async log_out() {
+        this.props.setShowDeliver({
+            showDeliver: false,
+            showBookDeliver: false,
+            orderUid: [],
+            orderBookUid: []
+        })
         await SecureStore.deleteItemAsync("token")
         Actions.reset("login")
     }
@@ -223,7 +227,7 @@ class EditAccount extends React.Component {
                                             <RegularText style={[fonts.size14]}>{this.state.userInfo && this.state.userInfo.phone ? this.state.userInfo.phone : null}</RegularText>
                                         </View>
                                     </View>
-                                    <TouchableOpacity onPress={() => Actions.push("phonesignup", { type: 'edit_phone' })}>
+                                    <TouchableOpacity onPress={() => Actions.push("phonesignup", { type: 'update_phone' })}>
                                         <RegularText style={[fonts.size14, { color: Colors.secColor }]}>変更</RegularText>
                                     </TouchableOpacity>
                                 </View>
@@ -291,7 +295,8 @@ EditAccount.navigationOptions = {
 }
 const mapDispatchToProps = dispatch => {
     return {
-        setUser: user => { dispatch(setUser(user)) }
+        setUser: user => { dispatch(setUser(user)) },
+        setShowDeliver: showDeliver => { dispatch(setShowDeliver(showDeliver)) },
     }
 }
 const mapStateToProps = (state) => {

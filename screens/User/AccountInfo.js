@@ -32,7 +32,8 @@ class AccountInfo extends React.Component {
             passwordError: false,
             loaded: true,
             firstNameError: false,
-            lastNameError: false
+            lastNameError: false,
+            address: ''
         };
     }
     componentDidMount(){
@@ -59,7 +60,7 @@ class AccountInfo extends React.Component {
             this.setState({lastNameError: false})
         }
         if(validate){
-            Actions.push("passwordregister", {phone: this.props.phone, firstName: this.state.firstName, lastName: this.state.lastName, birthDay: this.state.birthYear+'-'+this.state.birthMonth+'-'+this.state.birthDay, email: this.state.email});
+            Actions.push("passwordregister", {phone: this.props.phone, firstName: this.state.firstName, lastName: this.state.lastName, birthDay: this.state.birthYear+'-'+this.state.birthMonth+'-'+this.state.birthDay, email: this.state.email, address: this.state.address});
         }
     }
     validateEmail(email) {
@@ -101,12 +102,27 @@ class AccountInfo extends React.Component {
                                                 onChangeText = {(text) => this.setState({lastName: text})}
                                                 placeholderTextColor = '#9da8bf'
                                                 ref={input => {this.lastName = input;}}
-                                                onSubmitEditing={() => this.birthYear._root.focus()}
+                                                onSubmitEditing={() => this.address._root.focus()}
                                             />
                                         </Item>
                                     </View>
                                 </View>
                                 <View>
+                                    <RegularText style={styles.label}>住所</RegularText>
+                                    <Item rounded style={this.state.emailError ? [form.item, styles.error, {marginBottom: 0}] : [form.item, {marginBottom: 0}] }>
+                                        <Input
+                                            placeholder = "住所を入力"
+                                            value = { this.state.address }
+                                            style = {[form.input, fonts.size20, {lineHeight: normalize(23)}]}
+                                            onChangeText = {(text) => this.setState({address: text})}
+                                            placeholderTextColor = '#9da8bf'
+                                            returnKeyType="next"
+                                            ref={ref => {this.address = ref;}}
+                                            onSubmitEditing={() => this.birthYear._root.focus()}
+                                        />
+                                    </Item>
+                                </View>
+                                <View style={{marginTop: 15}}>
                                     <RegularText style={styles.label}>生年月日</RegularText>
                                     <View style={{flexDirection: 'row', alignItems: 'center'}}>
                                         <Item rounded style={ [form.item, {width: 90}] }>
@@ -258,6 +274,7 @@ const styles = StyleSheet.create({
         borderRightWidth: 1,
     },
     label: {
-        paddingLeft: 3
+        paddingLeft: 3,
+        paddingBottom: 4
     }
 });

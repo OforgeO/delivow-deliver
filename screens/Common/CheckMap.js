@@ -33,7 +33,6 @@ class CheckMap extends React.Component {
         }
     }
     async componentDidMount() {
-        console.log(this.props.store_name)
         this.setState({loaded: false})
         await getOrderLocations(this.props.order_uid)
         .then(async (response) => {
@@ -75,8 +74,31 @@ class CheckMap extends React.Component {
                         let region = {
                             latitude: (parseFloat(response.info.delivery_location[0]) + parseFloat(response.info.customer_location[0]))/2,
                             longitude: (parseFloat(response.info.delivery_location[1]) + parseFloat(response.info.customer_location[1]))/2,
-                            latitudeDelta: Math.abs(parseFloat(response.info.delivery_location[0]) - parseFloat(response.info.customer_location[0])) + 0.01,
-                            longitudeDelta: Math.abs(parseFloat(response.info.delivery_location[1]) - parseFloat(response.info.customer_location[1])) + 0.01
+                            latitudeDelta: Math.abs(parseFloat(response.info.delivery_location[0]) - parseFloat(response.info.customer_location[0])) + 0.1,
+                            longitudeDelta: Math.abs(parseFloat(response.info.delivery_location[1]) - parseFloat(response.info.customer_location[1])) + 0.1
+                        }
+                        this.setState({region: region})
+                    }
+                } else if(this.props.mapType == 'store_customer') {
+                    if(response.info.store_location && response.info.store_location.length > 0)
+                        this.setState({orgMarker: {
+                            latitude: response.info.store_location[0],
+                            longitude: response.info.store_location[1]
+                        }})
+                    if(response.info.customer_location && response.info.customer_location.length > 0)
+                        this.setState({targetMarker: {
+                            latitude: response.info.customer_location[0],
+                            longitude: response.info.customer_location[1]
+                        }})
+                    if(response.info.store_location.length > 0 && response.info.customer_location.length > 0) {
+                        await this.calcDistance(response.info.store_location[0], response.info.store_location[1], response.info.customer_location[0], response.info.customer_location[1], 'driving')
+                        await this.calcDistance(response.info.store_location[0], response.info.store_location[1], response.info.customer_location[0], response.info.customer_location[1], 'bicycling')
+                        this.setState({loaded: true});
+                        let region = {
+                            latitude: (parseFloat(response.info.store_location[0]) + parseFloat(response.info.customer_location[0]))/2,
+                            longitude: (parseFloat(response.info.store_location[1]) + parseFloat(response.info.customer_location[1]))/2,
+                            latitudeDelta: Math.abs(parseFloat(response.info.store_location[0]) - parseFloat(response.info.customer_location[0])) + 0.01,
+                            longitudeDelta: Math.abs(parseFloat(response.info.store_location[1]) - parseFloat(response.info.customer_location[1])) + 0.01
                         }
                         this.setState({region: region})
                     }
@@ -128,7 +150,7 @@ class CheckMap extends React.Component {
             <Container style={[shared.mainContainer]}>
                 {Platform.OS === 'ios' && <StatusBar barStyle="dark-content" backgroundColor="white" />}
                 <Content contentContainerStyle={{ flex: 1, backgroundColor: 'white'}}>
-                    <View style={{ height: Constants.statusBarHeight + 80, alignItems: 'flex-start', justifyContent: 'flex-end', bottom: 10, paddingHorizontal: normalize(20) }}>
+                    <View style={{ height: Constants.statusBarHeight + 40, alignItems: 'flex-start', justifyContent: 'flex-end', bottom: 10, paddingHorizontal: normalize(20) }}>
                         <View style={[shared.flexCenter, {justifyContent: 'space-between', width: '100%'}]}>
                             <BoldText style={[fonts.size32]}>MAPを確認</BoldText>
                             <RegularText style={[fonts.size32, {color: Colors.secColor}]}>{this.state.distance}</RegularText>
@@ -139,7 +161,7 @@ class CheckMap extends React.Component {
                             <MaterialIcons color={Colors.mainColor} size={28} name={"directions-bike"} />
                             <View style={margin.ml2}>
                                 <RegularText>バイク</RegularText>
-                                <BoldText style={fonts.size14}>{parseInt(this.state.driveTime/60)}分</BoldText>
+                                <BoldText style={fonts.size14}>{parseInt(this.state.driveTime/60)+10}分</BoldText>
                             </View>
                         </View>
                         <View style={[shared.flexCenter, {flex: 1, justifyContent:'center'}]}>

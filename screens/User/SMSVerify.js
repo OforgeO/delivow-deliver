@@ -51,7 +51,6 @@ class SMSVerify extends React.Component {
         await verifyCode(phone, code)
         .then(async (response) => {
             this.setState({loaded: true});
-            console.log(response)
             if(response.status == 1){
                 Actions.push("accountinfo", {phone: phone});
             } else{

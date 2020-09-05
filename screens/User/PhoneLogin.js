@@ -73,6 +73,7 @@ class PhoneLogin extends React.Component {
         if(valid){
             this.setState({phoneError: false})
             this.setState({passwordError: false})
+            await this.registerForPushNotificationsAsync();
             this.setState({loaded: false})
             await login(this.state.phone, this.state.password, this.state.token)
             .then(async (response) => {

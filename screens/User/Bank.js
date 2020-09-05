@@ -35,25 +35,27 @@ class Bank extends React.Component {
         };
     }
     async componentDidMount(){
-        this.setState({ loaded: false })
-        await getUser()
-        .then(async (response) => {
-            if(response.status == 1) {
-                this.setState({bankName: response.user.bank_name})
-                this.setState({bankCode: response.user.bank_code})
-                this.setState({branchCode: response.user.branch_code})
-                this.setState({accountNo: response.user.account_number})
-                this.setState({accountName: response.user.account_name})
-                this.setState({accountNameKana: response.user.account_name_kana})
-            } else {
-                showToast(response.message)
-            }
-            this.setState({ loaded: true })
-        })
-        .catch((error) => {
-            this.setState({ loaded: true })
-            showToast();
-        });
+        if(this.props.type == 'update') {
+            this.setState({ loaded: false })
+            await getUser()
+            .then(async (response) => {
+                if(response.status == 1) {
+                    this.setState({bankName: response.user.bank_name})
+                    this.setState({bankCode: response.user.bank_code})
+                    this.setState({branchCode: response.user.branch_code})
+                    this.setState({accountNo: response.user.account_number})
+                    this.setState({accountName: response.user.account_name})
+                    this.setState({accountNameKana: response.user.account_name_kana})
+                } else {
+                    showToast(response.message)
+                }
+                this.setState({ loaded: true })
+            })
+            .catch((error) => {
+                this.setState({ loaded: true })
+                showToast();
+            });
+        }
     }
 
     async nextScreen(){
@@ -117,7 +119,6 @@ class Bank extends React.Component {
                 await registerBank(this.state.bankName, this.state.bankCode, this.state.branchCode, this.state.accountNo, this.state.accountName, this.state.accountNameKana, this.props.phone)
                 .then(async (response) => {
                     this.setState({loaded: true});
-                    console.log(response)
                     if(response.status == 1)
                         Actions.push("cardphoto", {phone: this.props.phone})
                     else
@@ -139,104 +140,103 @@ class Bank extends React.Component {
                     <KeyboardAwareScrollView
                         resetScrollToCoords={{ x: 0, y: 0 }}
                         scrollEnabled={true}
-                        style={{}}
                     >
                         <View style={[shared.conatiner, {paddingHorizontal: normalize(20)}]}>
                             
-                                <View style={{flex: 1, justifyContent: 'center'}}>
-                                    <BoldText style={[fonts.size32, {marginTop: 30}]}>{ this.props.type == 'update' ? '口座情報の変更' : '口座情報を入力'}</BoldText>
-                                    <View style={{marginTop: 10}}>
-                                        <RegularText style={[margin.mb1, margin.ml1]}>銀行名</RegularText>
-                                        <Item rounded style={this.state.bankNameError ? [form.item, styles.error, {marginBottom: 0}] : [form.item, {marginBottom: 0}] }>
-                                            <Input
-                                                placeholder = "銀行名を入力…"
-                                                value = { this.state.bankName }
-                                                style = {[form.input, fonts.size20, {lineHeight: normalize(23)}]}
-                                                onChangeText = {(text) => this.setState({bankName: text})}
-                                                placeholderTextColor = '#9da8bf'
-                                                ref={ref => {this.bankName = ref;}}
-                                                onSubmitEditing={() => this.bankCode._root.focus()}
-                                            />
-                                        </Item>
-                                    </View>
-                                    <View style={{marginTop: 10}}>
-                                        <RegularText style={[margin.mb1, margin.ml1]}>銀行コード</RegularText>
-                                        <Item rounded style={this.state.bankCodeError? [form.item, styles.error, {marginBottom: 0}] : [form.item, {marginBottom: 0}] }>
-                                            <Input
-                                                placeholder = "銀行コードを入力…"
-                                                value = { this.state.bankCode }
-                                                style = {[form.input, fonts.size20, {lineHeight: normalize(23)}]}
-                                                onChangeText = {(text) => this.setState({bankCode: text})}
-                                                placeholderTextColor = '#9da8bf'
-                                                ref={ref => {this.bankCode = ref;}}
-                                                onSubmitEditing={() => this.branchCode._root.focus()}
-                                            />
-                                        </Item>
-                                    </View>
-                                    <View style={{marginTop: 10}}>
-                                        <RegularText style={[margin.mb1, margin.ml1]}>支店コード</RegularText>
-                                        <Item rounded style={this.state.branchCodeError? [form.item, styles.error, {marginBottom: 0}] : [form.item, {marginBottom: 0}] }>
-                                            <Input
-                                                placeholder = "銀行コードを入力…"
-                                                value = { this.state.branchCode }
-                                                style = {[form.input, fonts.size20, {lineHeight: normalize(23)}]}
-                                                onChangeText = {(text) => this.setState({branchCode: text})}
-                                                placeholderTextColor = '#9da8bf'
-                                                ref={ref => {this.branchCode = ref;}}
-                                                onSubmitEditing={() => this.accountNo._root.focus()}
-                                            />
-                                        </Item>
-                                    </View>
-                                    <View style={{marginTop: 10}}>
-                                        <RegularText style={[margin.mb1, margin.ml1]}>口座番号</RegularText>
-                                        <Item rounded style={this.state.accountNoError? [form.item, styles.error, {marginBottom: 0}] : [form.item, {marginBottom: 0}] }>
-                                            <Input
-                                                placeholder = "口座番号を入力…"
-                                                value = { this.state.accountNo }
-                                                style = {[form.input, fonts.size20, {lineHeight: normalize(23)}]}
-                                                onChangeText = {(text) => this.setState({accountNo: text})}
-                                                placeholderTextColor = '#9da8bf'
-                                                ref={ref => {this.accountNo = ref;}}
-                                                onSubmitEditing={() => this.accountName._root.focus()}
-                                            />
-                                        </Item>
-                                    </View>
-                                    <View style={{marginTop: 10}}>
-                                        <RegularText style={[margin.mb1, margin.ml1]}>口座名義</RegularText>
-                                        <Item rounded style={this.state.accountNameError? [form.item, styles.error, {marginBottom: 0}] : [form.item, {marginBottom: 0}] }>
-                                            <Input
-                                                placeholder = "口座名義を入力…"
-                                                value = { this.state.accountName }
-                                                style = {[form.input, fonts.size20, {lineHeight: normalize(23)}]}
-                                                onChangeText = {(text) => this.setState({accountName: text})}
-                                                placeholderTextColor = '#9da8bf'
-                                                ref={ref => {this.accountName = ref;}}
-                                                onSubmitEditing={() => this.accountNameKana._root.focus()}
-                                            />
-                                        </Item>
-                                    </View>
-                                    <View style={{marginTop: 10}}>
-                                        <RegularText style={[margin.mb1, margin.ml1]}>口座名義(全角カナ)</RegularText>
-                                        <Item rounded style={this.state.accountNameKanaError? [form.item, styles.error, {marginBottom: 0}] : [form.item, {marginBottom: 0}] }>
-                                            <Input
-                                                placeholder = "口座名義(全角カナ)を入力…"
-                                                value = { this.state.accountNameKana }
-                                                style = {[form.input, fonts.size20, {lineHeight: normalize(23)}]}
-                                                onChangeText = {(text) => this.setState({accountNameKana: text})}
-                                                placeholderTextColor = '#9da8bf'
-                                                ref={ref => {this.accountNameKana = ref;}}
-                                                onSubmitEditing={() => this.nextScreen()}
-                                                returnKeyType="go"
-                                            />
-                                        </Item>
-                                    </View>
-                                    
+                            <View style={{flex: 1, justifyContent: 'center'}}>
+                                <BoldText style={[fonts.size32, {marginTop: 30}]}>{ this.props.type == 'update' ? '口座情報の変更' : '口座情報を入力'}</BoldText>
+                                <View style={{marginTop: 10}}>
+                                    <RegularText style={[margin.mb1, margin.ml1]}>銀行名</RegularText>
+                                    <Item rounded style={this.state.bankNameError ? [form.item, styles.error, {marginBottom: 0}] : [form.item, {marginBottom: 0}] }>
+                                        <Input
+                                            placeholder = "銀行名を入力…"
+                                            value = { this.state.bankName }
+                                            style = {[form.input, fonts.size20, {lineHeight: normalize(23)}]}
+                                            onChangeText = {(text) => this.setState({bankName: text})}
+                                            placeholderTextColor = '#9da8bf'
+                                            ref={ref => {this.bankName = ref;}}
+                                            onSubmitEditing={() => this.bankCode._root.focus()}
+                                        />
+                                    </Item>
                                 </View>
-                                <View style={{justifyContent: 'center', alignItems: 'center', width: '100%',flex: 1, marginVertical: 30}}>
-                                    <TouchableOpacity onPress={() => this.nextScreen()} style={{borderRadius: 12, width: '100%',backgroundColor: Colors.mainColor, paddingVertical: Platform.OS == 'ios' ? 17 : 12 }}>
-                                        <BoldText style={[styles.btnText , fonts.size16]}>{this.props.type == 'update' ? '変更' : '次へ'}</BoldText>
-                                    </TouchableOpacity>
+                                <View style={{marginTop: 10}}>
+                                    <RegularText style={[margin.mb1, margin.ml1]}>銀行コード</RegularText>
+                                    <Item rounded style={this.state.bankCodeError? [form.item, styles.error, {marginBottom: 0}] : [form.item, {marginBottom: 0}] }>
+                                        <Input
+                                            placeholder = "銀行コードを入力…"
+                                            value = { this.state.bankCode }
+                                            style = {[form.input, fonts.size20, {lineHeight: normalize(23)}]}
+                                            onChangeText = {(text) => this.setState({bankCode: text})}
+                                            placeholderTextColor = '#9da8bf'
+                                            ref={ref => {this.bankCode = ref;}}
+                                            onSubmitEditing={() => this.branchCode._root.focus()}
+                                        />
+                                    </Item>
                                 </View>
+                                <View style={{marginTop: 10}}>
+                                    <RegularText style={[margin.mb1, margin.ml1]}>支店コード</RegularText>
+                                    <Item rounded style={this.state.branchCodeError? [form.item, styles.error, {marginBottom: 0}] : [form.item, {marginBottom: 0}] }>
+                                        <Input
+                                            placeholder = "銀行コードを入力…"
+                                            value = { this.state.branchCode }
+                                            style = {[form.input, fonts.size20, {lineHeight: normalize(23)}]}
+                                            onChangeText = {(text) => this.setState({branchCode: text})}
+                                            placeholderTextColor = '#9da8bf'
+                                            ref={ref => {this.branchCode = ref;}}
+                                            onSubmitEditing={() => this.accountNo._root.focus()}
+                                        />
+                                    </Item>
+                                </View>
+                                <View style={{marginTop: 10}}>
+                                    <RegularText style={[margin.mb1, margin.ml1]}>口座番号</RegularText>
+                                    <Item rounded style={this.state.accountNoError? [form.item, styles.error, {marginBottom: 0}] : [form.item, {marginBottom: 0}] }>
+                                        <Input
+                                            placeholder = "口座番号を入力…"
+                                            value = { this.state.accountNo }
+                                            style = {[form.input, fonts.size20, {lineHeight: normalize(23)}]}
+                                            onChangeText = {(text) => this.setState({accountNo: text})}
+                                            placeholderTextColor = '#9da8bf'
+                                            ref={ref => {this.accountNo = ref;}}
+                                            onSubmitEditing={() => this.accountName._root.focus()}
+                                        />
+                                    </Item>
+                                </View>
+                                <View style={{marginTop: 10}}>
+                                    <RegularText style={[margin.mb1, margin.ml1]}>口座名義</RegularText>
+                                    <Item rounded style={this.state.accountNameError? [form.item, styles.error, {marginBottom: 0}] : [form.item, {marginBottom: 0}] }>
+                                        <Input
+                                            placeholder = "口座名義を入力…"
+                                            value = { this.state.accountName }
+                                            style = {[form.input, fonts.size20, {lineHeight: normalize(23)}]}
+                                            onChangeText = {(text) => this.setState({accountName: text})}
+                                            placeholderTextColor = '#9da8bf'
+                                            ref={ref => {this.accountName = ref;}}
+                                            onSubmitEditing={() => this.accountNameKana._root.focus()}
+                                        />
+                                    </Item>
+                                </View>
+                                <View style={{marginTop: 10}}>
+                                    <RegularText style={[margin.mb1, margin.ml1]}>口座名義(全角カナ)</RegularText>
+                                    <Item rounded style={this.state.accountNameKanaError? [form.item, styles.error, {marginBottom: 0}] : [form.item, {marginBottom: 0}] }>
+                                        <Input
+                                            placeholder = "口座名義(全角カナ)を入力…"
+                                            value = { this.state.accountNameKana }
+                                            style = {[form.input, fonts.size20, {lineHeight: normalize(23)}]}
+                                            onChangeText = {(text) => this.setState({accountNameKana: text})}
+                                            placeholderTextColor = '#9da8bf'
+                                            ref={ref => {this.accountNameKana = ref;}}
+                                            onSubmitEditing={() => this.nextScreen()}
+                                            returnKeyType="go"
+                                        />
+                                    </Item>
+                                </View>
+                                
+                            </View>
+                            <View style={{justifyContent: 'center', alignItems: 'center', width: '100%',flex: 1, marginVertical: 30}}>
+                                <TouchableOpacity onPress={() => this.nextScreen()} style={{borderRadius: 12, width: '100%',backgroundColor: Colors.mainColor, paddingVertical: Platform.OS == 'ios' ? 17 : 12 }}>
+                                    <BoldText style={[styles.btnText , fonts.size16]}>{this.props.type == 'update' ? '変更' : '次へ'}</BoldText>
+                                </TouchableOpacity>
+                            </View>
                             
                         </View>
                     </KeyboardAwareScrollView>

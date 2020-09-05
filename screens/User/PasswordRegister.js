@@ -40,10 +40,9 @@ class PasswordRegister extends React.Component {
         }
         if(validate){
             this.setState({loaded: false});
-            await registerAccount(this.props.firstName, this.props.lastName, this.props.birthDay, this.props.email, this.state.password, this.props.phone)
+            await registerAccount(this.props.firstName, this.props.lastName, this.props.birthDay, this.props.email, this.state.password, this.props.phone, this.props.address)
             .then(async (response) => {
                 this.setState({loaded: true});
-                console.log(response)
                 if(response.code != 400){
                     if(response.status == 1){
                         Actions.push("avatarregister", {phone: this.props.phone});

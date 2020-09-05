@@ -45,7 +45,7 @@ class AreaShift extends React.Component {
             timeIndex: 0,
             timeType: 0,
             loaded: true,
-            deliverAddress: ''
+            deliverAddress: []
         };
     }
     componentDidMount(){
@@ -75,7 +75,6 @@ class AreaShift extends React.Component {
         await registerAreaShift(this.state.deliverAddress, this.props.phone, shift)
             .then(async (response) => {
             this.setState({loaded: true});
-            console.log(response)
             if(response.status == 1)
                 Actions.push("termsscreen", {phone: this.props.phone})
             else
@@ -89,15 +88,13 @@ class AreaShift extends React.Component {
     }
     checkOption(id){
         let temp = this.state.deliverOptions
-        let addr = '';
+        let addr = [];
         for(var i = 0;i<temp.length;i++){
             if(temp[i].id == id){
                 temp[i].selected = !temp[i].selected
             }
             if(temp[i].selected){
-                if(addr != '')
-                    addr += ',';
-                addr += temp[i].text
+                addr.push(temp[i].id)
             }
         }
         this.setState({deliverAddress: addr})

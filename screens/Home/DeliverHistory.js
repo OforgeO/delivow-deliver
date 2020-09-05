@@ -28,7 +28,6 @@ export default class DeliverHistory extends React.Component {
         this.setState({loaded: false})
         await getThisMonthHistory()
         .then(async (response) => {
-            console.log(response)
             if(response.status == 1) {
                 this.setState({listViewData: response.list})
             } else {
@@ -47,7 +46,7 @@ export default class DeliverHistory extends React.Component {
                 return <TouchableOpacity key={list.uid} style={styles.rowFrontSection} onPress={() => this.choose(list.uid)}>
                     <View style={styles.rowFront}>
                         <View style={{width: (Layout.window.width - 40)*0.3, borderRadius: 10, overflow: 'hidden'}}>
-                            <Image source={{uri: list.store_photo}} style={{width: (Layout.window.width - 40)*0.3, height: (Layout.window.width - 40)*0.3}} resizeMode="stretch" />
+                            <Image source={{uri: list.store_photo ? list.store_photo : ''}} style={{width: (Layout.window.width - 40)*0.3, height: (Layout.window.width - 40)*0.3}} resizeMode="stretch" />
                         </View>
                         <View style={[shared.flexCenter, {justifyContent: 'space-between', width: (Layout.window.width - 40)*0.7}]}>
                             <View style={[margin.pl3, {justifyContent: 'space-between', height: (Layout.window.width - 40)*0.3, paddingVertical: 10}]}>
@@ -55,7 +54,7 @@ export default class DeliverHistory extends React.Component {
                                 <BoldText style={[fonts.size16, margin.pt1, margin.pb1]}>{list.store_name}</BoldText>
                                 <View style={shared.flexCenter}>
                                     <RegularText style={fonts.size14}>配達距離</RegularText>
-                                    <RegularText style={[fonts.size14, margin.pl8]}>{list.distance}</RegularText>
+                                    <RegularText style={[fonts.size14, margin.pl8]}>{(parseInt(list.distance)/1000).toFixed(1)}km</RegularText>
                                 </View>
                                 <View style={shared.flexCenter}>
                                     <RegularText style={fonts.size14}>配達状況</RegularText>

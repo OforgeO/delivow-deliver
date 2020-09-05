@@ -32,7 +32,6 @@ export default class ShiftRegister extends React.Component {
         this.setState({ loaded: false })
         await getShift()
         .then(async (response) => {
-            console.log(response)
             if(response.status == 1) {
                 let shift = response.shift
                 shift = JSON.parse(shift)

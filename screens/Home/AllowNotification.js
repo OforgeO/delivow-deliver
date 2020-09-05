@@ -21,15 +21,26 @@ export default class AllowNotification extends React.Component {
             lastNameError: false
         };
     }
-    componentDidMount(){
+    async componentDidMount(){
+        const { status: existingStatus } = await Permissions.getAsync(
+            Permissions.NOTIFICATIONS
+        );
+        if (existingStatus !== 'granted') {
+            await Permissions.askAsync(Permissions.NOTIFICATIONS);
+        }
     }
 
-    async nextScreen() {
-        
-        Actions.pop()
+    async nextScreen(type) {
+        const { status: existingStatus } = await Permissions.getAsync(
+            Permissions.NOTIFICATIONS
+        );
+        if (existingStatus !== 'granted') {
+            await Permissions.askAsync(Permissions.NOTIFICATIONS);
+        }
+        /*Actions.pop()
         setTimeout(function() {
             Actions.refresh()
-        }, 10)
+        }, 10)*/
     }
     
     render(){

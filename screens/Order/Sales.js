@@ -141,6 +141,7 @@ export default class Sales extends React.Component {
                                     svg={{ stroke: Colors.secColor }}
                                     contentInset={contentInset}
                                     animate={true}
+                                    numberOfTicks={10}
                                 >
                                     <Grid />
                                 </LineChart>

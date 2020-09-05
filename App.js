@@ -108,7 +108,7 @@ export default function App(props) {
                                         <Scene key="emailconfirm" component={EmailConfirm} hideNavBar={true} />
                                         <Scene key="emailchange" component={EmailChange} hideNavBar={true} />
                                         <Scene key="reporttrouble" component={ReportTrouble} hideNavBar={true} />
-                                        <Scene key="shiftregister" component={ShiftRegister} />
+                                        
                                         <Scene key="bookrequest" component={BookRequest} />
                                         <Scene key="todayshift" component={TodayShift} />
                                         <Scene key="todayshifttime" component={TodayShiftTime} />

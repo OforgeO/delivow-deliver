@@ -36,12 +36,10 @@ class EmailChange extends React.Component {
             this.setState({ loaded: false });
             await updateEmail(this.state.email)
             .then(async (response) => {
-                console.log(response)
                 this.setState({ loaded: true });
                 if(response.status == 1) {
                     let info = store.getState().user
                     info.email = this.state.email
-                    console.log(info)
                     this.props.setUser(info)
                     setTimeout(function() {
                         Alert.alert("メールアドレスを変更しました。", "", [

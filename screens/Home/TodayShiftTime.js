@@ -53,7 +53,6 @@ export default class TodayShiftTime extends React.Component {
     async nextScreen() {
         let shift = this.props.shift_hours
         shift[moment().format('d')] = [this.state.startTime, this.state.endTime]
-        console.log(shift);
         this.setState({ loaded: false })
         await updateShift(shift)
             .then(async (response) => {

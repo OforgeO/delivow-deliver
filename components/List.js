@@ -33,7 +33,9 @@ export default class List extends React.Component {
                             <RegularText style={[fonts.size14, margin.ml2, { color: this.props.color ? this.props.color : 'black' }]}>{this.props.title}</RegularText>
                             {
                                 this.props.requestCnt > 0 ?
-                                    <BoldText style={[fonts.size16, margin.ml8, { color: 'white', alignItems: 'center', justifyContent: 'center', width: 24, height: 24, borderRadius: 12, backgroundColor: '#F50909', overflow: 'hidden', textAlign: 'center' }]}>{this.props.requestCnt}</BoldText>
+                                    <View style={[styles.undeliverSection, margin.ml8]}>
+                                        <BoldText style={[fonts.size16, {color: 'white', paddingTop:0}]}>{this.props.requestCnt}</BoldText>
+                                    </View>
                                     :
                                     null
                             }
@@ -65,5 +67,9 @@ const styles = StyleSheet.create({
     detailSection: {
         paddingVertical: 15,
         flexDirection: 'row'
+    },
+    undeliverSection: {
+        alignItems: 'center', justifyContent: 'center', backgroundColor: '#F50909', width: 26, height: 26, borderRadius: 15,
+        marginLeft: 10
     },
 });

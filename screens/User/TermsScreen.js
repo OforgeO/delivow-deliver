@@ -43,11 +43,11 @@ class TermsScreen extends React.Component {
                                     <RegularText style={[fonts.size16, margin.pt2]}>続行することにより</RegularText>
                                     <View style={{flexDirection: 'row'}}>
                                         <TouchableOpacity onPress={() => Actions.push("terms", {type: "terms"})}>
-                                            <BoldText style={[fonts.size16, {color: Colors.mainColor, lineHeight: 20}]}>利用規約</BoldText>
+                                            <BoldText style={[fonts.size16, {color: Colors.secColor, lineHeight: 20}]}>利用規約</BoldText>
                                         </TouchableOpacity>
                                         <RegularText style={[fonts.size16, { lineHeight: 20}]}>および</RegularText>
                                         <TouchableOpacity onPress={() => Actions.push("terms", {type: "policy"})}>
-                                            <BoldText style={[fonts.size16, {color: Colors.mainColor, lineHeight: 20}]}>個人情報保護方針</BoldText>
+                                            <BoldText style={[fonts.size16, {color: Colors.secColor, lineHeight: 20}]}>個人情報保護方針</BoldText>
                                         </TouchableOpacity>
                                         <RegularText style={[fonts.size16, {lineHeight: 20}]}>に</RegularText>
                                     </View>

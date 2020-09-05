@@ -27,7 +27,6 @@ export default class TransferStatus extends React.Component {
         this.setState({loaded: false})
         await getWeeklyData()
         .then(async (response) => {
-            console.log(response)
             if(response.status  == 1)
                 this.setState({dateList: response.list})
             this.setState({loaded: true})

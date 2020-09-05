@@ -38,7 +38,6 @@ export default class UpdatePassword extends React.Component {
             this.setState({ loaded: false });
             await updatePassword(this.state.password)
             .then(async (response) => {
-                console.log(response)
                 this.setState({ loaded: true });
                 if(response.status == 1) {
                     setTimeout(function() {

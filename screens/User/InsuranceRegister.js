@@ -14,9 +14,11 @@ import Modal from 'react-native-modal';
 import Spinner_bar from 'react-native-loading-spinner-overlay';
 import Constants from 'expo-constants';
 import { RegularText, BoldText } from '../../components/StyledText';
-import { registerInsurance } from '../../api';
+import { registerInsurance, getUser, updateInsurance } from '../../api';
 import { showToast } from '../../shared/global';
 import { _e } from '../../lang';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import moment from 'moment';
 TouchableOpacity.defaultProps = { activeOpacity: 0.8 };
 
 class InsuranceRegister extends React.Component {
@@ -45,7 +47,30 @@ class InsuranceRegister extends React.Component {
             anyImageError: false
         };
     }
-    componentDidMount(){
+    async componentDidMount(){
+        if(this.props.type == 'update') {
+            this.setState({ loaded: false })
+            await getUser()
+            .then(async (response) => {
+                if(response.status == 1) {
+                    this.setState({insuranceImage: response.user.insurance_image})
+                    this.setState({anyImage: response.user.voluntary_image})
+                    this.setState({insuranceYear: response.user.insurance_valid_date ? moment(response.user.insurance_valid_date).format("YYYY") : ''})
+                    this.setState({insuranceMonth: response.user.insurance_valid_date ? moment(response.user.insurance_valid_date).format("MM") : ''})
+                    this.setState({insuranceDay: response.user.insurance_valid_date ? moment(response.user.insurance_valid_date).format("DD") : ''})
+                    this.setState({anyYear: response.user.voluntary_expire_date ? moment(response.user.voluntary_expire_date).format("YYYY") : ''})
+                    this.setState({anyMonth: response.user.voluntary_expire_date ? moment(response.user.voluntary_expire_date).format("MM") : ''})
+                    this.setState({anyDay: response.user.voluntary_expire_date ? moment(response.user.voluntary_expire_date).format("DD") : ''})
+                } else {
+                    showToast(response.message)
+                }
+                this.setState({ loaded: true })
+            })
+            .catch((error) => {
+                this.setState({ loaded: true })
+                showToast();
+            });
+        }
     }
 
     async nextScreen(){
@@ -100,21 +125,38 @@ class InsuranceRegister extends React.Component {
         }
         if(valid){
             this.setState({loaded: false})
-            await registerInsurance(this.state.insuranceImage, this.state.anyImage, this.state.insuranceYear+'-'+this.state.insuranceMonth+'-'+this.state.insuranceDay, this.state.anyYear+'-'+this.state.anyMonth+'-'+this.state.anyDay,this.props.phone)
+            if(this.props.type == 'update') {
+                await updateInsurance(this.state.insuranceImage, this.state.anyImage, this.state.insuranceYear+'-'+this.state.insuranceMonth+'-'+this.state.insuranceDay, this.state.anyYear+'-'+this.state.anyMonth+'-'+this.state.anyDay)
                 .then(async (response) => {
-                this.setState({loaded: true});
-                console.log(response)
-                if(response.status == 1){
-                    Actions.pop()
-                    showToast(response.message, 'success')
-                } else{
-                    showToast(response.message)
-                }
-            })
-            .catch((error) => {
-                this.setState({loaded: true});
-                showToast();
-            });
+                    this.setState({loaded: true});
+                    if(response.status == 1){
+                        Actions.pop()
+                        showToast(response.message, 'success')
+                    } else{
+                        showToast(response.message)
+                    }
+                })
+                .catch((error) => {
+                    this.setState({loaded: true});
+                    showToast();
+                });
+            } else {
+                await registerInsurance(this.state.insuranceImage, this.state.anyImage, this.state.insuranceYear+'-'+this.state.insuranceMonth+'-'+this.state.insuranceDay, this.state.anyYear+'-'+this.state.anyMonth+'-'+this.state.anyDay,this.props.phone)
+                .then(async (response) => {
+                    this.setState({loaded: true});
+                    if(response.status == 1){
+                        Actions.pop()
+                        showToast(response.message, 'success')
+                    } else{
+                        showToast(response.message)
+                    }
+                })
+                .catch((error) => {
+                    this.setState({loaded: true});
+                    showToast();
+                });
+            }
+            
         }
     }
     
@@ -197,13 +239,10 @@ class InsuranceRegister extends React.Component {
         return (
             <Container>
                 <SafeAreaView style={[styles.contentBg ]}>
-                    {
-                        this.props.type == "update" ?
-                        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                            <BoldText style={fonts.size32}>{_e.developing}</BoldText>
-                        </View>
-                        :
-                        <ScrollView>
+                        <KeyboardAwareScrollView
+                            resetScrollToCoords={{ x: 0, y: 0 }}
+                            scrollEnabled={true}
+                        >
                             <View style={{flex: 1, paddingHorizontal: normalize(20)}}>
                                 <View>
                                     <BoldText style={[fonts.size32, {marginTop: 30}]}>保険証書をアップロード</BoldText>
@@ -363,8 +402,7 @@ class InsuranceRegister extends React.Component {
                                 </TouchableOpacity>
                             </View>
                         </View>
-                    </ScrollView>
-                    }
+                    </KeyboardAwareScrollView>
                     
                     <Modal
                         isVisible={this.state.imageModal}

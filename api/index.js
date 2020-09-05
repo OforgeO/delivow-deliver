@@ -78,10 +78,10 @@ export function verifyCode(phone, verify_code) {
         {phone, verify_code},
     );
 }
-export function registerAccount(first_name, last_name, birthday, email, password, phone) {
+export function registerAccount(first_name, last_name, birthday, email, password, phone, address) {
     return createCall(
         'delivery/auth/register_account',
-        {first_name, last_name, birthday, email, password, phone}
+        {first_name, last_name, birthday, email, password, phone, address}
     );
 }
 export function resendCode(phone) {
@@ -542,4 +542,106 @@ export async function updateVehicleType(type) {
         { type },
         { Authorization: 'Bearer '+token }
     );
+}
+
+export async function updateLicense(frontUri, backUri, number, expire_date) {
+    let token = await SecureStore.getItemAsync("token")
+    let uriFront = frontUri.split('.');
+    let frontType = uriFront[uriFront.length - 1];
+    let uriBack = backUri.split('.');
+    let backType = uriBack[uriBack.length - 1];
+    
+    let formData = new FormData();
+    if(frontUri){
+        formData.append('license_front', {
+            uri: frontUri,
+            name: `photo.${frontType}`,
+            type: `image/${frontType}`,
+        });
+    }
+    if(backUri){
+        formData.append('license_back', {
+            uri: backUri,
+            name: `photo.${backType}`,
+            type: `image/${backType}`,
+        });
+    }
+    
+    formData.append('number', number)
+    formData.append('expire_date', expire_date)
+    let options = {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'multipart/form-data',
+            'Authorization': 'Bearer '+token
+        },
+    };
+    return fetch(`${base_url}delivery/user/update_license`, options).then((resp) => resp.json());
+}
+
+export async function updateInsurance(liability_photo, voluntary_photo, liability_expire_date, voluntary_expire_date) {
+    let token = await SecureStore.getItemAsync("token")
+    let uriFront = liability_photo.split('.');
+    let frontType = uriFront[uriFront.length - 1];
+    let uriBack = voluntary_photo.split('.');
+    let backType = uriBack[uriBack.length - 1];
+    
+    let formData = new FormData();
+    if(liability_photo){
+        formData.append('liability_photo', {
+            uri: liability_photo,
+            name: `photo.${frontType}`,
+            type: `image/${frontType}`,
+        });
+    }
+    if(voluntary_photo){
+        formData.append('voluntary_photo', {
+            uri: voluntary_photo,
+            name: `photo.${backType}`,
+            type: `image/${backType}`,
+        });
+    }
+    
+    formData.append('liability_expire_date', liability_expire_date)
+    formData.append('voluntary_expire_date', voluntary_expire_date)
+    
+    let options = {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'multipart/form-data',
+            'Authorization': 'Bearer '+token
+        },
+    };
+    return fetch(`${base_url}delivery/user/update_insurance`, options).then((resp) => resp.json());
+}
+
+export async function updateVehicleImage(vehicle, number) {
+    let token = await SecureStore.getItemAsync("token")
+    let uriFront = vehicle.split('.');
+    let frontType = uriFront[uriFront.length - 1];
+    
+    let formData = new FormData();
+    if(vehicle){
+        formData.append('vehicle', {
+            uri: vehicle,
+            name: `photo.${frontType}`,
+            type: `image/${frontType}`,
+        });
+    }
+    
+    formData.append('number', number)
+    let options = {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'multipart/form-data',
+            'Authorization': 'Bearer '+token
+        },
+    };
+    return fetch(`${base_url}delivery/user/update_vehicle_image`, options).then((resp) => resp.json());
 }

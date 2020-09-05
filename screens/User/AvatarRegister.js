@@ -44,7 +44,6 @@ class AvatarRegister extends React.Component {
             await registerFace(this.state.imagePath, this.props.phone, 'face')
                 .then(async (response) => {
                 this.setState({loaded: true});
-                console.log(response)
                 if(response.status == 1)
                     Actions.push("vehicleregister", {phone: this.props.phone, type: 'register'})
                 else

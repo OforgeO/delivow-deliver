@@ -1,7 +1,8 @@
 const initialState = {
     showDeliver: false,
     showBookDeliver: false,
-    orderUid: null
+    orderUid: [],
+    orderBookUid: []
 }
 
 export default showDeliver = (state = initialState , action = {}) => {
@@ -11,7 +12,8 @@ export default showDeliver = (state = initialState , action = {}) => {
             return {
                 showDeliver: showDeliver.showDeliver, 
                 showBookDeliver: showDeliver.showBookDeliver,
-                orderUid: showDeliver.orderUid
+                orderUid: showDeliver.orderUid,
+                orderBookUid: showDeliver.orderBookUid
             }
             break;
         default:

@@ -7,6 +7,7 @@ const initialState = {
     delivery_order_serveral: false,
     delivery_request_attend: false,
     delivery_order_cancel: false,
+    cancel_delivering: false,
     title: '',
     subtitle: '',
     order_uid: '',
@@ -31,7 +32,8 @@ export default notify = (state = initialState , action = {}) => {
                 delivery_order_car: notify.delivery_order_car,
                 delivery_order_serveral: notify.delivery_order_serveral,
                 delivery_request_attend: notify.delivery_request_attend,
-                delivery_order_cancel: notify.delivery_order_cancel
+                delivery_order_cancel: notify.delivery_order_cancel,
+                cancel_delivering: notify.cancel_delivering
             }
         default:
             return state;

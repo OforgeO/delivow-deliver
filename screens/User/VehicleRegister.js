@@ -34,16 +34,14 @@ export default class VehicleRegister extends React.Component {
                 {id: 3, title: '保険証書', desc: '保険証書をアップロード'}
             ],
             loaded: true,
-            myInfo: null
         };
     }
     async componentDidMount(){
-        this.setState({ loaded: false })
-        await getUser()
-        .then(async (response) => {
-            if(response.status == 1) {
-                this.setState({myInfo: response.user})
-                if(this.props.type == 'update') {
+        if(this.props.type == 'update'){
+            this.setState({ loaded: false })
+            await getUser()
+            .then(async (response) => {
+                if(response.status == 1) {
                     let options = this.state.deliverOptions
                     if(response.user.vehicle_type == 'motor'){
                         this.setState({deliverType : response.user.vehicle_type})
@@ -63,16 +61,18 @@ export default class VehicleRegister extends React.Component {
                         this.setState({deliverType : response.user.vehicle_type})
                     }
                     this.setState({deliverOptions: options})
+                    
+                } else {
+                    showToast(response.message)
                 }
-            } else {
-                showToast(response.message)
-            }
-            this.setState({ loaded: true })
-        })
-        .catch((error) => {
-            this.setState({ loaded: true })
-            showToast();
-        });
+                this.setState({ loaded: true })
+            })
+            .catch((error) => {
+                this.setState({ loaded: true })
+                showToast();
+            });
+        }
+        
     }
 
     async nextScreen(){

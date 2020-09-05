@@ -46,7 +46,6 @@ class SplashScreen extends React.Component {
     CheckUserLogin() {
         try {
             let token = this.props.user.token;
-            console.log('token--', token)
             return token === null || token === ''
                 ? false
                 : true;

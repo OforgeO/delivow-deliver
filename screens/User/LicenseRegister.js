@@ -14,9 +14,10 @@ import Modal from 'react-native-modal';
 import { RegularText, BoldText } from '../../components/StyledText';
 import Spinner_bar from 'react-native-loading-spinner-overlay';
 import Constants from 'expo-constants';
-import { registerLicense } from '../../api';
+import { registerLicense, getUser, updateLicense } from '../../api';
 import { showToast } from '../../shared/global';
 import { _e } from '../../lang';
+import moment from 'moment';
 TouchableOpacity.defaultProps = { activeOpacity: 0.8 };
 
 class LicenseRegister extends React.Component {
@@ -38,10 +39,31 @@ class LicenseRegister extends React.Component {
             licenseExpireMonthError: false,
             licenseExpireDayError: false,
             imageFrontError: false,
-            imageBackError: false
+            imageBackError: false,
         };
     }
-    componentDidMount(){
+    async componentDidMount(){
+        if(this.props.type == 'update') {
+            this.setState({ loaded: false })
+            await getUser()
+            .then(async (response) => {
+                if(response.status == 1) {
+                    this.setState({licenseNo: response.user.license_number})
+                    this.setState({imageFront: response.user.license_image_front})
+                    this.setState({imageBack: response.user.license_image_back})
+                    this.setState({licenseExpireYear: response.user.license_expire_date ? moment(response.user.license_expire_date).format("YYYY") : ''})
+                    this.setState({licenseExpireMonth: response.user.license_expire_date ? moment(response.user.license_expire_date).format("MM") : ''})
+                    this.setState({licenseExpireDay: response.user.license_expire_date ? moment(response.user.license_expire_date).format("DD") : ''})
+                } else {
+                    showToast(response.message)
+                }
+                this.setState({ loaded: true })
+            })
+            .catch((error) => {
+                this.setState({ loaded: true })
+                showToast();
+            });
+        }
     }
 
     async nextScreen(){
@@ -84,21 +106,38 @@ class LicenseRegister extends React.Component {
         }
         if(valid){
             this.setState({loaded: false})
-            await registerLicense(this.state.imageFront, this.state.imageBack, this.state.licenseNo, this.state.licenseExpireYear+'-'+this.state.licenseExpireMonth+'-'+this.state.licenseExpireDay, this.props.phone)
+            if(this.props.type == 'update') {
+                await updateLicense(this.state.imageFront, this.state.imageBack, this.state.licenseNo, this.state.licenseExpireYear+'-'+this.state.licenseExpireMonth+'-'+this.state.licenseExpireDay)
                 .then(async (response) => {
-                this.setState({loaded: true});
-                console.log(response)
-                if(response.status == 1){
-                    Actions.pop() 
-                    showToast(response.message, 'success')
-                }
-                else
-                    showToast(response.message)
-            })
-            .catch((error) => {
-                this.setState({loaded: true});
-                showToast();
-            });
+                    this.setState({loaded: true});
+                    if(response.status == 1){
+                        Actions.pop() 
+                        showToast(response.message, 'success')
+                    }
+                    else
+                        showToast(response.message)
+                })
+                .catch((error) => {
+                    this.setState({loaded: true});
+                    showToast();
+                });
+            } else {
+                await registerLicense(this.state.imageFront, this.state.imageBack, this.state.licenseNo, this.state.licenseExpireYear+'-'+this.state.licenseExpireMonth+'-'+this.state.licenseExpireDay, this.props.phone)
+                .then(async (response) => {
+                    this.setState({loaded: true});
+                    if(response.status == 1){
+                        Actions.pop() 
+                        showToast(response.message, 'success')
+                    }
+                    else
+                        showToast(response.message)
+                })
+                .catch((error) => {
+                    this.setState({loaded: true});
+                    showToast();
+                });
+            }
+            
         }
     }
     
@@ -183,11 +222,6 @@ class LicenseRegister extends React.Component {
             <Container>
                 <SafeAreaView style={[styles.contentBg]}>
                     {
-                        this.props.type == 'update' ?
-                        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                            <BoldText style={fonts.size32}>{_e.developing}</BoldText>
-                        </View>
-                        :
                         <ScrollView>
                             <View style={{flex: 1, paddingHorizontal: normalize(20)}}>
                                 <View>

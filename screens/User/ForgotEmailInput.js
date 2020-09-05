@@ -34,7 +34,6 @@ class ForgotEmailInput extends React.Component {
             //this.setState({loaded: false})
             await forgot(this.state.email)
             .then(async (response) => {
-                console.log(response)
                 //this.setState({loaded: true});
                 if(response.status == 1){
                     Actions.push("forgotemailreceive", {email: this.state.email});

@@ -14,7 +14,7 @@ import Modal from 'react-native-modal';
 import Spinner_bar from 'react-native-loading-spinner-overlay';
 import Constants from 'expo-constants';
 import { RegularText, BoldText } from '../../components/StyledText';
-import { registerVehicleImage } from '../../api';
+import { registerVehicleImage, getUser, updateVehicleImage } from '../../api';
 import { showToast } from '../../shared/global';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { _e } from '../../lang';
@@ -32,7 +32,24 @@ class VehicleNoRegister extends React.Component {
             loaded: true
         };
     }
-    componentDidMount(){
+    async componentDidMount(){
+        if(this.props.type == 'update') {
+            this.setState({ loaded: false })
+            await getUser()
+            .then(async (response) => {
+                if(response.status == 1) {
+                    this.setState({vehicleNo: response.user.vehicle_number})
+                    this.setState({vehicleNoImage: response.user.vehicle_number_image})
+                } else {
+                    showToast(response.message)
+                }
+                this.setState({ loaded: true })
+            })
+            .catch((error) => {
+                this.setState({ loaded: true })
+                showToast();
+            });
+        }
     }
 
     async nextScreen(){
@@ -51,23 +68,38 @@ class VehicleNoRegister extends React.Component {
         }
         if(valid){
             this.setState({loaded: false})
-            console.log(this.state.vehicleNoImage)
-            await registerVehicleImage(this.state.vehicleNoImage, this.state.vehicleNo, this.props.phone)
+            if(this.props.type == 'update') {
+                await updateVehicleImage(this.state.vehicleNoImage, this.state.vehicleNo)
                 .then(async (response) => {
-                this.setState({loaded: true});
-                console.log(response)
-                if(response.status == 1){
-                    Actions.pop() 
-                    showToast(response.message, 'success')
-                } else {
-                    showToast(response.message)
-                }
-            })
-            .catch((error) => {
-                console.log(error)
-                this.setState({loaded: true});
-                showToast();
-            });
+                    this.setState({loaded: true});
+                    if(response.status == 1){
+                        Actions.pop() 
+                        showToast(response.message, 'success')
+                    } else {
+                        showToast(response.message)
+                    }
+                })
+                .catch((error) => {
+                    this.setState({loaded: true});
+                    showToast();
+                });
+            } else{
+                await registerVehicleImage(this.state.vehicleNoImage, this.state.vehicleNo, this.props.phone)
+                .then(async (response) => {
+                    this.setState({loaded: true});
+                    if(response.status == 1){
+                        Actions.pop() 
+                        showToast(response.message, 'success')
+                    } else {
+                        showToast(response.message)
+                    }
+                })
+                .catch((error) => {
+                    this.setState({loaded: true});
+                    showToast();
+                });
+            }
+            
         }
     }
     
@@ -141,11 +173,6 @@ class VehicleNoRegister extends React.Component {
             <Container>
                 <SafeAreaView style={[styles.contentBg]}>
                     {
-                        this.props.type == 'update' ?
-                        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                            <BoldText style={fonts.size32}>{_e.developing}</BoldText>
-                        </View>
-                        :
                         <KeyboardAwareScrollView
                             resetScrollToCoords={{ x: 0, y: 0 }}
                             scrollEnabled={true}

@@ -19,7 +19,6 @@ import * as Permissions from 'expo-permissions';
 import { connect } from "react-redux";
 import { showToast } from '../../shared/global';
 import { setUser,setShowDeliver } from '../../actions';
-import showDeliver from '../../reducers/showDeliver';
 
 const LOCATION_TASK_NAME = 'background-location-task';
 var curTimeInterval = null;
@@ -30,7 +29,7 @@ class MyPage extends React.Component {
             todayInfo: null,
             loaded: true,
             currentTime: moment().format("HH:mm"),
-            pushSetting: 'off',
+            pushSetting: '',
             userInfo: null,
             shift_hours: null, 
             noDeliverCnt: 0
@@ -68,11 +67,35 @@ class MyPage extends React.Component {
             this.setState({ loaded: true });
             showToast();
         });
+        let my_id = store.getState().user.uid
+        await getReservationList()
+        .then(async (response) => {
+            if(response.status == 1) {
+                let orderBookUid = []
+                response.list.map((order) => {
+                    if(order.deliver_uid == my_id && order.status == "accepted") {
+                        orderBookUid.push(order.order_uid)
+                    }
+                })
+                if(orderBookUid.length > 0) {
+                    this.props.setShowDeliver({
+                        showDeliver: false,
+                        showBookDeliver: true,
+                        orderUid: [],
+                        orderBookUid: orderBookUid
+                    })
+                }
+            }
+        })
+        .catch((error) => {
+        });
+
         var _self = this;
         _self.getReservation()
         curTimeInterval = setInterval(function () {
             _self.setState({ currentTime: moment().format("HH:mm") })
         }, 5000)
+        await this.registerForPushNotificationsAsync();
     }
     UNSAFE_componentWillReceiveProps() {
         this.refresh()
@@ -118,7 +141,7 @@ class MyPage extends React.Component {
             Permissions.NOTIFICATIONS
         );
         let finalStatus = existingStatus;
-
+        
         if (finalStatus !== 'granted') {
             this.setState({ pushSetting: 'off' })
         } else {
@@ -251,7 +274,7 @@ class MyPage extends React.Component {
                             <List icon="car-side" font5={true} title="予約の配達依頼を見る" size={14} clickEvent={this.bookrequest.bind(this)} requestCnt={this.state.noDeliverCnt} />
                             <List icon="user-circle" font5={false} title="アカウントを編集" size={14} clickEvent={this.editaccount.bind(this)} />
                             <List icon="bell" setting={this.state.pushSetting} font5={false} title="通知設定" size={14} clickEvent={this.notify.bind(this)} warn={true} />
-                            <List icon="video-camera" font5={false} title="デリバー説明動画" size={14} clickEvent={this.deliverHistory.bind(this)} borderBottom={false} />
+                            <List icon="video-camera" font5={false} title="今月の配達履歴" size={14} clickEvent={this.deliverHistory.bind(this)} borderBottom={false} />
                         </View>
                     </ScrollView>
                     <Spinner_bar color={'#27cccd'} visible={!this.state.loaded} textContent={""} overlayColor={"rgba(0, 0, 0, 0.5)"} />

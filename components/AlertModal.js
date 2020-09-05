@@ -63,7 +63,6 @@ class AlertModal extends React.Component {
             let notify = store.getState().notify
             notify.delivery_decide = false
             this.props.setNotify(notify)
-            console.log(notify)
             Actions.push("checkmap", {order_uid: store.getState().notify.order_uid, type: 'show_modal', mapType: 'deliver_store', store_name: notify.store_name})
         }
     }
@@ -73,7 +72,8 @@ class AlertModal extends React.Component {
             this.props.setShowDeliver({
                 showDeliver: true,
                 showBookDeliver: store.getState().showBookDeliver,
-                orderUid: notify.order_uid
+                orderUid: store.getState().orderUid.push(notify.order_uid),
+                orderBookUid: store.getState().orderBookUid
             })
         }
         this.disable(type)
@@ -105,14 +105,14 @@ class AlertModal extends React.Component {
     render() {
         return (
             <Modal
-                isVisible={store.getState().notify.delivery_before_attend || store.getState().notify.delivery_order_request || store.getState().notify.delivery_decide || store.getState().notify.delivery_no_entry || store.getState().notify.delivery_order_car || store.getState().notify.delivery_order_serveral || store.getState().notify.delivery_request_attend || store.getState().notify.delivery_order_cancel}
+                isVisible={store.getState().notify.delivery_before_attend || store.getState().notify.delivery_order_request || store.getState().notify.delivery_decide || store.getState().notify.delivery_no_entry || store.getState().notify.delivery_order_car || store.getState().notify.delivery_order_serveral || store.getState().notify.delivery_request_attend || store.getState().notify.delivery_order_cancel || store.getState().notify.cancel_delivering}
                 onBackdropPress={() => this.setState({visible: false})}
                 style={styles.modal}
             >
                 <View style={styles.modalContainer}>
                     <View style={styles.container}>
                         {
-                            store.getState().notify.delivery_before_attend || store.getState().notify.delivery_decide || store.getState().notify.delivery_no_entry || store.getState().notify.delivery_request_attend || store.getState().notify.delivery_order_cancel ?
+                            store.getState().notify.delivery_before_attend || store.getState().notify.delivery_decide || store.getState().notify.delivery_no_entry || store.getState().notify.delivery_request_attend || store.getState().notify.delivery_order_cancel || store.getState().notify.cancel_delivering ?
                             null
                             :
                             store.getState().notify.delivery_order_request || store.getState().notify.delivery_order_car || store.getState().notify.delivery_order_serveral ?
@@ -124,13 +124,13 @@ class AlertModal extends React.Component {
                             null
                         }
                         <View style={styles.header}>
-                            <BoldText style={[fonts.size18, {textAlign: 'center', lineHeight: 20, color: store.getState().notify.delivery_no_entry || store.getState().notify.delivery_order_cancel ? '#CE082E' : 'black'}]}>{store.getState().notify.title}</BoldText>
+                            <BoldText style={[fonts.size18, {textAlign: 'center', lineHeight: 20, color: store.getState().notify.delivery_no_entry || store.getState().notify.delivery_order_cancel || store.getState().notify.cancel_delivering ? '#CE082E' : 'black'}]}>{store.getState().notify.title}</BoldText>
                         </View>
                         <View style={styles.body}>
                             <RegularText style={[fonts.size14, {textAlign: 'center', lineHeight: 18}]}>{store.getState().notify.subtitle}</RegularText>
                         </View>
                         {
-                            store.getState().notify.delivery_before_attend || store.getState().notify.delivery_order_request || store.getState().notify.delivery_no_entry || store.getState().notify.delivery_order_car || store.getState().notify.delivery_order_serveral || store.getState().notify.delivery_request_attend || store.getState().notify.delivery_order_cancel ?
+                            store.getState().notify.delivery_before_attend || store.getState().notify.delivery_order_request || store.getState().notify.delivery_no_entry || store.getState().notify.delivery_order_car || store.getState().notify.delivery_order_serveral || store.getState().notify.delivery_request_attend || store.getState().notify.delivery_order_cancel || store.getState().notify.cancel_delivering ?
                             null
                             :
                             store.getState().notify.delivery_decide ?
@@ -185,6 +185,11 @@ class AlertModal extends React.Component {
                         :
                         store.getState().notify.delivery_order_cancel ?
                         <TouchableOpacity style={styles.button} onPress={() => this.confirmBtn("delivery_order_cancel")}>
+                            <RegularText style={[fonts.size18, {color: Colors.secColor, textAlign: 'center'}]}>閉じる</RegularText>
+                        </TouchableOpacity>
+                        :
+                        store.getState().notify.cancel_delivering ?
+                        <TouchableOpacity style={styles.button} onPress={() => this.confirmBtn("cancel_delivering")}>
                             <RegularText style={[fonts.size18, {color: Colors.secColor, textAlign: 'center'}]}>閉じる</RegularText>
                         </TouchableOpacity>
                         :

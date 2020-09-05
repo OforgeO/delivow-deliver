@@ -8,6 +8,7 @@ import Colors from '../../constants/Colors';
 import { FontAwesome5 } from '@expo/vector-icons'; 
 import CodeInput from 'react-native-confirmation-code-input';
 import { RegularText, BoldText } from '../../components/StyledText';
+import OrderConfirm from '../../components/OrderConfirm';
 TouchableOpacity.defaultProps = { activeOpacity: 0.8 };
 
 export default class EmailConfirm extends React.Component {
@@ -45,6 +46,7 @@ export default class EmailConfirm extends React.Component {
     render(){
         return (
             <Container>
+                <OrderConfirm />
                 <Content contentContainerStyle={[styles.contentBg , styles.contentPD, {
                     flexGrow: 1,
                     flexDirection: 'column',

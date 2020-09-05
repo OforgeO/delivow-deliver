@@ -36,12 +36,17 @@ class OrderConfirm extends React.Component {
                         <BoldText style={[{ color: 'white' }, fonts.size14]}>現在の依頼内容を確認 »</BoldText>
                     </View>
                 </TouchableOpacity>
-
-                <TouchableOpacity style={store.getState().showDeliver.showBookDeliver ? [styles.container, {backgroundColor: '#D93DCD', marginTop: store.getState().showDeliver.showDeliver ? 10 : 0}]: {height: 0}} onPress={() => this.confirmStatus('book')}>
-                    <View>
-                        <BoldText style={[{ color: 'white' }, fonts.size14]}>予約の依頼内容を確認 »</BoldText>
-                    </View>
-                </TouchableOpacity>
+                {
+                    this.props.page != 'bookrequest' ?
+                    <TouchableOpacity style={store.getState().showDeliver.showBookDeliver ? [styles.container, {backgroundColor: '#D93DCD', marginTop: store.getState().showDeliver.showDeliver ? 50 : 0}]: {height: 0}} onPress={() => this.confirmStatus('book')}>
+                        <View>
+                            <BoldText style={[{ color: 'white' }, fonts.size14]}>予約の依頼内容を確認 »</BoldText>
+                        </View>
+                    </TouchableOpacity>
+                    :
+                    null
+                }
+                
             </View>
         );
     }

@@ -2,15 +2,13 @@ import React from 'react';
 import { StyleSheet, View, TouchableOpacity, SafeAreaView, ScrollView, Share } from 'react-native';
 import { Container, Content, Item, Input, Text } from 'native-base';
 import { normalize, fonts, margin, form, shared} from '../../assets/styles';
-import { connect } from "react-redux";
-import { setUser } from '../../actions';
 import {Actions} from 'react-native-router-flux';
 import Colors from '../../constants/Colors';
 import { FontAwesome, FontAwesome5 } from '@expo/vector-icons';
-import List from '../../components/List';
-import * as Sharing from 'expo-sharing';
 import { RegularText, BoldText } from '../../components/StyledText';
 import Back from '../../components/Back';
+import store from '../../store/configuteStore';
+import OrderConfirm from '../../components/OrderConfirm';
 TouchableOpacity.defaultProps = { activeOpacity: 0.8 };
 
 export default class DeliverFeeDetail extends React.Component {
@@ -50,8 +48,9 @@ export default class DeliverFeeDetail extends React.Component {
     render(){
         return (
             <Container>
+                <OrderConfirm />
                 <SafeAreaView>
-                    <ScrollView contentContainerStyle={{height: '100%'}}>
+                    <ScrollView contentContainerStyle={{height: '100%', paddingTop: store.getState().showDeliver.showDeliver && store.getState().showDeliver.showBookDeliver ? 100 : (store.getState().showDeliver.showDeliver || store.getState().showDeliver.showBookDeliver) ? 50 : 0}}>
                         <View style={{flex: 1}}>
                             <Back color={"#d3d3d3"} />
                             <View style={[styles.whiteSection, {paddingBottom: 10, paddingTop: 0, borderBottomColor: '#f2f2f2', borderBottomWidth: 1}]}>

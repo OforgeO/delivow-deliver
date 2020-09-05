@@ -14,6 +14,8 @@ import Spinner_bar from 'react-native-loading-spinner-overlay';
 import { showToast } from '../../shared/global';
 import { dayNamesLong } from '../../constants/Global'
 import Back from '../../components/Back';
+import OrderConfirm from '../../components/OrderConfirm';
+import store from '../../store/configuteStore';
 TouchableOpacity.defaultProps = { activeOpacity: 0.8 };
 
 export default class ShiftRegister extends React.Component {
@@ -101,8 +103,8 @@ export default class ShiftRegister extends React.Component {
     }
 
     renderDateList() {
-        return this.state.dateList.map((option) => {
-            return <View style={[shared.flexCenter, {justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: '#f2f2f2', paddingVertical: 10}]}>
+        return this.state.dateList.map((option, index) => {
+            return <View key={index} style={[shared.flexCenter, {justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: '#f2f2f2', paddingVertical: 10}]}>
                     <TouchableOpacity style={[shared.flexCenter]} onPress={() => this.checkDate(option.id)}>
                     <FontAwesome name="check-circle" size={20} color={option.selected ? Colors.secColor : '#D3D3D3'} />
                     <RegularText style={option.selected ? [fonts.size14, margin.ml1] : [fonts.size18, margin.ml1, {color: '#d3d3d3'}]}>{option.date}</RegularText>
@@ -151,9 +153,10 @@ export default class ShiftRegister extends React.Component {
         return (
             <Container>
                 {Platform.OS === 'ios' && <StatusBar barStyle="dark-content" backgroundColor="white" />}
+                <OrderConfirm />
                 <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
                     <ScrollView style={{backgroundColor: '#f2f2f2'}}>
-                        <View style={{flex: 1}}>
+                        <View style={{flex: 1, paddingTop: store.getState().showDeliver.showDeliver && store.getState().showDeliver.showBookDeliver ? 100 : (store.getState().showDeliver.showDeliver || store.getState().showDeliver.showBookDeliver) ? 50 : 0}}>
                             <Back color={"#d3d3d3"} />
                             <View style={[styles.whiteSection, {paddingBottom: 15}]}>
                                 <RegularText style={[fonts.size32]}>シフトを編集</RegularText>

@@ -14,6 +14,7 @@ import Back from '../../components/Back';
 import firebase from '../../Fire';
 import store from '../../store/configuteStore';
 import moment from 'moment';
+import OrderConfirm from '../../components/OrderConfirm';
 const fbChat = firebase.database().ref();
 export default class ChatList extends React.Component {
     constructor(props) {
@@ -64,28 +65,24 @@ export default class ChatList extends React.Component {
     }
 
     renderChat() {
+        console.log(this.state.chatList)
         return this.state.chatList.map((chat) => {
             return <TouchableOpacity style={styles.chatSection} onPress={() => this.gotoChat(chat)}>
                 <View style={{ alignItems: 'center' }}>
                     <Image source={
-                        chat.receiverRole == 'customer' && chat.senderAvatar ? {uri: chat.senderAvatar} :
-                        chat.senderRole == 'customer' && chat.receiverAvatar ? {uri: chat.receiverAvatar} : Images.avatar} 
+                        chat.receiverRole == 'customer' && chat.receiverAvatar ? {uri: chat.receiverAvatar} :
+                        chat.senderRole == 'customer' && chat.senderAvatar ? {uri: chat.senderAvatar} : 
+                        chat.receiverRole == 'store' && chat.receiverAvatar ? {uri: chat.receiverAvatar} : 
+                        chat.senderRole == 'store' && chat.senderAvatar ? {uri: chat.senderAvatar} : Images.avatar} 
                         style={{ width: 50, height: 50, borderRadius: 25 }} />
                 </View>
                 <View style={[margin.ml4, shared.flexCenter, { justifyContent: 'space-between', alignItems: 'flex-start', flex: 1 }]}>
                     <View>
                         <RegularText style={[fonts.size14, margin.mb1]}>
                             {
-                                chat.receiverRole == 'customer' ? chat.senderName : chat.receiverName
+                                chat.receiverRole == 'customer' ? chat.receiverName : chat.senderName
                             }
                         </RegularText>
-                        {
-                            chat.receiverRole == 'deliver' || chat.senderRole == 'deliver' ?
-                            <RegularText style={[fonts.size14, { color: '#848484' }]}>{this.props.store_name}</RegularText>
-                            :
-                            null
-                        }
-                        
                     </View>
                     <RegularText style={[fonts.size14, { color: '#B5B5B5' }]}>{moment(chat.lastMessageTimestamp).format("H:mm")}</RegularText>
                 </View>
@@ -97,12 +94,13 @@ export default class ChatList extends React.Component {
         return (
             <Container style={[shared.mainContainer]}>
                 {Platform.OS === 'ios' && <StatusBar barStyle="dark-content" backgroundColor="white" />}
+                <OrderConfirm />
                 <SafeAreaView style={{ flex: 1 }}>
-                    <ScrollView ref={ref => this.scrollRef = ref} style={{ flex: 1, backgroundColor: '#f2f2f2' }}>
+                    <ScrollView ref={ref => this.scrollRef = ref} style={{ flex: 1, backgroundColor: '#f2f2f2' }} contentContainerStyle={{paddingTop: store.getState().showDeliver.showDeliver && store.getState().showDeliver.showBookDeliver ? 100 : (store.getState().showDeliver.showDeliver || store.getState().showDeliver.showBookDeliver) ? 50 : 0}}>
                         <View style={{ flex: 1, backgroundColor: 'white' }}>
                             <Back color="#d3d3d3" />
                             <View style={[margin.pb3, { borderBottomWidth: 1, borderBottomColor: '#f2f2f2' }]}>
-                                <BoldText style={[fonts.size32, { paddingHorizontal: normalize(20) }]}>デリバーに連絡</BoldText>
+                                <BoldText style={[fonts.size32, { paddingHorizontal: normalize(20) }]}>連絡</BoldText>
                             </View>
                             {
                                 this.state.chatList ?

@@ -56,8 +56,8 @@ class CheckMap extends React.Component {
                         let region = {
                             latitude: (parseFloat(response.info.delivery_location[0]) + parseFloat(response.info.store_location[0]))/2,
                             longitude: (parseFloat(response.info.delivery_location[1]) + parseFloat(response.info.store_location[1]))/2,
-                            latitudeDelta: Math.abs(parseFloat(response.info.delivery_location[0]) - parseFloat(response.info.store_location[0])) + 0.01,
-                            longitudeDelta: Math.abs(parseFloat(response.info.delivery_location[1]) - parseFloat(response.info.store_location[1])) + 0.01
+                            latitudeDelta: Math.abs(parseFloat(response.info.delivery_location[0]) - parseFloat(response.info.store_location[0])) + 2,
+                            longitudeDelta: Math.abs(parseFloat(response.info.delivery_location[1]) - parseFloat(response.info.store_location[1])) + 1
                         }
                         this.setState({region: region})
                     }
@@ -74,8 +74,8 @@ class CheckMap extends React.Component {
                         let region = {
                             latitude: (parseFloat(response.info.delivery_location[0]) + parseFloat(response.info.customer_location[0]))/2,
                             longitude: (parseFloat(response.info.delivery_location[1]) + parseFloat(response.info.customer_location[1]))/2,
-                            latitudeDelta: Math.abs(parseFloat(response.info.delivery_location[0]) - parseFloat(response.info.customer_location[0])) + 0.1,
-                            longitudeDelta: Math.abs(parseFloat(response.info.delivery_location[1]) - parseFloat(response.info.customer_location[1])) + 0.1
+                            latitudeDelta: Math.abs(parseFloat(response.info.delivery_location[0]) - parseFloat(response.info.customer_location[0])) + 2,
+                            longitudeDelta: Math.abs(parseFloat(response.info.delivery_location[1]) - parseFloat(response.info.customer_location[1])) + 1
                         }
                         this.setState({region: region})
                     }
@@ -97,8 +97,8 @@ class CheckMap extends React.Component {
                         let region = {
                             latitude: (parseFloat(response.info.store_location[0]) + parseFloat(response.info.customer_location[0]))/2,
                             longitude: (parseFloat(response.info.store_location[1]) + parseFloat(response.info.customer_location[1]))/2,
-                            latitudeDelta: Math.abs(parseFloat(response.info.store_location[0]) - parseFloat(response.info.customer_location[0])) + 0.01,
-                            longitudeDelta: Math.abs(parseFloat(response.info.store_location[1]) - parseFloat(response.info.customer_location[1])) + 0.01
+                            latitudeDelta: Math.abs(parseFloat(response.info.store_location[0]) - parseFloat(response.info.customer_location[0])) + 2,
+                            longitudeDelta: Math.abs(parseFloat(response.info.store_location[1]) - parseFloat(response.info.customer_location[1])) + 1
                         }
                         this.setState({region: region})
                     }

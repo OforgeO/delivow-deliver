@@ -93,7 +93,6 @@ export default function App(props) {
                 <Provider store={store}>
                     <TermsNotify />
                     <AlertModal />
-                    <OrderConfirm />
                     <RouterWithRedux>
                         <Scene hideNavBar key="hidenav">
                             <Scene key="root" hideNavBar showLabel={false} >
@@ -113,7 +112,7 @@ export default function App(props) {
                                         <Scene key="todayshift" component={TodayShift} />
                                         <Scene key="todayshifttime" component={TodayShiftTime} />
                                         <Scene key="bookrequestdetail" component={BookRequestDetail} />
-                                        <Scene key="chatlist" component={ChatList} />
+                                        <Scene key="chatlist" component={ChatList}/>
                                         <Scene key="chat" component={Chat} />
                                         <Scene key="editname" component={EditName} />
                                         <Scene key="updatepassword" component={UpdatePassword} />

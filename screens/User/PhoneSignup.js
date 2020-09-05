@@ -13,6 +13,7 @@ import { RegularText, BoldText } from '../../components/StyledText';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Constants from 'expo-constants';
 import store from '../../store/configuteStore';
+import OrderConfirm from '../../components/OrderConfirm';
 
 TouchableOpacity.defaultProps = { activeOpacity: 0.8 };
 
@@ -83,6 +84,13 @@ class PhoneSignup extends React.Component {
     render(){
         return (
             <Container>
+                {
+                    this.props.type == 'update_phone' ?
+                    <OrderConfirm />
+                    :
+                    null
+                }
+                
                 <SafeAreaView style={[styles.contentBg]}>
                     <KeyboardAwareScrollView
                         resetScrollToCoords={{ x: 0, y: 0 }}

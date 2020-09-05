@@ -13,6 +13,7 @@ import { setUser } from '../../actions';
 import { updateName } from '../../api';
 import { showToast } from '../../shared/global';
 import store from '../../store/configuteStore';
+import OrderConfirm from '../../components/OrderConfirm';
 TouchableOpacity.defaultProps = { activeOpacity: 0.8 };
 
 class EditName extends React.Component {
@@ -68,6 +69,7 @@ class EditName extends React.Component {
     render(){
         return (
             <Container>
+                <OrderConfirm />
                 <SafeAreaView style={[styles.contentBg ,{marginTop: Platform.OS == 'ios' ? Constants.statusBarHeight : 0}]}>
                     <KeyboardAwareScrollView
                         resetScrollToCoords={{ x: 0, y: 0 }}

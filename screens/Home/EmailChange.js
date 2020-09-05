@@ -13,6 +13,7 @@ import { connect } from "react-redux";
 import { setUser } from '../../actions';
 import store from '../../store/configuteStore';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import OrderConfirm from '../../components/OrderConfirm';
 TouchableOpacity.defaultProps = { activeOpacity: 0.8 };
 
 class EmailChange extends React.Component {
@@ -65,6 +66,7 @@ class EmailChange extends React.Component {
     render(){
         return (
             <Container>
+                <OrderConfirm />
                 <SafeAreaView style={[styles.contentBg , styles.contentPD]}>
                     <KeyboardAwareScrollView
                         resetScrollToCoords={{ x: 0, y: 0 }}

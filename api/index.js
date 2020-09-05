@@ -526,6 +526,15 @@ export async function getUser() {
     );
 }
 
+export async function getCurrentOrders() {
+    let token = await SecureStore.getItemAsync("token")
+    return createCall(
+        'delivery/user/get_current_orders',
+        null,
+        { Authorization: 'Bearer '+token }, 'GET'
+    );
+}
+
 export async function setDeliveryStatus(status, start_time, end_time) {
     let token = await SecureStore.getItemAsync("token")
     return createCall(

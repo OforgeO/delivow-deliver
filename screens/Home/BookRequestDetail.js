@@ -67,6 +67,7 @@ class BookRequestDetail extends React.Component {
         await getOrderDetails(this.props.order_uid)
         .then(async (response) => {
             if (response.status == 1) {
+                console.log(response)
                 this.setState({ orderInfo: response.info })
                 if(response.info.status == 'delivering')
                     this.setState({orderStauts: 4})
@@ -93,6 +94,23 @@ class BookRequestDetail extends React.Component {
         .then(async (response) => {
             if (response.status == 1) {
                 this.setState({ orderStauts: 4 })
+                let status = store.getState().showDeliver
+                let orderUid = status.orderUid
+                let orderBookUid = stus.orderBookUid
+                orderUid.push(this.props.order_uid)
+                for(var i = 0;i<orderBookUid.length;i++) {
+                    if(orderBookUid[i] == this.props.order_uid){
+                        orderBookUid.splice(i, 1)
+                        break;
+                    }
+                }
+                this.props.setShowDeliver({
+                    showDeliver: orderUid.length > 0 ? true : false,
+                    showBookDeliver: orderBookUid.length > 0 ? true : false,
+                    orderUid: orderUid,
+                    orderBookUid: orderBookUid
+                })
+
             } else {
                 showToast(response.message)
             }
@@ -152,29 +170,30 @@ class BookRequestDetail extends React.Component {
         }
     }
     checkCultleryOption() {
-        if (this.state.orderStauts <= 2 || this.state.orderInfo.status == 'accepted')
+        if (this.state.orderStauts <= 2 || this.state.orderInfo.status == 'accepted') {
             this.setState({cutleryCheck : !this.state.cutleryCheck})
-        let temp = this.state.orderList
-        let checkAll = 1
-        for (var i = 0; i < temp.length; i++) {
-            if (!temp[i].selected)
-                checkAll = 0;
-            if(temp[i].options && temp[i].options.length > 0) {
-                temp[i].options.map((option, j) => {
-                    if(option.list && option.list.length > 0) {
-                        option.list.map((list, index) => {
-                            if(!list.selected)
-                                checkAll = 0;
-                        })
-                    }
-                })
+            let temp = this.state.orderList
+            let checkAll = 1
+            for (var i = 0; i < temp.length; i++) {
+                if (!temp[i].selected)
+                    checkAll = 0;
+                if(temp[i].options && temp[i].options.length > 0) {
+                    temp[i].options.map((option, j) => {
+                        if(option.list && option.list.length > 0) {
+                            option.list.map((list, index) => {
+                                if(!list.selected)
+                                    checkAll = 0;
+                            })
+                        }
+                    })
+                }
             }
-        }
-        
-        if(checkAll == 1 && !this.state.cutleryCheck) {
-            this.setState({orderStauts: 2})
-        } else {
-            this.setState({orderStauts: 1})
+            
+            if(checkAll == 1 && !this.state.cutleryCheck) {
+                this.setState({orderStauts: 2})
+            } else {
+                this.setState({orderStauts: 1})
+            }
         }
     }
     nextStep() {
@@ -184,13 +203,44 @@ class BookRequestDetail extends React.Component {
         } else {
             if (this.state.orderStauts < 3) {
                 let temp = this.state.orderList
-                let checkCnt = 0
+                let checkAll = 1
                 for (var i = 0; i < temp.length; i++) {
-                    if (temp[i].selected)
-                        checkCnt++;
+                    if (temp[i].product_uid == id) {
+                        temp[i].selected = !temp[i].selected
+                    }
+                    if (!temp[i].selected)
+                        checkAll = 0;
+                    if(temp[i].options && temp[i].options.length > 0) {
+                        temp[i].options.map((option, j) => {
+                            if(option.list && option.list.length > 0) {
+                                option.list.map((list, index) => {
+                                    if(!list.selected)
+                                        checkAll = 0;
+                                })
+                            }
+                        })
+                    }
                 }
-                if (checkCnt == this.state.orderList.length)
+                if (checkAll == 1){
                     this.setState({ orderStauts: 3 })
+                    Alert.alert(
+                        "飲食店を出発しましたか？",
+                        "お客様に出発の通知が送られます。",
+                        [
+                            {
+                                text: 'いいえ',
+                                onPress: () => console.log("Cancel Pressed"),
+                                style: "cancel"
+                            },
+                            {
+                                text: "はい", onPress: () => {
+                                    this.departStore()
+                                }
+                            }
+                        ],
+                        { cancelable: false }
+                    );
+                }
                 else {
                     Alert.alert("全てのメニューにチェックを入れてください")
                 }
@@ -227,7 +277,7 @@ class BookRequestDetail extends React.Component {
                             onPress: () => console.log("Cancel Pressed"),
                             style: "cancel"
                         },
-                        { text: "お客様または飲食店に連絡", onPress: () => Actions.push("chatlist") },
+                        { text: "お客様または飲食店に連絡", onPress: () => this.chat("both") },
                     ],
                     { cancelable: false }
                 );
@@ -340,44 +390,59 @@ class BookRequestDetail extends React.Component {
     }
     async chat(type) {
         let myInfo = store.getState().user
-        if(type== 'store'){
-            await this.sendMessage({
-                author: {
-                    uid: myInfo.uid,
-                    name: myInfo.first_name + ' ' + myInfo.last_name,
-                    avatar: myInfo.photo,
-                    phone: myInfo.phone,
-                    role: 'deliver'
-                },
-                target: {
-                    uid: this.state.orderInfo.store.uid,
-                    name: this.state.orderInfo.store.name,
-                    avatar: this.state.orderInfo.store.photo,
-                    phone: this.state.orderInfo.store.phone,
-                    role: 'store'
-                },
-                message: "Hi, there!"
-            })
-        } else if(type == 'customer') {
-            await this.sendMessage({
-                author: {
-                    uid: myInfo.uid,
-                    name: myInfo.first_name + ' ' + myInfo.last_name,
-                    avatar: myInfo.photo,
-                    phone: myInfo.phone,
-                    role: 'deliver'
-                },
-                target: {
-                    uid: this.state.customerInfo.uid,
-                    name: this.state.customerInfo.name,
-                    avatar: this.state.customerInfo.photo,
-                    phone: this.state.customerInfo.phone,
-                    role: 'customer'
-                },
-                message: "Hi, there!"
-            })
+        if(type == 'both') {
+            this.toStoreChat()
+            this.toCustomerChat()
+            Actions.push("chatlist", {customer: this.state.customerInfo, store: this.state.orderInfo, author: myInfo})
+        } else {
+            if(type== 'store'){
+                this.toStoreChat()
+            } else if(type == 'customer') {
+                this.toCustomerChat()
+            }
+            Actions.push("chatlist", {customer: this.state.customerInfo, store: this.state.orderInfo, author: myInfo})
         }
-        Actions.push("chatlist", {customer: this.state.customerInfo, store: this.state.orderInfo, author: myInfo})
+        
+    }
+    async toStoreChat() {
+        let myInfo = store.getState().user
+        await this.sendMessage({
+            author: {
+                uid: myInfo.uid,
+                name: myInfo.first_name + ' ' + myInfo.last_name,
+                avatar: myInfo.photo,
+                phone: myInfo.phone,
+                role: 'deliver'
+            },
+            target: {
+                uid: this.state.orderInfo.store.uid,
+                name: this.state.orderInfo.store.name,
+                avatar: this.state.orderInfo.store.photo,
+                phone: this.state.orderInfo.store.phone,
+                role: 'store'
+            },
+            message: "Hi, there!"
+        })
+    }
+    async toCustomerChat() {
+        let myInfo = store.getState().user
+        await this.sendMessage({
+            author: {
+                uid: myInfo.uid,
+                name: myInfo.first_name + ' ' + myInfo.last_name,
+                avatar: myInfo.photo,
+                phone: myInfo.phone,
+                role: 'deliver'
+            },
+            target: {
+                uid: this.state.customerInfo.uid,
+                name: this.state.customerInfo.name,
+                avatar: this.state.customerInfo.photo,
+                phone: this.state.customerInfo.phone,
+                role: 'customer'
+            },
+            message: "Hi, there!"
+        })
     }
     phoneCall(phone) {
         if(phone)
@@ -513,7 +578,7 @@ class BookRequestDetail extends React.Component {
                                         </View>
                                         {
                                             this.state.orderInfo ?
-                                            <TouchableOpacity style={[shared.flexCenter, margin.mt2]} onPress={() => this.showMap(this.state.orderInfo.order_uid, 'deliver_store')}>
+                                            <TouchableOpacity style={[shared.flexCenter, margin.mt2]} onPress={() => this.showMap(this.state.orderInfo.order_uid, 'deliver_store', this.state.orderInfo.store_name)}>
                                                 <FontAwesome5 name={"map-marker-alt"} color={Colors.secColor} size={14} />
                                                 <BoldText style={[fonts.size14, {color:Colors.secColor}]}>飲食店までをMAPで確認</BoldText>
                                             </TouchableOpacity>

@@ -19,6 +19,7 @@ import Spinner_bar from 'react-native-loading-spinner-overlay';
 import { showToast } from '../../shared/global';
 import * as SecureStore from 'expo-secure-store';
 import Back from '../../components/Back';
+import OrderConfirm from '../../components/OrderConfirm';
 class EditAccount extends React.Component {
     constructor(props) {
         super(props);
@@ -185,8 +186,9 @@ class EditAccount extends React.Component {
         return (
             <Container style={[shared.mainContainer]}>
                 {Platform.OS === 'ios' && <StatusBar barStyle="dark-content" backgroundColor="white" />}
+                <OrderConfirm />
                 <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
-                    <ScrollView ref={ref => this.scrollRef = ref} contentContainerStyle={{backgroundColor: '#f2f2f2'}}>
+                    <ScrollView ref={ref => this.scrollRef = ref} contentContainerStyle={{backgroundColor: '#f2f2f2', paddingTop: store.getState().showDeliver.showDeliver && store.getState().showDeliver.showBookDeliver ? 100 : (store.getState().showDeliver.showDeliver || store.getState().showDeliver.showBookDeliver) ? 50 : 0}}>
                         <View style={{backgroundColor: 'white'}}>
                             <Back color={"#d3d3d3"} />
                             <View style={{ paddingHorizontal: normalize(20), paddingBottom: 10, borderBottomWidth: 1, borderBottomColor: '#f2f2f2' }}>

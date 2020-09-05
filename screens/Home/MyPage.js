@@ -10,7 +10,7 @@ import Images from '../../assets/Images';
 import List from '../../components/List';
 import moment from 'moment';
 import { RegularText, BoldText } from '../../components/StyledText';
-import { getDeliveryInfos, getReservationList, getUser, setDeliveryStatus } from '../../api';
+import { getDeliveryInfos, getReservationList, getCurrentOrders, getUser, setDeliveryStatus } from '../../api';
 import Spinner_bar from 'react-native-loading-spinner-overlay';
 import * as Location from 'expo-location';
 import store from '../../store/configuteStore';
@@ -19,7 +19,8 @@ import * as Permissions from 'expo-permissions';
 import { connect } from "react-redux";
 import { showToast } from '../../shared/global';
 import { setUser,setShowDeliver } from '../../actions';
-
+import * as SecureStore from 'expo-secure-store';
+import OrderConfirm from '../../components/OrderConfirm';
 const LOCATION_TASK_NAME = 'background-location-task';
 var curTimeInterval = null;
 class MyPage extends React.Component {
@@ -36,10 +37,22 @@ class MyPage extends React.Component {
         }
     }
     async componentDidMount() {
+        let my_id = store.getState().user.uid
+        if(!my_id) {
+            this.props.setShowDeliver({
+                showDeliver: false,
+                showBookDeliver: false,
+                orderUid: [],
+                orderBookUid: []
+            })
+            await SecureStore.deleteItemAsync("token")
+            Actions.reset("login")
+        }
         /*this.props.setShowDeliver({
             showDeliver: false,
             showBookDeliver: false,
-            orderUid: null
+            orderUid: [],
+            orderBookUid: []
         })*/
         const { status } = await Location.requestPermissionsAsync();
         if (status === 'granted') {
@@ -67,24 +80,26 @@ class MyPage extends React.Component {
             this.setState({ loaded: true });
             showToast();
         });
-        let my_id = store.getState().user.uid
-        await getReservationList()
+        
+
+        await getCurrentOrders()
         .then(async (response) => {
             if(response.status == 1) {
+                let orderUid = []
                 let orderBookUid = []
-                response.list.map((order) => {
-                    if(order.deliver_uid == my_id && order.status == "accepted") {
-                        orderBookUid.push(order.order_uid)
-                    }
+                response.orders.map((order) => {
+                    if(order.status == "accepted" && order.deliver_type == 'book') 
+                        orderBookUid.push(order.uid)
+                    else if(order.status == 'delivering' || (order.status == 'accepted' && order.deliver_type == 'order'))
+                        orderUid.push(order.uid)
                 })
-                if(orderBookUid.length > 0) {
-                    this.props.setShowDeliver({
-                        showDeliver: false,
-                        showBookDeliver: true,
-                        orderUid: [],
-                        orderBookUid: orderBookUid
-                    })
-                }
+                this.props.setShowDeliver({
+                    showDeliver: orderUid.length > 0 ? true : false,
+                    showBookDeliver: orderBookUid.length > 0 ? true : false,
+                    orderUid: orderUid,
+                    orderBookUid: orderBookUid
+                })
+                
             }
         })
         .catch((error) => {
@@ -185,8 +200,9 @@ class MyPage extends React.Component {
         return (
             <Container style={[shared.mainContainer, {backgroundColor: 'white'}]}>
                 {Platform.OS === 'ios' && <StatusBar barStyle="dark-content" backgroundColor="white" />}
+                <OrderConfirm />
                 <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
-                    <ScrollView ref={ref => this.scrollRef = ref} contentContainerStyle={{backgroundColor: '#f2f2f2',flex: 1}} >
+                    <ScrollView ref={ref => this.scrollRef = ref} contentContainerStyle={{backgroundColor: '#f2f2f2',flex: 1, paddingTop: store.getState().showDeliver.showDeliver && store.getState().showDeliver.showBookDeliver ? 100 : (store.getState().showDeliver.showDeliver || store.getState().showDeliver.showBookDeliver) ? 50 : 0}} >
                         <View style={{backgroundColor: 'white'}}>
                             <View style={[styles.avatarSection]}>
                                 <Image source={this.state.userInfo && this.state.userInfo.photo ? { uri: this.state.userInfo.photo } : Images.avatar} style={{ width: 58, height: 58, borderRadius: 29 }} />

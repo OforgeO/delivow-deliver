@@ -15,6 +15,8 @@ import { dayNamesShort } from '../../constants/Global';
 import moment from 'moment';
 import { _e } from '../../lang';
 import { RegularText, BoldText} from '../../components/StyledText';
+import OrderConfirm from '../../components/OrderConfirm';
+import store from '../../store/configuteStore';
 const contentInset = { top: 20, bottom: 20 }
 export default class Sales extends React.Component {
     constructor(props) {
@@ -82,8 +84,9 @@ export default class Sales extends React.Component {
       return (
         <Container style={[shared.mainContainer]}>
             {Platform.OS === 'ios' && <StatusBar barStyle="dark-content" backgroundColor="white" />}
+            <OrderConfirm />
             <SafeAreaView contentContainerStyle={{ flex:1}}>
-                <ScrollView ref={ref => this.scrollRef = ref} >
+                <ScrollView ref={ref => this.scrollRef = ref} contentContainerStyle={{paddingTop: store.getState().showDeliver.showDeliver && store.getState().showDeliver.showBookDeliver ? 80 : (store.getState().showDeliver.showDeliver || store.getState().showDeliver.showBookDeliver) ? 40 : 0}}>
                     <View style={[styles.header, {marginTop: 40}]}>
                         <BoldText style={[fonts.size32]}>売上管理</BoldText>
                     </View>

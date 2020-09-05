@@ -11,6 +11,8 @@ import { RegularText, BoldText} from '../../components/StyledText';
 import { _e } from '../../lang'
 import moment from 'moment'
 import Back from '../../components/Back';
+import store from '../../store/configuteStore';
+import OrderConfirm from '../../components/OrderConfirm';
 TouchableOpacity.defaultProps = { activeOpacity: 0.8 };
 
 export default class TransferStatus extends React.Component {
@@ -56,8 +58,9 @@ export default class TransferStatus extends React.Component {
         return (
             <Container>
                 {Platform.OS === 'ios' && <StatusBar barStyle="dark-content" backgroundColor="white" />}
+                <OrderConfirm />
                 <SafeAreaView>
-                    <ScrollView>
+                    <ScrollView style={{paddingTop: store.getState().showDeliver.showDeliver && store.getState().showDeliver.showBookDeliver ? 100 : (store.getState().showDeliver.showDeliver || store.getState().showDeliver.showBookDeliver) ? 50 : 0}}>
                         <View style={{flex: 1}}>
                             <Back color={"#d3d3d3"} />
                             <View style={[styles.whiteSection, {paddingBottom: 10, borderBottomColor: '#f2f2f2', borderBottomWidth: 1}]}>

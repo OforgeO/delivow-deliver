@@ -10,6 +10,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import { updatePassword } from '../../api';
 import { showToast } from '../../shared/global';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import OrderConfirm from '../../components/OrderConfirm';
 TouchableOpacity.defaultProps = { activeOpacity: 0.8 };
 
 export default class UpdatePassword extends React.Component {
@@ -59,6 +60,7 @@ export default class UpdatePassword extends React.Component {
     render(){
         return (
             <Container>
+                <OrderConfirm />
                 <SafeAreaView style={[styles.contentBg , styles.contentPD ]}>
                     <KeyboardAwareScrollView
                         resetScrollToCoords={{ x: 0, y: 0 }}

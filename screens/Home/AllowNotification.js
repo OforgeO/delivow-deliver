@@ -9,6 +9,7 @@ import { RegularText, BoldText } from '../../components/StyledText';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Constants from 'expo-constants';
 import * as Permissions from 'expo-permissions';
+import OrderConfirm from '../../components/OrderConfirm';
 TouchableOpacity.defaultProps = { activeOpacity: 0.8 };
 export default class AllowNotification extends React.Component {
     constructor(props){
@@ -46,6 +47,7 @@ export default class AllowNotification extends React.Component {
     render(){
         return (
             <Container>
+                <OrderConfirm />
                 <SafeAreaView style={[styles.contentBg ,{marginTop: Platform.OS == 'ios' ? Constants.statusBarHeight : 0}]}>
                     <KeyboardAwareScrollView
                         resetScrollToCoords={{ x: 0, y: 0 }}

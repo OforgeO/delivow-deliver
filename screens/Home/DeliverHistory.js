@@ -15,6 +15,8 @@ import { showToast } from '../../shared/global';
 import Back from '../../components/Back';
 import Constants from 'expo-constants';
 import moment from 'moment';
+import OrderConfirm from '../../components/OrderConfirm';
+import store from '../../store/configuteStore';
 export default class DeliverHistory extends React.Component {
     constructor(props) {
         super(props);
@@ -84,8 +86,9 @@ export default class DeliverHistory extends React.Component {
       return (
         <Container style={[shared.mainContainer]}>
             {Platform.OS === 'ios' && <StatusBar barStyle="dark-content" backgroundColor="white" />}
+            <OrderConfirm />
             <SafeAreaView style={{ flex:1, marginTop: Platform.OS == 'ios' ? 0 : Constants.statusBarHeight}}>
-                <ScrollView ref={ref => this.scrollRef = ref} >
+                <ScrollView ref={ref => this.scrollRef = ref} contentContainerStyle={{paddingTop: store.getState().showDeliver.showDeliver && store.getState().showDeliver.showBookDeliver ? 100 : (store.getState().showDeliver.showDeliver || store.getState().showDeliver.showBookDeliver) ? 50 : 0}}>
                     <Back color="#d3d3d3" />
                     <View style={styles.header}>
                         <BoldText style={[fonts.size32]}>今月の配達履歴</BoldText>

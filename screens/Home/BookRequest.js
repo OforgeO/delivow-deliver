@@ -18,6 +18,7 @@ import Back from '../../components/Back';
 import store from '../../store/configuteStore';
 import { connect } from "react-redux";
 import { setShowDeliver } from '../../actions';
+import OrderConfirm from '../../components/OrderConfirm';
 TouchableOpacity.defaultProps = { activeOpacity: 0.8 };
 
 class BookRequest extends React.Component {
@@ -178,8 +179,9 @@ class BookRequest extends React.Component {
         return (
             <Container>
                 {Platform.OS === 'ios' && <StatusBar barStyle="dark-content" backgroundColor="white" />}
+                <OrderConfirm page="bookrequest" />
                 <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
-                    <ScrollView style={{flex: 1, backgroundColor: '#f2f2f2'}}>
+                    <ScrollView style={{flex: 1, backgroundColor: '#f2f2f2'}} contentContainerStyle={{paddingTop: store.getState().showDeliver.showDeliver ? 50 : 0}}>
                         <View style={{flex: 1}}>
                             <Back color={"#d3d3d3"} />
                             <View style={[styles.whiteSection, {paddingTop: 0}]}>

@@ -14,6 +14,8 @@ import Back from '../../components/Back';
 import Spinner_bar from 'react-native-loading-spinner-overlay';
 import { showToast } from '../../shared/global';
 import { updateShift } from '../../api';
+import OrderConfirm from '../../components/OrderConfirm';
+import store from '../../store/configuteStore';
 export default class TodayShiftTime extends React.Component {
     constructor(props) {
         super(props);
@@ -76,8 +78,9 @@ export default class TodayShiftTime extends React.Component {
         return (
             <Container style={[shared.mainContainer]}>
                 {Platform.OS === 'ios' && <StatusBar barStyle="dark-content" backgroundColor="white" />}
+                <OrderConfirm />
                 <SafeAreaView style={{ flex: 1, backgroundColor: '#f2f2f2', marginTop: Constants.statusBarHeight }}>
-                    <ScrollView ref={ref => this.scrollRef = ref} >
+                    <ScrollView ref={ref => this.scrollRef = ref} contentContainerStyle={{paddingTop: store.getState().showDeliver.showDeliver && store.getState().showDeliver.showBookDeliver ? 100 : (store.getState().showDeliver.showDeliver || store.getState().showDeliver.showBookDeliver) ? 50 : 0}}>
                         <View style={{ flex: 1, backgroundColor: 'white' }}>
                             <Back color="#d3d3d3" />
                             <View style={[styles.header]}>

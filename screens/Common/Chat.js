@@ -13,6 +13,8 @@ import Spinner_bar from 'react-native-loading-spinner-overlay';
 import firebase from '../../Fire';
 import moment from 'moment';
 import Layout from '../../constants/Layout';
+import store from '../../store/configuteStore';
+import OrderConfirm from '../../components/OrderConfirm';
 export const usersRef = firebase.database().ref('Users')
 export const chatsRef = firebase.database().ref('Chats')
 export const messagesRef = firebase.database().ref('chatMessages')
@@ -152,18 +154,19 @@ export default class Chat extends React.Component {
         return (
             <Container style={[shared.mainContainer]}>
                 {Platform.OS === 'ios' && <StatusBar barStyle="dark-content" backgroundColor="white" />}
+                <OrderConfirm />
                 <SafeAreaView style={{ flex: 1 }}>
-                    <KeyboardAvoidingView behavior={"padding"} style={{flex: 1}} >
+                    <KeyboardAvoidingView behavior={"padding"} style={{flex: 1, paddingTop: store.getState().showDeliver.showDeliver && store.getState().showDeliver.showBookDeliver ? 100 : (store.getState().showDeliver.showDeliver || store.getState().showDeliver.showBookDeliver) ? 50 : 0}} keyboardVerticalOffset={50}>
                         <View style={{ flex: 1, backgroundColor: 'white' }}>
                             <View style={[shared.flexCenter, {justifyContent: 'space-between'}]}>
-                                <TouchableOpacity style={styles.goBack} onPress={() => {Actions.pop({refresh: {}}); setTimeout(function(){
+                                <TouchableOpacity style={[styles.goBack, {width: 60}]} onPress={() => {Actions.pop({refresh: {}}); setTimeout(function(){
                                     Actions.refresh()
                                 }, 10)}}>
                                     <FontAwesome name={"chevron-left"} color={'#d3d3d3'} size={14} />
                                     <BoldText style={[{color: '#d3d3d3'}, margin.ml1, fonts.size14]}>戻る</BoldText>
                                 </TouchableOpacity>
-                                <View style={[margin.pb3, margin.pt3, {alignItems: 'center'}]}>
-                                    <BoldText style={[fonts.size14]}>{this.props.title}</BoldText>
+                                <View style={[margin.pb3, margin.pt3, {alignItems: 'center', flex: 1}]}>
+                                    <BoldText style={[fonts.size14, {textAlign: 'center'}]}>{this.props.title}</BoldText>
                                     {
                                         this.props.subtitle ?
                                         <RegularText style={[fonts.size14, margin.mt1, {color: '#848484'}]}>{this.props.subtitle}</RegularText>
@@ -171,8 +174,8 @@ export default class Chat extends React.Component {
                                         null
                                     }
                                 </View>
-                                <TouchableOpacity onPress={() => Linking.openURL("tel:"+this.props.target.phone)}>
-                                    <FontAwesome color={Colors.mainColor} name={"phone"} size={30} style={{paddingRight: 15}} />
+                                <TouchableOpacity style={{width: 60, alignItems: 'flex-end'}} onPress={() => Linking.openURL("tel:"+this.props.target.phone)}>
+                                    <FontAwesome color={Colors.secColor} name={"phone"} size={20} style={{paddingRight: 10}} />
                                 </TouchableOpacity>
                             </View>
                             

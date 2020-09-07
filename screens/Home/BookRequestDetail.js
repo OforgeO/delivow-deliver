@@ -92,16 +92,31 @@ class BookRequestDetail extends React.Component {
         this.setState({ loaded: false })
         await departStore(this.props.order_uid)
         .then(async (response) => {
+            console.log(response)
             if (response.status == 1) {
                 this.setState({ orderStauts: 4 })
                 let status = store.getState().showDeliver
+                console.log(status)
                 let orderUid = status.orderUid
-                let orderBookUid = stus.orderBookUid
-                orderUid.push(this.props.order_uid)
-                for(var i = 0;i<orderBookUid.length;i++) {
-                    if(orderBookUid[i] == this.props.order_uid){
-                        orderBookUid.splice(i, 1)
-                        break;
+                let orderBookUid = status.orderBookUid
+                if(orderUid.length > 0) {
+                    exist = 0;
+                    for(var i = 0;i< orderUid.length;i++) {
+                        if(orderUid[i] == this.props.order_uid) {
+                            exist = 1;
+                            break;
+                        }
+                    }
+                    if(exist == 0)
+                        orderUid.push(this.props.order_uid)
+                } else 
+                    orderUid.push(this.props.order_uid)
+                if(orderBookUid.length > 0) {
+                    for(var i = 0;i<orderBookUid.length;i++) {
+                        if(orderBookUid[i] == this.props.order_uid){
+                            orderBookUid.splice(i, 1)
+                            break;
+                        }
                     }
                 }
                 this.props.setShowDeliver({
@@ -205,9 +220,6 @@ class BookRequestDetail extends React.Component {
                 let temp = this.state.orderList
                 let checkAll = 1
                 for (var i = 0; i < temp.length; i++) {
-                    if (temp[i].product_uid == id) {
-                        temp[i].selected = !temp[i].selected
-                    }
                     if (!temp[i].selected)
                         checkAll = 0;
                     if(temp[i].options && temp[i].options.length > 0) {
@@ -287,13 +299,13 @@ class BookRequestDetail extends React.Component {
     }
     renderOrderList(products) {
         return products.map((product, index) => {
-            return <View key={index}>
+            return <TouchableOpacity key={product.product_uid}  onPress={() => this.checkOption(product.product_uid)}>
                 <View key={product.product_uid} style={[shared.flexCenter, { justifyContent: 'space-between', borderTopWidth: 1, borderTopColor: '#f2f2f2', paddingVertical: 13 }]}>
-                <TouchableOpacity style={[shared.flexCenter, { flex: 1, alignItems: 'flex-start' }]} onPress={() => this.checkOption(product.product_uid)}>
+                <View style={[shared.flexCenter, { flex: 1, alignItems: 'flex-start' }]}>
                     <FontAwesome name={"check-circle"} size={20} color={product.selected || (this.state.orderInfo && this.state.orderInfo.status == 'delivering') ? Colors.secColor : '#848484'} />
                     <BoldText style={[fonts.size14, margin.ml1, { color: product.selected || (this.state.orderInfo && this.state.orderInfo.status == 'delivering') ? 'black' : '#848484' }]}>{product.product_name}</BoldText>
-                </TouchableOpacity>
-                <RegularText style={[fonts.size14, { color: product.selected || (this.state.orderInfo && this.state.orderInfo.status == 'delivering') ? 'black' : '#848484', width: 120, textAlign: 'right' }]}>数量{product.quantity}</RegularText>
+                </View>
+                <RegularText style={[fonts.size14, { color: product.selected || (this.state.orderInfo && this.state.orderInfo.status == 'delivering') ? 'black' : '#848484', width: 120, textAlign: 'right' }]}>数量 {product.quantity}</RegularText>
                 
             </View>
             {
@@ -302,7 +314,7 @@ class BookRequestDetail extends React.Component {
                 :
                 null
             }
-            </View>
+            </TouchableOpacity>
         })
     }
     renderOption(product_id, options) {
@@ -314,7 +326,7 @@ class BookRequestDetail extends React.Component {
                             <FontAwesome name={"check-circle"} size={20} color={list.selected || (this.state.orderInfo && this.state.orderInfo.status == 'delivering') ? Colors.secColor : '#848484'} />
                             <BoldText style={[fonts.size14, margin.ml1, { color: list.selected || (this.state.orderInfo && this.state.orderInfo.status == 'delivering') ? 'black' : '#848484' }]}>{list.option_name}</BoldText>
                         </TouchableOpacity>
-                        <RegularText style={[fonts.size14, { color: list.selected || (this.state.orderInfo && this.state.orderInfo.status == 'delivering') ? 'black' : '#848484', width: 120, textAlign: 'right' }]}>数量{list.quantity}</RegularText>
+                        <RegularText style={[fonts.size14, { color: list.selected || (this.state.orderInfo && this.state.orderInfo.status == 'delivering') ? 'black' : '#848484', width: 120, textAlign: 'right' }]}>数量 {list.quantity}</RegularText>
                     </View>
                 })
             }
@@ -393,14 +405,14 @@ class BookRequestDetail extends React.Component {
         if(type == 'both') {
             this.toStoreChat()
             this.toCustomerChat()
-            Actions.push("chatlist", {customer: this.state.customerInfo, store: this.state.orderInfo, author: myInfo})
+            Actions.push("chatlist", {customer: this.state.customerInfo, store: this.state.orderInfo, author: myInfo, order_uid: this.props.order_uid})
         } else {
             if(type== 'store'){
                 this.toStoreChat()
             } else if(type == 'customer') {
                 this.toCustomerChat()
             }
-            Actions.push("chatlist", {customer: this.state.customerInfo, store: this.state.orderInfo, author: myInfo})
+            Actions.push("chatlist", {customer: this.state.customerInfo, store: this.state.orderInfo, author: myInfo, order_uid: this.props.order_uid})
         }
         
     }
@@ -493,9 +505,9 @@ class BookRequestDetail extends React.Component {
                         {text: "OK", onPress : () => {
                             _self.props.setShowDeliver({
                                 showDeliver: false,
-                                showBookDeliver: store.getState().showBookDeliver,
+                                showBookDeliver: store.getState().showDeliver.showBookDeliver,
                                 orderUid: [],
-                                orderBookUid: store.getState().orderBookUid
+                                orderBookUid: store.getState().showDeliver.orderBookUid
                             })
                             Actions.reset("root")
                         } }

@@ -20,30 +20,38 @@ export const chatsRef = firebase.database().ref('Chats')
 export const messagesRef = firebase.database().ref('chatMessages')
 export const userChatsRef = firebase.database().ref('userChats')
 export const serverTimestamp = firebase.database.ServerValue.TIMESTAMP
+var initialDataLoaded = false;
 export default class Chat extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             loaded: true,
-            chatList: null,
+            chatList: [],
             chat: '',
         }
         this._keyboardDidShow =  (e) => {
             this.scrollView.scrollToEnd()
         }
-        
     }
-    componentDidMount() {
-        const chatList = firebase.app().database().ref().child('chatMessages/'+this.props.room);
-        let temp = [];
-        chatList.on("child_added", function (snapshot) {
-            temp.push(snapshot.val())
-        })
-        
+    async componentDidMount() {
+        this.setState({loaded: false})
+        const chat = firebase.app().database().ref().child('chatMessages/'+this.props.room);
+        let chatList = []
         var _self = this;
+        let my_id = store.getState().user.uid
+        chat.on("child_added", function (snapshot) {
+            let chatInfo = snapshot.val()
+            chatList.push(chatInfo)
+            _self.setState({chatList})
+            if(chatInfo.status == 'unread' && chatInfo.senderUID != my_id ){
+                chatInfo.status = 'read';
+                chat.child(snapshot.key).update(chatInfo)
+            }
+        })
         setTimeout(function() {
-            _self.setState({ chatList: temp })
-        }, 1000)
+            _self.setState({chatList})
+            _self.setState({loaded: true})
+        },1000)
     }
 
     UNSAFE_componentWillMount () {
@@ -70,7 +78,7 @@ export default class Chat extends React.Component {
                             </View>
                             
                             <View style={styles.chatText}>
-                                <RegularText style={[fonts.size14, margin.mb1]}>{chat.message}</RegularText>
+                                <RegularText style={[fonts.size14]}>{chat.message}</RegularText>
                             </View>
                             <RegularText style={[fonts.size14, margin.ml3, { color: '#B5B5B5' }]}>
                                 {moment(chat.timestamp).format("YYYY/M/D") == moment().format("YYYY/M/D") ? moment(chat.timestamp).format("H:mm") : moment(chat.timestamp).format("M/D H:mm")}
@@ -83,7 +91,7 @@ export default class Chat extends React.Component {
                                 {moment(chat.timestamp).format("YYYY/M/D") == moment().format("YYYY/M/D") ? moment(chat.timestamp).format("H:mm") : moment(chat.timestamp).format("M/D H:mm")}
                             </RegularText>
                             <View style={[styles.chatText, {backgroundColor: '#0D7684', marginRight: 10}]}>
-                                <RegularText style={[fonts.size14, margin.mb1, {color: 'white'}]}>{chat.message}</RegularText>
+                                <RegularText style={[fonts.size14, {color: 'white'}]}>{chat.message}</RegularText>
                             </View>
                             
                             <View>
@@ -137,7 +145,8 @@ export default class Chat extends React.Component {
           senderRole: author.role,
           receiverRole: target.role,
           senderUID: author.uid,
-          receiverUID: target.uid
+          receiverUID: target.uid,
+          order_uid: this.props.order_uid
         })
     }
 
@@ -154,9 +163,8 @@ export default class Chat extends React.Component {
         return (
             <Container style={[shared.mainContainer]}>
                 {Platform.OS === 'ios' && <StatusBar barStyle="dark-content" backgroundColor="white" />}
-                <OrderConfirm />
                 <SafeAreaView style={{ flex: 1 }}>
-                    <KeyboardAvoidingView behavior={"padding"} style={{flex: 1, paddingTop: store.getState().showDeliver.showDeliver && store.getState().showDeliver.showBookDeliver ? 100 : (store.getState().showDeliver.showDeliver || store.getState().showDeliver.showBookDeliver) ? 50 : 0}} keyboardVerticalOffset={50}>
+                    <KeyboardAvoidingView behavior={Platform.OS == 'ios' ? 'padding' : "height"} style={{flex: 1}} keyboardVerticalOffset={Platform.OS == 'ios' ? 0 : 40}>
                         <View style={{ flex: 1, backgroundColor: 'white' }}>
                             <View style={[shared.flexCenter, {justifyContent: 'space-between'}]}>
                                 <TouchableOpacity style={[styles.goBack, {width: 60}]} onPress={() => {Actions.pop({refresh: {}}); setTimeout(function(){
@@ -165,7 +173,7 @@ export default class Chat extends React.Component {
                                     <FontAwesome name={"chevron-left"} color={'#d3d3d3'} size={14} />
                                     <BoldText style={[{color: '#d3d3d3'}, margin.ml1, fonts.size14]}>戻る</BoldText>
                                 </TouchableOpacity>
-                                <View style={[margin.pb3, margin.pt3, {alignItems: 'center', flex: 1}]}>
+                                <View style={[margin.pb3, margin.pt3, {flex: 1, alignItems: 'center'}]}>
                                     <BoldText style={[fonts.size14, {textAlign: 'center'}]}>{this.props.title}</BoldText>
                                     {
                                         this.props.subtitle ?
@@ -175,7 +183,7 @@ export default class Chat extends React.Component {
                                     }
                                 </View>
                                 <TouchableOpacity style={{width: 60, alignItems: 'flex-end'}} onPress={() => Linking.openURL("tel:"+this.props.target.phone)}>
-                                    <FontAwesome color={Colors.secColor} name={"phone"} size={20} style={{paddingRight: 10}} />
+                                    <FontAwesome5 color={Colors.secColor} name={"phone"} size={30} style={{paddingRight: 15}} />
                                 </TouchableOpacity>
                             </View>
                             
@@ -184,6 +192,7 @@ export default class Chat extends React.Component {
                                     onContentSizeChange={(contentWidth, contentHeight)=>{        
                                         this.scrollView.scrollToEnd({animated: true})
                                     }}
+                                    contentContainerStyle={{paddingBottom: 20}}
                                 >
                                     {
                                         this.renderChat()
@@ -234,7 +243,7 @@ const styles = StyleSheet.create({
         lineHeight: normalize(24),
         textAlignVertical: 'top',
         justifyContent: 'center',
-        height: 40
+        height: Platform.OS == 'ios' ? 40 : 30
     },
     chatText: {
         maxWidth: Layout.window.width - 160, backgroundColor: 'white', borderRadius: 10, paddingVertical: 10,

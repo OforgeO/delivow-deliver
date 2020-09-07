@@ -107,18 +107,14 @@ export default function App(props) {
                                         <Scene key="emailconfirm" component={EmailConfirm} hideNavBar={true} />
                                         <Scene key="emailchange" component={EmailChange} hideNavBar={true} />
                                         <Scene key="reporttrouble" component={ReportTrouble} hideNavBar={true} />
-                                        
                                         <Scene key="bookrequest" component={BookRequest} />
                                         <Scene key="todayshift" component={TodayShift} />
                                         <Scene key="todayshifttime" component={TodayShiftTime} />
                                         <Scene key="bookrequestdetail" component={BookRequestDetail} />
-                                        <Scene key="chatlist" component={ChatList}/>
-                                        <Scene key="chat" component={Chat} />
                                         <Scene key="editname" component={EditName} />
                                         <Scene key="updatepassword" component={UpdatePassword} />
                                         <Scene key="allownotification" component={AllowNotification} />
                                         <Scene key="vehicleregister" component={VehicleRegister} />
-                                        
                                         <Scene key="deliverhistory" component={DeliverHistory} />
                                     </Scene>
                                     <Scene key="order" title="売上管理" type="FontAwesome5" reset="sales" name="coins" icon={TabBarIcon} hideNavBar={true} >
@@ -132,6 +128,8 @@ export default function App(props) {
                                     </Scene>
                                 </Scene>
                                 <Scene key="checkmap" component={CheckMap}/>
+                                <Scene key="chatlist" component={ChatList} />
+                                <Scene key="chat" component={Chat} />
                             </Scene>
                             <Scene key="terms" component={Terms}/>
 

@@ -90,7 +90,7 @@ class MyPage extends React.Component {
                 response.orders.map((order) => {
                     if(order.status == "accepted" && order.deliver_type == 'book') 
                         orderBookUid.push(order.uid)
-                    else if(order.status == 'delivering' || (order.status == 'accepted' && order.deliver_type == 'order'))
+                    else if(order.status == 'delivering' || ((order.status == 'accepted' || order.status == 'cooking') && order.deliver_type == 'order'))
                         orderUid.push(order.uid)
                 })
                 this.props.setShowDeliver({

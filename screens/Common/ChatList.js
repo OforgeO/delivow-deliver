@@ -26,20 +26,39 @@ export default class ChatList extends React.Component {
         }
     }
     componentDidMount() {
+        this.refresh();
+    }
+
+    UNSAFE_componentWillReceiveProps() {
+        this.refresh();
+    }
+
+    async refresh() {
+        this.setState({loaded: false})
         const myChats = fbChat.child('userChats/'+this.state.myInfo.uid);
         let chatList = [];
+        var _self = this;
         myChats.on("child_added", function (snapshot) {
             fbChat.child('Chats').on("child_added", function(snap) {
                 if(snap.key == snapshot.val()) {
                     let content = snap.val()
                     content['room'] = snapshot.val()
+                    const chat = fbChat.child('chatMessages/'+snapshot.val());
+                    let unreadCount = 0;
+                    chat.on("child_added", function (snapshot) {
+                        if(snapshot.val().status == 'unread' && snapshot.val().senderUID != _self.state.myInfo.uid)
+                            unreadCount++;
+                    })
+                    content['unread_count'] = unreadCount;
                     chatList.push(content)
                 }
             })
         })
-        var _self = this;
+        
+        
         setTimeout(function() {
             _self.setState({chatList})
+            _self.setState({loaded: true})
         }, 1000)
     }
 
@@ -61,13 +80,12 @@ export default class ChatList extends React.Component {
             phone: chat.senderRole == 'deliver' ? chat.receiverPhone : chat.senderPhone,
             role: chat.senderRole == 'deliver' ? chat.receiverRole : chat.senderRole
         }
-        Actions.push("chat", {room : room, author: author, target: target, title: title, subtitle: subtitle})
+        Actions.push("chat", {room : room, author: author, target: target, title: title, subtitle: subtitle, order_uid: this.props.order_uid})
     }
 
     renderChat() {
-        console.log(this.state.chatList)
-        return this.state.chatList.map((chat) => {
-            return <TouchableOpacity style={styles.chatSection} onPress={() => this.gotoChat(chat)}>
+        return this.state.chatList.map((chat, index) => {
+            return <TouchableOpacity key={index} style={styles.chatSection} onPress={() => this.gotoChat(chat)}>
                 <View style={{ alignItems: 'center' }}>
                     <Image source={
                         chat.receiverRole == 'customer' && chat.receiverAvatar ? {uri: chat.receiverAvatar} :
@@ -84,7 +102,14 @@ export default class ChatList extends React.Component {
                             }
                         </RegularText>
                     </View>
-                    <RegularText style={[fonts.size14, { color: '#B5B5B5' }]}>{moment(chat.lastMessageTimestamp).format("H:mm")}</RegularText>
+                    {
+                        chat.unread_count > 0 ?
+                        <View style={[styles.unread]}>
+                            <BoldText style={[fonts.size14, {color: 'white', paddingTop:0, textAlign: 'center'}]}>{chat.unread_count}</BoldText>
+                        </View>
+                        :
+                        <RegularText style={[fonts.size14, { color: '#B5B5B5' }]}>{moment(chat.lastMessageTimestamp).format("H:mm")}</RegularText>
+                    }
                 </View>
             </TouchableOpacity>
         })

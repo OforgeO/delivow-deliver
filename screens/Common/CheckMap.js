@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Platform, AsyncStorage, TouchableOpacity, StatusBar, Alert } from 'react-native';
+import { StyleSheet, View, Platform, SafeAreaView, TouchableOpacity, StatusBar, Alert } from 'react-native';
 import { shared, fonts, margin, normalize, form } from '../../assets/styles';
 import { Actions } from 'react-native-router-flux';
 import Layout from '../../constants/Layout';
@@ -149,7 +149,7 @@ class CheckMap extends React.Component {
         return (
             <Container style={[shared.mainContainer]}>
                 {Platform.OS === 'ios' && <StatusBar barStyle="dark-content" backgroundColor="white" />}
-                <Content contentContainerStyle={{ flex: 1, backgroundColor: 'white'}}>
+                <SafeAreaView style={{ flex: 1, backgroundColor: 'white'}}>
                     <View style={{ height: Constants.statusBarHeight + 40, alignItems: 'flex-start', justifyContent: 'flex-end', bottom: 10, paddingHorizontal: normalize(20) }}>
                         <View style={[shared.flexCenter, {justifyContent: 'space-between', width: '100%'}]}>
                             <BoldText style={[fonts.size32]}>MAPを確認</BoldText>
@@ -220,7 +220,7 @@ class CheckMap extends React.Component {
                         </View>
                     </View>
                     
-                </Content>
+                </SafeAreaView>
                 <Spinner_bar color={'#27cccd'} visible={!this.state.loaded} textContent={""} overlayColor={"rgba(0, 0, 0, 0.5)"} />
             </Container>
         );

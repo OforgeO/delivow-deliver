@@ -21,9 +21,10 @@ class OrderConfirm extends React.Component {
     }
     async confirmStatus(type) {
         let status = store.getState().showDeliver
+        console.log(status)
         if(status.orderBookUid && status.orderBookUid.length > 1 && type == 'book')
             Actions.push("bookrequest")
-        else if(status.orderUid && status.orderUid.length == 1)
+        else if(status.orderUid && status.orderUid.length > 0)
             Actions.push("bookrequestdetail", { order_uid: status.orderUid[0], type: type, confirm: 'false'})       
         else if(status.orderBookUid && status.orderBookUid.length == 1)
             Actions.push("bookrequestdetail", { order_uid: status.orderBookUid[0], type: type, confirm: 'false'})       

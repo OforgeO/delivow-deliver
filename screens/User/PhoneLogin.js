@@ -50,6 +50,7 @@ class PhoneLogin extends React.Component {
         }
         try {
           let token = await Notifications.getExpoPushTokenAsync(); 
+          console.log(token)
           this.setState({token : token})
         } catch (error) {
           this.setState({token : ''})

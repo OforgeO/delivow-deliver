@@ -69,11 +69,25 @@ class AlertModal extends React.Component {
     cancelBtn(type) {
         if(type == "delivery_decide"){
             let notify = store.getState().notify
+            let orderUid = store.getState().showDeliver.orderUid
+            if(orderUid.length > 0) {
+                exist = 0;
+                for(var i = 0;i< orderUid.length;i++) {
+                    if(orderUid[i] == notify.order_uid) {
+                        exist = 1;
+                        break;
+                    }
+                }
+                if(exist == 0)
+                    orderUid.push(notify.order_uid)
+            } else 
+                orderUid.push(notify.order_uid)
+
             this.props.setShowDeliver({
                 showDeliver: true,
-                showBookDeliver: store.getState().showBookDeliver,
-                orderUid: store.getState().orderUid.push(notify.order_uid),
-                orderBookUid: store.getState().orderBookUid
+                showBookDeliver: store.getState().showDeliver.showBookDeliver,
+                orderUid: orderUid,
+                orderBookUid: store.getState().showDeliver.orderBookUid
             })
         }
         this.disable(type)

@@ -10,6 +10,8 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import Constants from 'expo-constants';
 import * as Permissions from 'expo-permissions';
 import OrderConfirm from '../../components/OrderConfirm';
+import Back from '../../components/Back';
+import store from '../../store/configuteStore';
 TouchableOpacity.defaultProps = { activeOpacity: 0.8 };
 export default class AllowNotification extends React.Component {
     constructor(props){
@@ -31,17 +33,8 @@ export default class AllowNotification extends React.Component {
         }
     }
 
-    async nextScreen(type) {
-        const { status: existingStatus } = await Permissions.getAsync(
-            Permissions.NOTIFICATIONS
-        );
-        if (existingStatus !== 'granted') {
-            await Permissions.askAsync(Permissions.NOTIFICATIONS);
-        }
-        /*Actions.pop()
-        setTimeout(function() {
-            Actions.refresh()
-        }, 10)*/
+    async nextScreen() {
+        Linking.openURL('app-settings:');
     }
     
     render(){
@@ -53,27 +46,27 @@ export default class AllowNotification extends React.Component {
                         resetScrollToCoords={{ x: 0, y: 0 }}
                         scrollEnabled={true}
                     >
-                        <View style={[shared.bodyContainer, {paddingHorizontal: normalize(20)}]}>
-                            <View style={{flex: 3, justifyContent: 'center'}}>
-                                <BoldText style={[fonts.size32, margin.mb4]}>プッシュ通知の設定</BoldText>
-                                <View style={margin.mt4}>
-                                    <RegularText style={fonts.size16}>待機中・配達中は「 ON」の設定が必須です。{'\n'}</RegularText>
-                                    <RegularText style={fonts.size16}>通知は、配達依頼・お客様や飲食店からの連絡などをお知らせするために使用されます。</RegularText>
-                                </View>
+                        <View style={[shared.bodyContainer]}>
+                            <View style={{paddingTop: store.getState().showDeliver.showDeliver ? 50 : 0}}>
+                                <Back color="#d3d3d3" />
                             </View>
-                            <View style={{flex: 1, justifyContent: 'flex-end'}}>
-                                <View style={{justifyContent: 'center', alignItems: 'center', width: '100%', bottom: 30,marginBottom: 30}}>
-                                    <TouchableOpacity onPress={() => this.nextScreen("on")} style={{borderRadius: 12, width: '100%',backgroundColor: Colors.secColor }}>
-                                        <RegularText style={[styles.btnText , fonts.size16]}>プッシュ通知をONにする</RegularText>
-                                    </TouchableOpacity>
+                            <View style={{paddingHorizontal: normalize(20), flex: 1}}>
+                                <View style={{flex: 3, justifyContent: 'center'}}>
+                                    <BoldText style={[fonts.size32, margin.mb4]}>プッシュ通知の設定</BoldText>
+                                    <View style={margin.mt4}>
+                                        <RegularText style={fonts.size16}>待機中・配達中は「 ON」の設定が必須です。{'\n'}</RegularText>
+                                        <RegularText style={fonts.size16}>通知は、配達依頼・お客様や飲食店からの連絡などをお知らせするために使用されます。</RegularText>
+                                    </View>
                                 </View>
+                                <View style={{flex: 1, justifyContent: 'flex-end'}}>
 
-                                <View style={{justifyContent: 'center', alignItems: 'center', width: '100%', bottom: 30,}}>
-                                    <TouchableOpacity onPress={() => this.nextScreen("off")} style={{borderRadius: 12, width: '100%',backgroundColor: Colors.secColor }}>
-                                        <RegularText style={[styles.btnText , fonts.size16]}>プッシュ通知をOFFにする</RegularText>
-                                    </TouchableOpacity>
+                                    <View style={{justifyContent: 'center', alignItems: 'center', width: '100%', bottom: 30,}}>
+                                        <TouchableOpacity onPress={() => this.nextScreen()} style={{borderRadius: 12, width: '100%',backgroundColor: Colors.secColor }}>
+                                            <RegularText style={[styles.btnText , fonts.size16]}>通知設定を変更</RegularText>
+                                        </TouchableOpacity>
+                                    </View>
                                 </View>
-                            </View>     
+                            </View> 
                         </View>
                     </KeyboardAwareScrollView>
                 </SafeAreaView>

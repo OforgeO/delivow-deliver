@@ -54,8 +54,6 @@ export default class ChatList extends React.Component {
                 }
             })
         })
-        
-        
         setTimeout(function() {
             _self.setState({chatList})
             _self.setState({loaded: true})
@@ -98,9 +96,11 @@ export default class ChatList extends React.Component {
                     <View>
                         <RegularText style={[fonts.size14, margin.mb1]}>
                             {
-                                chat.receiverRole == 'customer' ? chat.receiverName : chat.senderName
+                                chat.receiverRole == 'deliver' ? chat.senderName :
+                                chat.senderRole == 'deliver' ? chat.receiverName : null
                             }
                         </RegularText>
+                        <RegularText style={[fonts.size14, { color: '#848484' }]}>{chat.lastMessageSent}</RegularText>
                     </View>
                     {
                         chat.unread_count > 0 ?
@@ -155,4 +155,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
     },
+    unread: {
+        alignItems: 'center', justifyContent: 'center', backgroundColor: '#F50909', width: 30, height: 30, borderRadius: 15,
+        marginLeft: 10
+    }
 });

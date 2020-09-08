@@ -113,7 +113,6 @@ export default function App(props) {
                                         <Scene key="bookrequestdetail" component={BookRequestDetail} />
                                         <Scene key="editname" component={EditName} />
                                         <Scene key="updatepassword" component={UpdatePassword} />
-                                        <Scene key="allownotification" component={AllowNotification} />
                                         <Scene key="vehicleregister" component={VehicleRegister} />
                                         <Scene key="deliverhistory" component={DeliverHistory} />
                                     </Scene>
@@ -130,6 +129,7 @@ export default function App(props) {
                                 <Scene key="checkmap" component={CheckMap}/>
                                 <Scene key="chatlist" component={ChatList} />
                                 <Scene key="chat" component={Chat} />
+                                <Scene key="allownotification" component={AllowNotification} />
                             </Scene>
                             <Scene key="terms" component={Terms}/>
 

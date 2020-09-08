@@ -19,6 +19,7 @@ import store from '../../store/configuteStore';
 import { connect } from "react-redux";
 import { setShowDeliver } from '../../actions';
 import OrderConfirm from '../../components/OrderConfirm';
+import { _e } from '../../lang';
 TouchableOpacity.defaultProps = { activeOpacity: 0.8 };
 
 class BookRequest extends React.Component {
@@ -106,74 +107,82 @@ class BookRequest extends React.Component {
         });
     }
     renderbookList() {
-        return this.state.bookList.map((deliver) => {
-            return <View key={deliver.order_uid}>
-                <View style={styles.space}>
-                </View>
-                <View style={[styles.section, { borderColor: Colors.secColor, borderWidth: deliver.deliver_uid ? 0 : 2}]}>
-                    <View style={[shared.flexCenter, {justifyContent: 'space-between'}]}>
-                        <View style={shared.flexCenter}>
-                            <BoldText style={[{width: 80,paddingTop: 0}, fonts.size14]}>{deliver.book_date ? moment(deliver.book_date).format("M/D")+"("+dayNamesShort[moment(deliver.book_date).format("d")]+"）" : ''}</BoldText>
-                            <BoldText style={[{color: Colors.secColor,paddingTop: 0}, fonts.size14]}>{deliver.book_date ? moment(deliver.book_date).format("HH:mm") : null}</BoldText>
-                        </View>
-                        <RegularText style={{color: Colors.secColor}}>にお客様にお届けするご予約です</RegularText>
+        if(this.state.bookList && this.state.bookList.length > 0 ) {
+            return this.state.bookList.map((deliver) => {
+                return <View key={deliver.order_uid}>
+                    <View style={styles.space}>
                     </View>
-                    <View style={[shared.flexCenter, {justifyContent: 'space-between'}, margin.mt2]}>
-                        <BoldText style={fonts.size14}>注文管理ナンバー</BoldText>
-                        <RegularText style={fonts.size14}>{deliver.order_uid}</RegularText>
-                    </View>
-                    <View style={[shared.flexCenter, margin.mt2]}>
-                        <View style={[shared.flexCenter, {width: 180}]}>
-                            <BoldText style={[fonts.size14, {width: 80}]}>エリア</BoldText>
-                            <RegularText style={{color: '#848484'}}>{deliver.area}</RegularText>
-                        </View>
-                        <View style={[shared.flexCenter, margin.ml4]}>
-                            <BoldText style={fonts.size14}>配達距離</BoldText>
-                            <RegularText style={[{color: '#848484'}, margin.ml2]}>{parseFloat(deliver.delivery_distance.distance/1000).toFixed(1)}km</RegularText>
-                        </View>
-                    </View>
-                    <View style={[shared.flexCenter, margin.mt2]}>
-                        <BoldText style={[fonts.size14, {width: 80}]}>店舗名</BoldText>
-                        <RegularText numberOfLines={1} style={[fonts.size14, {color: '#848484'}]}>{deliver.store_name}</RegularText>
-                    </View>
-                    <View style={[shared.flexCenter, margin.mt2]}>
-                        <BoldText style={[fonts.size14, {width: 80}]}>お届け先</BoldText>
-                        <RegularText numberOfLines={1} style={[fonts.size14, {color: '#848484'}]}>{deliver.customer_address.address}</RegularText>
-                    </View>
-                    <View style={[shared.flexCenter, margin.mt4, {justifyContent: 'space-between', alignItems: 'flex-end'}]}>
-                        {
-                            store.getState().user.uid == deliver.deliver_uid ?
-                            <TouchableOpacity style={[styles.deliverBtn, {backgroundColor: '#ED0E0E'}]}>
-                                <BoldText style={[fonts.size16, {color: 'white'}]}>店着時間　{deliver.book_date && deliver.delivery_distance ? moment(deliver.book_date).subtract(deliver.delivery_distance.duration, 'seconds').format("HH:mm") : moment(deliver.book_date).format("HH:mm")}</BoldText>
-                            </TouchableOpacity>
-                            :
-                            deliver.deliver_uid ?
-                            <View style={[styles.deliverBtn, {backgroundColor: '#F2F2F2'}]}>
-                                <BoldText style={[fonts.size16, {color: 'black'}]}>デリバー確定済み</BoldText>
+                    <View style={[styles.section, { borderColor: Colors.secColor, borderWidth: deliver.deliver_uid ? 0 : 2}]}>
+                        <View style={[shared.flexCenter, {justifyContent: 'space-between'}]}>
+                            <View style={shared.flexCenter}>
+                                <BoldText style={[{width: 80,paddingTop: 0}, fonts.size14]}>{deliver.book_date ? moment(deliver.book_date).format("M/D")+"("+dayNamesShort[moment(deliver.book_date).format("d")]+"）" : ''}</BoldText>
+                                <BoldText style={[{color: Colors.secColor,paddingTop: 0}, fonts.size14]}>{deliver.book_date ? moment(deliver.book_date).format("HH:mm") : null}</BoldText>
                             </View>
-                            :
-                            <TouchableOpacity style={[styles.deliverBtn, {backgroundColor: '#ED0E0E'}]} onPress={() => this.clickDeliver(deliver.order_uid, deliver.store_name, deliver.customer_address.address, deliver.store_cooking_time)}>
-                                <BoldText style={[fonts.size16, {color: 'white'}]}>私が配達します！</BoldText>
-                            </TouchableOpacity>
-                        }
-                        
-                        <View>
+                            <RegularText style={{color: Colors.secColor}}>にお客様にお届けするご予約です</RegularText>
+                        </View>
+                        <View style={[shared.flexCenter, {justifyContent: 'space-between'}, margin.mt2]}>
+                            <BoldText style={fonts.size14}>注文管理ナンバー</BoldText>
+                            <RegularText style={fonts.size14}>{deliver.order_uid}</RegularText>
+                        </View>
+                        <View style={[shared.flexCenter, margin.mt2]}>
+                            <View style={[shared.flexCenter, {width: 180}]}>
+                                <BoldText style={[fonts.size14, {width: 80}]}>エリア</BoldText>
+                                <RegularText style={{color: '#848484'}}>{deliver.area}</RegularText>
+                            </View>
+                            <View style={[shared.flexCenter, margin.ml4]}>
+                                <BoldText style={fonts.size14}>配達距離</BoldText>
+                                <RegularText style={[{color: '#848484'}, margin.ml2]}>{parseFloat(deliver.delivery_distance.distance/1000).toFixed(1)}km</RegularText>
+                            </View>
+                        </View>
+                        <View style={[shared.flexCenter, margin.mt2]}>
+                            <BoldText style={[fonts.size14, {width: 80}]}>店舗名</BoldText>
+                            <RegularText numberOfLines={1} style={[fonts.size14, {color: '#848484'}]}>{deliver.store_name}</RegularText>
+                        </View>
+                        <View style={[shared.flexCenter, margin.mt2]}>
+                            <BoldText style={[fonts.size14, {width: 80}]}>お届け先</BoldText>
+                            <RegularText numberOfLines={1} style={[fonts.size14, {color: '#848484'}]}>{deliver.customer_address.address}</RegularText>
+                        </View>
+                        <View style={[shared.flexCenter, margin.mt4, {justifyContent: 'space-between', alignItems: 'flex-end'}]}>
                             {
-                                deliver.car ?
-                                <View style={styles.carBtn}>
-                                    <RegularText style={[fonts.size14, {paddingTop: 1}]}>車限定</RegularText>
+                                store.getState().user.uid == deliver.deliver_uid ?
+                                <TouchableOpacity style={[styles.deliverBtn, {backgroundColor: '#ED0E0E'}]}>
+                                    <BoldText style={[fonts.size16, {color: 'white'}]}>店着時間　{deliver.book_date && deliver.delivery_distance ? moment(deliver.book_date).subtract(deliver.delivery_distance.duration, 'seconds').format("HH:mm") : moment(deliver.book_date).format("HH:mm")}</BoldText>
+                                </TouchableOpacity>
+                                :
+                                deliver.deliver_uid ?
+                                <View style={[styles.deliverBtn, {backgroundColor: '#F2F2F2'}]}>
+                                    <BoldText style={[fonts.size16, {color: 'black'}]}>デリバー確定済み</BoldText>
                                 </View>
                                 :
-                                null
+                                <TouchableOpacity style={[styles.deliverBtn, {backgroundColor: '#ED0E0E'}]} onPress={() => this.clickDeliver(deliver.order_uid, deliver.store_name, deliver.customer_address.address, deliver.store_cooking_time)}>
+                                    <BoldText style={[fonts.size16, {color: 'white'}]}>私が配達します！</BoldText>
+                                </TouchableOpacity>
                             }
-                            <TouchableOpacity onPress={() => this.goBookRequestDetail(deliver.order_uid, deliver.deliver_uid, deliver.delivery_distance)}>
-                                <BoldText style={[fonts.size14, {color: '#155CCE'}]}>注文内容を見る</BoldText>
-                            </TouchableOpacity>
+                            
+                            <View>
+                                {
+                                    deliver.car ?
+                                    <View style={styles.carBtn}>
+                                        <RegularText style={[fonts.size14, {paddingTop: 1}]}>車限定</RegularText>
+                                    </View>
+                                    :
+                                    null
+                                }
+                                <TouchableOpacity onPress={() => this.goBookRequestDetail(deliver.order_uid, deliver.deliver_uid, deliver.delivery_distance)}>
+                                    <BoldText style={[fonts.size14, {color: '#155CCE'}]}>注文内容を見る</BoldText>
+                                </TouchableOpacity>
+                            </View>
                         </View>
                     </View>
                 </View>
-            </View>
-        })
+            })
+        } else {
+            return (
+                <View style={[shared.flexCenter,margin.pt4, margin.pb4,{width: '100%', justifyContent: 'center'}]}>
+                    <RegularText style={fonts.size16}>{_e.noBookRequest}</RegularText>
+                </View>
+            )
+        }
     }
     render(){
         return (

@@ -56,11 +56,11 @@ class MyPage extends React.Component {
         })*/
         const { status } = await Location.requestPermissionsAsync();
         if (status === 'granted') {
-            /*await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
+            await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
                 accuracy: Location.Accuracy.BestForNavigation,
                 showsBackgroundLocationIndicator : false,
                 timeInterval: 60000
-            });*/
+            });
         }
         this.setState({ loaded: false })
         this.setState({ userInfo: store.getState().user })

@@ -67,7 +67,6 @@ class BookRequestDetail extends React.Component {
         await getOrderDetails(this.props.order_uid)
         .then(async (response) => {
             if (response.status == 1) {
-                console.log(response)
                 this.setState({ orderInfo: response.info })
                 if(response.info.status == 'delivering')
                     this.setState({orderStauts: 4})
@@ -92,11 +91,9 @@ class BookRequestDetail extends React.Component {
         this.setState({ loaded: false })
         await departStore(this.props.order_uid)
         .then(async (response) => {
-            console.log(response)
             if (response.status == 1) {
                 this.setState({ orderStauts: 4 })
                 let status = store.getState().showDeliver
-                console.log(status)
                 let orderUid = status.orderUid
                 let orderBookUid = status.orderBookUid
                 if(orderUid.length > 0) {
@@ -405,14 +402,14 @@ class BookRequestDetail extends React.Component {
         if(type == 'both') {
             this.toStoreChat()
             this.toCustomerChat()
-            Actions.push("chatlist", {customer: this.state.customerInfo, store: this.state.orderInfo, author: myInfo, order_uid: this.props.order_uid})
+            Actions.push("chatlist", { store_name: this.state.orderInfo.store_name, author: myInfo, order_uid: this.props.order_uid})
         } else {
             if(type== 'store'){
                 this.toStoreChat()
             } else if(type == 'customer') {
                 this.toCustomerChat()
             }
-            Actions.push("chatlist", {customer: this.state.customerInfo, store: this.state.orderInfo, author: myInfo, order_uid: this.props.order_uid})
+            Actions.push("chatlist", {store_name: this.state.orderInfo.store_name, author: myInfo, order_uid: this.props.order_uid})
         }
         
     }
@@ -458,7 +455,7 @@ class BookRequestDetail extends React.Component {
     }
     phoneCall(phone) {
         if(phone)
-            Linking.openURL("tel:+12314123")
+            Linking.openURL("tel:"+phone)
         else
             Alert.alert(_e.noPhone)
     }

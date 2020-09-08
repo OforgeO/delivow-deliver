@@ -103,6 +103,12 @@ class Login extends React.Component {
             notify.title = notify_data.body.title
             notify.subtitle = notify_data.body.body
             this.props.setNotify(notify)
+        } else if(notify_data.body.type == 'chat') {
+            if(Actions.currentScene != 'chat' && Actions.currentScene != 'chatlist'){
+                Actions.push("chatlist", { order_uid: notify_data.body.order_uid, author: store.getState().user, store_name: notify_data.body.store_name })
+            }
+            else
+                Actions.refresh();
         }
         if(notify_data.body.type == "delivery_order_request" || notify_data.body.type == "delivery_order_car" || notify_data.body.type == "delivery_order_serveral") {
             Notifications.scheduleNotificationAsync({

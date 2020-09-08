@@ -654,3 +654,11 @@ export async function updateVehicleImage(vehicle, number) {
     };
     return fetch(`${base_url}delivery/user/update_vehicle_image`, options).then((resp) => resp.json());
 }
+
+export async function sendNotification(author, target, message, order_uid) {
+    return createCall(
+        'customer/user/send_notification',
+        {author, target, message, order_uid},
+        null
+    );
+}

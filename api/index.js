@@ -662,3 +662,10 @@ export async function sendNotification(author, target, message, order_uid) {
         null
     );
 }
+
+export function registerWithCustomer(phone) {
+    return createCall(
+        'delivery/auth/register_with_customer',
+        {phone},
+    );
+}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, TouchableOpacity, SafeAreaView, Platform } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, SafeAreaView, Platform, Alert } from 'react-native';
 import { Container, Content, Item, Input, Text } from 'native-base';
 import { normalize, fonts, margin, form, shared} from '../../assets/styles';
 import { showToast } from '../../shared/global';
@@ -8,7 +8,7 @@ import { setUser } from '../../actions';
 import {Actions} from 'react-native-router-flux';
 import Spinner_bar from 'react-native-loading-spinner-overlay';
 import Colors from '../../constants/Colors';
-import { registerSms, updatePhone } from '../../api';
+import { registerSms, updatePhone, registerWithCustomer } from '../../api';
 import { RegularText, BoldText } from '../../components/StyledText';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Constants from 'expo-constants';
@@ -68,6 +68,24 @@ class PhoneSignup extends React.Component {
                         if(response.status == 1){
                             showToast(response.message, 'success')
                             Actions.push("smsverify", {phone: this.state.phone})
+                        } else if(response.status == 2) {
+                            var _self = this;
+                            setTimeout(function() {
+                                Alert.alert("この番号は、お客様アカウントとして登録済みです。\nアカウント情報をデリバー情報として登録しますか？", "氏名・生年月日・メールアドレス・パスワードの入力を省略できます。", 
+                                    [
+                                        {
+                                            text: 'やめておく',
+                                            onPress: () => Actions.pop()
+                                        },
+                                        {
+                                            text: "登録する", onPress: () => {
+                                                _self.registerWithCustomer(_self.state.phone)
+                                            }
+                                        }
+                                    ],
+                                    { cancelable: false }
+                                );
+                            }, 300);
                         } else{
                             showToast(response.message)
                         }
@@ -80,6 +98,18 @@ class PhoneSignup extends React.Component {
             }
             
         }
+    }
+    async registerWithCustomer(phone) {
+        this.setState({loaded: false});
+        await registerWithCustomer(phone)
+        .then(async (response) => {
+            this.setState({loaded: true});
+            Actions.push("avatarregister", {phone: phone})
+        })
+        .catch((error) => {
+            this.setState({loaded: true});
+            showToast();
+        });
     }
     render(){
         return (

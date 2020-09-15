@@ -21,6 +21,7 @@ import { showToast } from '../../shared/global';
 import { setUser,setShowDeliver } from '../../actions';
 import * as SecureStore from 'expo-secure-store';
 import OrderConfirm from '../../components/OrderConfirm';
+
 const LOCATION_TASK_NAME = 'background-location-task';
 var curTimeInterval = null;
 class MyPage extends React.Component {
@@ -46,7 +47,7 @@ class MyPage extends React.Component {
                 orderBookUid: []
             })
             await SecureStore.deleteItemAsync("token")
-            Actions.reset("login")
+            Actions.reset("signup")
         }
         /*this.props.setShowDeliver({
             showDeliver: false,
@@ -56,11 +57,11 @@ class MyPage extends React.Component {
         })*/
         const { status } = await Location.requestPermissionsAsync();
         if (status === 'granted') {
-            await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
+            /*await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
                 accuracy: Location.Accuracy.BestForNavigation,
                 showsBackgroundLocationIndicator : false,
                 timeInterval: 60000
-            });
+            });*/
         }
         this.setState({ loaded: false })
         this.setState({ userInfo: store.getState().user })

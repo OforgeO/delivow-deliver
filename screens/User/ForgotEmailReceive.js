@@ -48,9 +48,9 @@ class ForgotEmailReceive extends React.Component {
                     flexDirection: 'column',
                     justifyContent: 'center'
                 }]}>
-                    <View style={{flex: 1, justifyContent: 'center'}}>
+                    <View style={{flex: 1, justifyContent: 'center', marginBottom: 70}}>
                         <BoldText style={fonts.size32}>デリボから送られたメールを確認</BoldText>
-                        <RegularText style={[fonts.siz16, margin.mt2]}>本文に添付されているリンクから、パスワードの再設定をしてください。</RegularText>
+                        <RegularText style={[fonts.siz16, margin.mt4]}>本文に添付されているリンクから、パスワードの再設定をしてください。</RegularText>
                         <TouchableOpacity style={styles.goDliever} onPress={() => this.resendEmail()}>
                             <Ionicons name="ios-arrow-dropright-circle" size={24} color={Colors.secColor} />
                             <BoldText style={[fonts.size14, {color: Colors.secColor, marginLeft: 5}]}>届かないのでメールを再送する</BoldText>
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     goDliever: {
         flexDirection: 'row', 
         alignItems: 'center', 
-        marginTop: normalize(15), 
+        marginTop: normalize(35), 
         width: '100%'
     },
 });

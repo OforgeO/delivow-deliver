@@ -38,11 +38,11 @@ class ForgotPwd extends React.Component {
         } else{
             this.setState({passwordError: false})
             this.setState({loaded: false})
-            await resetPassword('3KzVq8LzSWeeVKdkJssM9iqyg4WtAegMAGdvSRw+', this.state.password)
+            await resetPassword(this.props.token, this.state.password)
             .then(async (response) => {
                 this.setState({loaded: true});
                 if(response.status == 1){
-                    Actions.reset("login")
+                    Actions.reset("signup")
                 } else{
                     showToast(response.message)
                 }

@@ -45,7 +45,7 @@ export default class DeliverHistory extends React.Component {
     renderList(){
         if(this.state.listViewData.length > 0) {
             return this.state.listViewData.map((list) => {
-                return <TouchableOpacity key={list.uid} style={styles.rowFrontSection} onPress={() => this.choose(list.uid)}>
+                return <TouchableOpacity key={list.uid} style={styles.rowFrontSection}>
                     <View style={styles.rowFront}>
                         <View style={{width: (Layout.window.width - 40)*0.3, borderRadius: 10, overflow: 'hidden'}}>
                             <Image source={{uri: list.store_photo ? list.store_photo : ''}} style={{width: (Layout.window.width - 40)*0.3, height: (Layout.window.width - 40)*0.3}} resizeMode="stretch" />

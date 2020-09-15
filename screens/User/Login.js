@@ -135,6 +135,7 @@ class Login extends React.Component {
     }
 
     navigate(url) {
+        console.log(url)
         if (!url) return;
         let { queryParams } = Linking1.parse(url);
         if(queryParams && queryParams.token) {

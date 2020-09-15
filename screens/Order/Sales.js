@@ -213,7 +213,7 @@ export default class Sales extends React.Component {
                             </View>
                         </View>
                     </View>
-                    <List icon="coins" font5={true} title="振込状況を確認" size={14} clickEvent={this.transfer.bind(this)}/>
+                    <List icon="coins" font5={true} title="週別実績を確認" size={14} clickEvent={this.transfer.bind(this)}/>
                     <List icon="file-text" font5={false} title="配達報酬明細表(年度)" size={14} clickEvent={this.deliverfee.bind(this)}/>
                 </ScrollView>
                 <Spinner_bar color={'#27cccd'} visible={!this.state.loaded} textContent={""} overlayColor={"rgba(0, 0, 0, 0.5)"} />

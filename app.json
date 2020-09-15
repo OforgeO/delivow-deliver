@@ -46,7 +46,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.delivow.deliver.jp",
-      "buildNumber" : "11",
+      "buildNumber" : "13",
       "config" : {
         "googleMapsApiKey" : "AIzaSyDKnoMsrfivglgqGV875Q-emWYkIBHvBWs"
       },
@@ -54,8 +54,17 @@
         "UIBackgroundModes": [
           "location",
           "fetch"
-        ]
+        ],
+        "CFBundleAllowMixedLocalizations" : true,
+        "CFBundleLocalizations" : ["ja"],
+        "CFBundleDevelopmentRegion" : "ja_JP"
       }
+    },
+    "locales": {
+      "ja": "./japan.json"
+    },
+    "notification" : {
+      "icon": "./assets/images/push_icon.png"
     },
     "web": {
       "favicon": "./assets/images/favicon.png"

@@ -133,8 +133,8 @@ export default function App(props) {
                             </Scene>
                             <Scene key="terms" component={Terms}/>
 
-                            <Scene key="login" component={Login} initial />
-                            <Scene key="signup" component={Signup} />
+                            <Scene key="login" component={Login}  />
+                            <Scene key="signup" component={Signup} initial/>
                             <Scene key="phonelogin" component={PhoneLogin} />
                             <Scene key="forgotemailinput" component={ForgotEmailInput} />
                             <Scene key="forgotemailreceive" component={ForgotEmailReceive} />

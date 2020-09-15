@@ -179,7 +179,7 @@ class EditAccount extends React.Component {
             orderBookUid: []
         })
         await SecureStore.deleteItemAsync("token")
-        Actions.reset("login")
+        Actions.reset("signup")
     }
 
     render() {
@@ -203,9 +203,12 @@ class EditAccount extends React.Component {
                                 </View>
                                 <View style={[margin.ml4, shared.flexCenter, { justifyContent: 'space-between', flex: 1, marginBottom: 18 }]}>
                                     <RegularText style={[fonts.size18]}>{this.state.userInfo && this.state.userInfo.first_name && this.state.userInfo.last_name ? this.state.userInfo.first_name + ' ' + this.state.userInfo.last_name : '名前が入ります'}</RegularText>
-                                    <TouchableOpacity onPress={() => { Actions.push("editname") }}>
-                                        <RegularText style={[fonts.size14, { color: Colors.secColor }]}>修正</RegularText>
-                                    </TouchableOpacity>
+                                    {
+                                        /*<TouchableOpacity onPress={() => { Actions.push("editname") }}>
+                                            <RegularText style={[fonts.size14, { color: Colors.secColor }]}>修正</RegularText>
+                                        </TouchableOpacity>*/
+                                    }
+                                    
                                 </View>
                             </View>
                             <View style={styles.container}>

@@ -185,8 +185,7 @@ class VehicleNoRegister extends React.Component {
                                             <RegularText style={styles.label}>車両ナンバー</RegularText>
                                             <Item rounded style={ this.state.vehicleNoError ? [form.item, styles.error] : [form.item] }>
                                                 <Input
-                                                    placeholder = "メールアドレスを入力…"
-                                                    keyboardType="number-pad"
+                                                    placeholder = "豊橋000　み　0000"
                                                     value = { this.state.vehicleNo }
                                                     style = { [form.input, fonts.size20, {lineHeight: normalize(23)}] }
                                                     onChangeText = {(text) => this.setState({vehicleNo: text})}

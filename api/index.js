@@ -669,3 +669,10 @@ export function registerWithCustomer(phone) {
         {phone},
     );
 }
+
+export function makeVoice() {
+    return createCall(
+        'make_voice',
+        {param: '', param2: ''},
+    );
+}

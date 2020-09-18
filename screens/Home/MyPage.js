@@ -10,7 +10,7 @@ import Images from '../../assets/Images';
 import List from '../../components/List';
 import moment from 'moment';
 import { RegularText, BoldText } from '../../components/StyledText';
-import { getDeliveryInfos, getReservationList, getCurrentOrders, getUser, setDeliveryStatus } from '../../api';
+import { getDeliveryInfos, getReservationList, getCurrentOrders, getUser, setDeliveryStatus, makeVoice } from '../../api';
 import Spinner_bar from 'react-native-loading-spinner-overlay';
 import * as Location from 'expo-location';
 import store from '../../store/configuteStore';
@@ -81,6 +81,14 @@ class MyPage extends React.Component {
             this.setState({ loaded: true });
             showToast();
         });
+
+        /*await makeVoice()
+        .then(async (response) => {
+            console.log('111', response)
+        })
+        .catch((error) => {
+            console.log('222', error)
+        });*/
         
 
         await getCurrentOrders()
@@ -242,7 +250,7 @@ class MyPage extends React.Component {
                                                 this.state.todayInfo ?
                                                     this.state.todayInfo.rating
                                                     :
-                                                    null
+                                                    0
                                             }
                                         </RegularText>
                                         <RegularText style={[fonts.size14, { color: Colors.mainColor, paddingTop: 1 }, margin.ml1]}>
@@ -250,7 +258,7 @@ class MyPage extends React.Component {
                                                 this.state.todayInfo ?
                                                     '(' + this.state.todayInfo.rating_count + ')'
                                                     :
-                                                    null
+                                                    '(0)'
                                             }
                                         </RegularText>
                                     </View>

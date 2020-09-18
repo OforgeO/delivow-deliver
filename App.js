@@ -115,6 +115,7 @@ export default function App(props) {
                                         <Scene key="updatepassword" component={UpdatePassword} />
                                         <Scene key="vehicleregister" component={VehicleRegister} />
                                         <Scene key="deliverhistory" component={DeliverHistory} />
+                                        <Scene key="shiftregister" component={ShiftRegister} />
                                     </Scene>
                                     <Scene key="order" title="売上管理" type="FontAwesome5" reset="sales" name="coins" icon={TabBarIcon} hideNavBar={true} >
                                         <Scene key="sales" component={Sales} hideNavBar={true} initial />

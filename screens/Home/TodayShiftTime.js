@@ -28,10 +28,12 @@ export default class TodayShiftTime extends React.Component {
         }
     }
     componentDidMount() {
-        let todayTime = this.props.shift_hours[moment().format('d')]
-        if (todayTime && todayTime.length > 0) {
-            this.setState({ startTime: todayTime[0] })
-            this.setState({ endTime: todayTime[1] })
+        if(this.props.shift_hours) {
+            let todayTime = this.props.shift_hours[moment().format('d')]
+            if (todayTime && todayTime.length > 0) {
+                this.setState({ startTime: todayTime[0] })
+                this.setState({ endTime: todayTime[1] })
+            }
         }
     }
     hideDatePicker = () => {
@@ -54,12 +56,15 @@ export default class TodayShiftTime extends React.Component {
 
     async nextScreen() {
         let shift = this.props.shift_hours
+        if(shift == null ) {
+            shift = [[], [], [], [], [], [], []];
+        }
         shift[moment().format('d')] = [this.state.startTime, this.state.endTime]
         this.setState({ loaded: false })
         await updateShift(shift)
             .then(async (response) => {
                 if (response.status == 1) {
-                    Actions.pop()
+                    Actions.pop({shift_hours : shift})
                     setTimeout(function () {
                         Actions.refresh()
                     }, 10);

@@ -59,7 +59,6 @@ export default class AllowNotification extends React.Component {
                                     </View>
                                 </View>
                                 <View style={{flex: 1, justifyContent: 'flex-end'}}>
-
                                     <View style={{justifyContent: 'center', alignItems: 'center', width: '100%', bottom: 30,}}>
                                         <TouchableOpacity onPress={() => this.nextScreen()} style={{borderRadius: 12, width: '100%',backgroundColor: Colors.secColor }}>
                                             <RegularText style={[styles.btnText , fonts.size16]}>通知設定を変更</RegularText>

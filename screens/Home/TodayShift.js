@@ -31,8 +31,11 @@ export default class TodayShift extends React.Component {
         this.refresh()
     }
     refresh() {
-        let today_time = this.props.shift_hours[moment().format("d")]
-        this.setState({today_time : today_time})
+        if(this.props.shift_hours) {
+            let today_time = this.props.shift_hours[moment().format("d")]
+            this.setState({today_time : today_time})
+        }
+        
     }
     nextScreen() {
         Actions.pop();

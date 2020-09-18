@@ -34,6 +34,7 @@ export default class ShiftRegister extends React.Component {
         this.setState({ loaded: false })
         await getShift()
         .then(async (response) => {
+            console.log(response)
             if(response.status == 1) {
                 let shift = response.shift
                 shift = JSON.parse(shift)
@@ -113,16 +114,16 @@ export default class ShiftRegister extends React.Component {
                     option.selected ?
                     <View style={shared.flexCenter}>
                         <TouchableOpacity onPress={() => this.chooseTime(option.id, 1)}>
-                            <BoldText style={[fonts.size14, {color: Colors.secColor}]}>{option.time1}</BoldText>
+                            <BoldText style={[fonts.size14, {color: Colors.secColor}]}>{option.time1 ? option.time1 : '00:00'}</BoldText>
                         </TouchableOpacity>
                         <BoldText style={{color: 'black'}}>-</BoldText>
                         <TouchableOpacity onPress={() => this.chooseTime(option.id, 2)}>
-                            <BoldText style={[fonts.size14, {color: Colors.secColor}]}>{option.time2}</BoldText>
+                            <BoldText style={[fonts.size14, {color: Colors.secColor}]}>{option.time2 ? option.time2 : '00:00'}</BoldText>
                         </TouchableOpacity>
                     </View>
                     :
                     <View style={shared.flexCenter}>
-                        <BoldText style={[fonts.size14, {color: '#d3d3d3'}]}>{option.time1 + '-' + option.time2}</BoldText>
+                        <BoldText style={[fonts.size14, {color: '#d3d3d3'}]}>{option.time1 ? option.time1 : '00:00' + '-' + option.time2 ? option.time2 : '00:00'}</BoldText>
                     </View>
                 }
             </View>

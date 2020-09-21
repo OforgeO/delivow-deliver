@@ -119,9 +119,9 @@ export default class ChatList extends React.Component {
         return (
             <Container style={[shared.mainContainer]}>
                 {Platform.OS === 'ios' && <StatusBar barStyle="dark-content" backgroundColor="white" />}
-                <OrderConfirm />
+                
                 <SafeAreaView style={{ flex: 1 }}>
-                    <ScrollView ref={ref => this.scrollRef = ref} style={{ flex: 1, backgroundColor: '#f2f2f2' }} contentContainerStyle={{paddingTop: store.getState().showDeliver.showDeliver && store.getState().showDeliver.showBookDeliver ? 100 : (store.getState().showDeliver.showDeliver || store.getState().showDeliver.showBookDeliver) ? 50 : 0}}>
+                    <ScrollView ref={ref => this.scrollRef = ref} style={{ flex: 1, backgroundColor: '#f2f2f2' }} >
                         <View style={{ flex: 1, backgroundColor: 'white' }}>
                             <Back color="#d3d3d3" />
                             <View style={[margin.pb3, { borderBottomWidth: 1, borderBottomColor: '#f2f2f2' }]}>

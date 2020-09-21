@@ -78,6 +78,7 @@ class MyPage extends React.Component {
                 showToast(response.message)
         })
         .catch((error) => {
+            console.log(error)
             this.setState({ loaded: true });
             showToast();
         });

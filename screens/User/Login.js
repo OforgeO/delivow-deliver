@@ -135,7 +135,6 @@ class Login extends React.Component {
     }
 
     navigate(url) {
-        console.log(url)
         if (!url) return;
         let { queryParams } = Linking1.parse(url);
         if(queryParams && queryParams.token) {
@@ -166,9 +165,12 @@ class Login extends React.Component {
                 </LinearGradient>
                 <View style={{flex: 1}}>
                 </View>
-                <View style={{flex: 5}}>
-                    <Image source={Images.login_bg_img} style={{height: '100%', width: '100%'}} resizeMode="stretch"/>
-                </View>
+                {
+                    /*<View style={{flex: 5}}>
+                        <Image source={Images.login_bg_img} style={{height: '100%', width: '100%'}} resizeMode="stretch"/>
+                    </View>*/
+                }
+                
                 <View style={{flex: 1, backgroundColor: 'rgb(210,223,215)'}}>
                 </View>
                 <Spinner_bar color={'#27cccd'} visible={!this.state.loaded} textContent={""} overlayColor={"rgba(0, 0, 0, 0.5)"} />

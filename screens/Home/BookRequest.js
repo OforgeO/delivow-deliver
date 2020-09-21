@@ -83,23 +83,31 @@ class BookRequest extends React.Component {
     }
     async confirm(order_uid, store_name, area, cooking_time) {
         this.setState({loaded: false})
+        var _self = this;
         await confirmOrder(order_uid)
         .then(async (response) => {
+            this.setState({loaded: true});
             if(response.status == 1) {
-                Alert.alert("ありがとうございます！\nあなたがこの注文の配達担当者となりました。", "");
-                let status = store.getState().showDeliver
-                status.orderBookUid.push(order_uid)
-                this.props.setShowDeliver({
-                    showDeliver: status.showDeliver,
-                    showBookDeliver: true,
-                    orderUid: status.order_uid,
-                    orderBookUid: status.orderBookUid
-                })
-                this.refresh();
+                setTimeout(function() {
+                    Alert.alert("ありがとうございます！\nあなたがこの注文の配達担当者となりました。", "", [
+                        {text: "OK", onPress : () => {
+                            let status = store.getState().showDeliver
+                            status.orderBookUid.push(order_uid)
+                            _self.props.setShowDeliver({
+                                showDeliver: status.showDeliver,
+                                showBookDeliver: true,
+                                orderUid: status.order_uid,
+                                orderBookUid: status.orderBookUid
+                            })
+                            _self.refresh();
+                        } }
+                    ]);
+                    
+                }, 500)
+                
             } else {
                 showToast(response.message)
             }
-            this.setState({loaded: true});
         })
         .catch((error) => {
             this.setState({loaded: true});

@@ -296,22 +296,24 @@ class BookRequestDetail extends React.Component {
     }
     renderOrderList(products) {
         return products.map((product, index) => {
-            return <TouchableOpacity key={product.product_uid}  onPress={() => this.checkOption(product.product_uid)}>
-                <View key={product.product_uid} style={[shared.flexCenter, { justifyContent: 'space-between', borderTopWidth: 1, borderTopColor: '#f2f2f2', paddingVertical: 13 }]}>
-                <View style={[shared.flexCenter, { flex: 1, alignItems: 'flex-start' }]}>
-                    <FontAwesome name={"check-circle"} size={20} color={product.selected || (this.state.orderInfo && this.state.orderInfo.status == 'delivering') ? Colors.secColor : '#848484'} />
-                    <BoldText style={[fonts.size14, margin.ml1, { color: product.selected || (this.state.orderInfo && this.state.orderInfo.status == 'delivering') ? 'black' : '#848484' }]}>{product.product_name}</BoldText>
+            return <View>
+                <TouchableOpacity key={product.product_uid}  onPress={() => this.checkOption(product.product_uid)}>
+                    <View key={product.product_uid} style={[shared.flexCenter, { justifyContent: 'space-between', borderTopWidth: 1, borderTopColor: '#f2f2f2', paddingVertical: 13 }]}>
+                    <View style={[shared.flexCenter, { flex: 1, alignItems: 'flex-start' }]}>
+                        <FontAwesome name={"check-circle"} size={20} color={product.selected || (this.state.orderInfo && this.state.orderInfo.status == 'delivering') ? Colors.secColor : '#848484'} />
+                        <BoldText style={[fonts.size14, margin.ml1, { color: product.selected || (this.state.orderInfo && this.state.orderInfo.status == 'delivering') ? 'black' : '#848484' }]}>{product.product_name}</BoldText>
+                    </View>
+                    <RegularText style={[fonts.size14, { color: product.selected || (this.state.orderInfo && this.state.orderInfo.status == 'delivering') ? 'black' : '#848484', width: 120, textAlign: 'right' }]}>数量 {product.quantity}</RegularText>
+                    
                 </View>
-                <RegularText style={[fonts.size14, { color: product.selected || (this.state.orderInfo && this.state.orderInfo.status == 'delivering') ? 'black' : '#848484', width: 120, textAlign: 'right' }]}>数量 {product.quantity}</RegularText>
-                
-            </View>
+            </TouchableOpacity>
             {
                 product.options && product.options.length > 0 ?
                 this.renderOption(product.product_uid, product.options)
                 :
                 null
             }
-            </TouchableOpacity>
+            </View>
         })
     }
     renderOption(product_id, options) {

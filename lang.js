@@ -1,5 +1,5 @@
 export const _e = {
-    connectionError: "インターネット連結不具合",
+    connectionError: "再度操作してください。",
     noDeliverData: "一度も配達をしてません。",
     noTranfer: "入金したことがありません。",
     noDeliverHistory: '今月の配達履歴はありません。',

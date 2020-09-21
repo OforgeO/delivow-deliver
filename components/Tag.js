@@ -4,7 +4,7 @@ import { FontAwesome, FontAwesome5, MaterialCommunityIcons } from '@expo/vector-
 import Colors from '../constants/Colors';
 import Layout from '../constants/Layout';
 import { RegularText , BoldText } from './StyledText';
-export default class CardInfo extends React.Component {
+export default class Tag extends React.Component {
 
   render() {
     return (

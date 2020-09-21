@@ -34,7 +34,6 @@ export default class ShiftRegister extends React.Component {
         this.setState({ loaded: false })
         await getShift()
         .then(async (response) => {
-            console.log(response)
             if(response.status == 1) {
                 let shift = response.shift
                 shift = JSON.parse(shift)
@@ -104,11 +103,12 @@ export default class ShiftRegister extends React.Component {
     }
 
     renderDateList() {
+        console.log(this.state.dateList)
         return this.state.dateList.map((option, index) => {
             return <View key={index} style={[shared.flexCenter, {justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: '#f2f2f2', paddingVertical: 10}]}>
                     <TouchableOpacity style={[shared.flexCenter]} onPress={() => this.checkDate(option.id)}>
                     <FontAwesome name="check-circle" size={20} color={option.selected ? Colors.secColor : '#D3D3D3'} />
-                    <RegularText style={option.selected ? [fonts.size14, margin.ml1] : [fonts.size18, margin.ml1, {color: '#d3d3d3'}]}>{option.date}</RegularText>
+                    <RegularText style={option.selected ? [fonts.size14, margin.ml1] : [fonts.size14, margin.ml1, {color: '#d3d3d3'}]}>{option.date}</RegularText>
                 </TouchableOpacity>
                 {
                     option.selected ?
@@ -123,7 +123,7 @@ export default class ShiftRegister extends React.Component {
                     </View>
                     :
                     <View style={shared.flexCenter}>
-                        <BoldText style={[fonts.size14, {color: '#d3d3d3'}]}>{option.time1 ? option.time1 : '00:00' + '-' + option.time2 ? option.time2 : '00:00'}</BoldText>
+                        <BoldText style={[fonts.size14, {color: '#d3d3d3'}]}>{option.time1 ? option.time1 : '00:00'}-{option.time2 ? option.time2 : '00:00'}</BoldText>
                     </View>
                 }
             </View>

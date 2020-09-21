@@ -38,7 +38,6 @@ class SplashScreen extends React.Component {
     }
     navigate( url) {
         if (!url) return;
-        console.log('deep link----', url)
     }
     componentWillUnmount() {
         Linking.removeEventListener('url', this.handleOpenURL);

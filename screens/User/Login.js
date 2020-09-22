@@ -52,7 +52,6 @@ class Login extends React.Component {
         this.setState({loaded: true})
     }
     handleNotification(notify_data, type) {
-        console.log(notify_data)
         if(notify_data.body.type == "terms" || notify_data.body.type == "commercial" || notify_data.body.type == "personal") {
             let termsInfo = store.getState().terms
             if(notify_data.body.type == "terms")

@@ -174,7 +174,7 @@ class AvatarRegister extends React.Component {
                                             <TouchableOpacity style={styles.avatarSection} onPress={() => this.chooseAvatar()}>
                                                 {
                                                     this.state.imagePath ?
-                                                    <Image source={{uri: this.state.imagePath}} resizeMode="stretch" style={{width: '100%', height: '100%'}} />
+                                                    <Image source={{uri: this.state.imagePath, cache: 'force-cache'}} resizeMode="stretch" style={{width: '100%', height: '100%'}} />
                                                     :
                                                     <View style={shared.flexCenter}>
                                                         <FontAwesome name={"upload"} color={Colors.secColor} size={18} />

@@ -78,18 +78,9 @@ class MyPage extends React.Component {
                 showToast(response.message)
         })
         .catch((error) => {
-            console.log(error)
             this.setState({ loaded: true });
             showToast();
         });
-
-        /*await makeVoice()
-        .then(async (response) => {
-            console.log('111', response)
-        })
-        .catch((error) => {
-            console.log('222', error)
-        });*/
         
 
         await getCurrentOrders()
@@ -215,7 +206,7 @@ class MyPage extends React.Component {
                     <ScrollView ref={ref => this.scrollRef = ref} contentContainerStyle={{backgroundColor: '#f2f2f2',flex: 1, paddingTop: store.getState().showDeliver.showDeliver && store.getState().showDeliver.showBookDeliver ? 100 : (store.getState().showDeliver.showDeliver || store.getState().showDeliver.showBookDeliver) ? 50 : 0}} >
                         <View style={{backgroundColor: 'white'}}>
                             <View style={[styles.avatarSection]}>
-                                <Image source={this.state.userInfo && this.state.userInfo.photo ? { uri: this.state.userInfo.photo } : Images.avatar} style={{ width: 58, height: 58, borderRadius: 29 }} />
+                                <Image source={this.state.userInfo && this.state.userInfo.photo ? { uri: this.state.userInfo.photo, cache: 'force-cache' } : Images.avatar} style={{ width: 58, height: 58, borderRadius: 29 }} />
                                 <View style={[margin.ml2]}>
                                     <View style={[shared.flexCenter]}>
                                         <BoldText style={[fonts.size14]}>

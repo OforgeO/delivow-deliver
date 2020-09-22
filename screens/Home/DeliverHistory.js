@@ -48,7 +48,7 @@ export default class DeliverHistory extends React.Component {
                 return <TouchableOpacity key={list.uid} style={styles.rowFrontSection}>
                     <View style={styles.rowFront}>
                         <View style={{width: (Layout.window.width - 40)*0.3, borderRadius: 10, overflow: 'hidden'}}>
-                            <Image source={{uri: list.store_photo ? list.store_photo : ''}} style={{width: (Layout.window.width - 40)*0.3, height: (Layout.window.width - 40)*0.3}} resizeMode="stretch" />
+                            <Image source={{uri: list.store_photo ? list.store_photo : '', cache: 'force-cache'}} style={{width: (Layout.window.width - 40)*0.3, height: (Layout.window.width - 40)*0.3}} resizeMode="stretch" />
                         </View>
                         <View style={[shared.flexCenter, {justifyContent: 'space-between', width: (Layout.window.width - 40)*0.7}]}>
                             <View style={[margin.pl3, {justifyContent: 'space-between', height: (Layout.window.width - 40)*0.3, paddingVertical: 10}]}>

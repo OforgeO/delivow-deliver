@@ -86,10 +86,10 @@ export default class ChatList extends React.Component {
             return <TouchableOpacity key={index} style={styles.chatSection} onPress={() => this.gotoChat(chat)}>
                 <View style={{ alignItems: 'center' }}>
                     <Image source={
-                        chat.receiverRole == 'customer' && chat.receiverAvatar ? {uri: chat.receiverAvatar} :
-                        chat.senderRole == 'customer' && chat.senderAvatar ? {uri: chat.senderAvatar} : 
-                        chat.receiverRole == 'store' && chat.receiverAvatar ? {uri: chat.receiverAvatar} : 
-                        chat.senderRole == 'store' && chat.senderAvatar ? {uri: chat.senderAvatar} : Images.avatar} 
+                        chat.receiverRole == 'customer' && chat.receiverAvatar ? {uri: chat.receiverAvatar, cache: 'force-cache'} :
+                        chat.senderRole == 'customer' && chat.senderAvatar ? {uri: chat.senderAvatar, cache: 'force-cache'} : 
+                        chat.receiverRole == 'store' && chat.receiverAvatar ? {uri: chat.receiverAvatar, cache: 'force-cache'} : 
+                        chat.senderRole == 'store' && chat.senderAvatar ? {uri: chat.senderAvatar, cache: 'force-cache'} : Images.avatar} 
                         style={{ width: 50, height: 50, borderRadius: 25 }} />
                 </View>
                 <View style={[margin.ml4, shared.flexCenter, { justifyContent: 'space-between', alignItems: 'flex-start', flex: 1 }]}>

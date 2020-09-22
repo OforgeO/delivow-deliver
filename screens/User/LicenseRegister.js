@@ -311,7 +311,7 @@ class LicenseRegister extends React.Component {
                                     <View style={this.state.imageFrontError ? [styles.licenseImg, styles.error] : styles.licenseImg}>
                                         {
                                             this.state.imageFront ?
-                                            <Image source={{uri: this.state.imageFront}} style={{width: '100%', height: '100%'}} resizeMode="stretch" />
+                                            <Image source={{uri: this.state.imageFront, cache: 'force-cache'}} style={{width: '100%', height: '100%'}} resizeMode="stretch" />
                                             :
                                             <TouchableOpacity onPress={() => this.chooseImage(1)} style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
                                                 <FontAwesome name={"upload"} color={Colors.secColor} size={40} />
@@ -323,7 +323,7 @@ class LicenseRegister extends React.Component {
                                     <View style={this.state.imageBackError ? [styles.licenseImg, styles.error] : styles.licenseImg}>
                                         {
                                             this.state.imageBack ?
-                                            <Image source={{uri: this.state.imageBack}} style={{width: '100%', height: '100%'}} resizeMode="stretch" />
+                                            <Image source={{uri: this.state.imageBack, cache: 'force-cache'}} style={{width: '100%', height: '100%'}} resizeMode="stretch" />
                                             :
                                             <TouchableOpacity onPress={() => this.chooseImage(2)} style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
                                                 <FontAwesome name={"upload"} color={Colors.secColor} size={40} />

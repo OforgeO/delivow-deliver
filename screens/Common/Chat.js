@@ -82,7 +82,7 @@ export default class Chat extends React.Component {
                         chat.senderUID != this.props.author.uid ?
                             <View style={[shared.flexCenter, { flex: 1, alignItems: 'flex-end' }]}>
                                 <View>
-                                    <Image source={chat.senderAvatar ? { uri: chat.senderAvatar } : Images.avatar} style={{ width: 36, height: 36, borderRadius: 18 }} />
+                                    <Image source={chat.senderAvatar ? { uri: chat.senderAvatar, cache: 'force-cache' } : Images.avatar} style={{ width: 36, height: 36, borderRadius: 18 }} />
                                 </View>
 
                                 <View style={styles.chatText}>
@@ -103,7 +103,7 @@ export default class Chat extends React.Component {
                                 </View>
 
                                 <View>
-                                    <Image source={chat.senderAvatar ? { uri: chat.senderAvatar } : Images.avatar} style={{ width: 36, height: 36, borderRadius: 18 }} />
+                                    <Image source={chat.senderAvatar ? { uri: chat.senderAvatar, cache: 'force-cache' } : Images.avatar} style={{ width: 36, height: 36, borderRadius: 18 }} />
                                 </View>
                             </View>
                     }

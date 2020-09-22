@@ -196,7 +196,7 @@ class EditAccount extends React.Component {
                             </View>
                             <View style={styles.avatarSection}>
                                 <View style={{ alignItems: 'center' }}>
-                                    <Image source={this.state.userInfo && this.state.userInfo.photo ? { uri: this.state.userInfo.photo } : Images.avatar} style={{ width: 48, height: 48, borderRadius: 24 }} />
+                                    <Image source={this.state.userInfo && this.state.userInfo.photo ? { uri: this.state.userInfo.photo, cache: 'force-cache' } : Images.avatar} style={{ width: 48, height: 48, borderRadius: 24 }} />
                                     <TouchableOpacity onPress={() => this.openImage()}>
                                         <RegularText style={[fonts.size14, { color: Colors.secColor }, margin.mt2]}>変更</RegularText>
                                     </TouchableOpacity>

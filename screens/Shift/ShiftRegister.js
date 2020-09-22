@@ -103,7 +103,6 @@ export default class ShiftRegister extends React.Component {
     }
 
     renderDateList() {
-        console.log(this.state.dateList)
         return this.state.dateList.map((option, index) => {
             return <View key={index} style={[shared.flexCenter, {justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: '#f2f2f2', paddingVertical: 10}]}>
                     <TouchableOpacity style={[shared.flexCenter]} onPress={() => this.checkDate(option.id)}>

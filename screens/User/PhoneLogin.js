@@ -15,7 +15,7 @@ import * as SecureStore from 'expo-secure-store';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import Constants from 'expo-constants';
 import * as Permissions from 'expo-permissions';
-import { Notifications } from 'expo';
+import * as Notifications from 'expo-notifications';
 TouchableOpacity.defaultProps = { activeOpacity: 0.8 };
 
 class PhoneLogin extends React.Component {
@@ -49,8 +49,8 @@ class PhoneLogin extends React.Component {
           return;
         }
         try {
-          let token = await Notifications.getExpoPushTokenAsync();
-          this.setState({token : token})
+          let token = await Notifications.getExpoPushTokenAsync({development : true, experienceId: '@johnpatch/delivow-deliver'});
+          this.setState({token : token.data})
         } catch (error) {
           this.setState({token : ''})
         }

@@ -134,7 +134,6 @@ export default function App(props) {
                             </Scene>
                             <Scene key="terms" component={Terms}/>
 
-                            <Scene key="login" component={Login}  />
                             <Scene key="signup" component={Signup} initial/>
                             <Scene key="phonelogin" component={PhoneLogin} />
                             <Scene key="forgotemailinput" component={ForgotEmailInput} />
@@ -175,7 +174,6 @@ const styles = StyleSheet.create({
 
 TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
     if (error) {
-        console.log(error)
         return;
     }
     if (data) {

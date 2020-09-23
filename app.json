@@ -26,7 +26,8 @@
             "DEFAULT"
           ]
         }
-      ]
+      ],
+      "useNextNotificationsApi": true
     },
     "version": "1.0.0",
     "orientation": "portrait",
@@ -46,14 +47,15 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.delivow.deliver.jp",
-      "buildNumber" : "20",
+      "buildNumber" : "23",
       "config" : {
         "googleMapsApiKey" : "AIzaSyDKnoMsrfivglgqGV875Q-emWYkIBHvBWs"
       },
       "infoPlist": {
         "UIBackgroundModes": [
           "location",
-          "fetch"
+          "fetch",
+          "remote-notification"
         ],
         "CFBundleAllowMixedLocalizations" : true,
         "CFBundleLocalizations" : ["ja"],

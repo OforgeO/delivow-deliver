@@ -49,7 +49,7 @@ class PhoneLogin extends React.Component {
           return;
         }
         try {
-          let token = await Notifications.getExpoPushTokenAsync({development : true, experienceId: '@johnpatch/delivow-deliver'});
+          let token = await Notifications.getExpoPushTokenAsync();
           this.setState({token : token.data})
         } catch (error) {
           this.setState({token : ''})
@@ -82,6 +82,7 @@ class PhoneLogin extends React.Component {
                     await SecureStore.setItemAsync("token", response.accessToken)
                     this.props.setUser({
                         area: response.user.area,
+                        address: response.user.address,
                         birthday: response.user.birthday,
                         email: response.user.email,
                         first_name: response.user.first_name,

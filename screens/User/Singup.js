@@ -38,11 +38,10 @@ class Signup extends React.Component {
         }
         Linking.addEventListener('url', this.handleOpenURL);
         //SecureStore.deleteItemAsync("token")
-        let token = await SecureStore.getItemAsync("token")
-        if(token) {
+        let my_id = store.getState().user.uid
+        if(my_id) {
             Actions.reset("root")
         }
-        this.setState({loaded: true})
     }
     handleNotification(notify_data, type) {
         console.log(notify_data)

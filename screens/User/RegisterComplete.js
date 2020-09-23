@@ -38,7 +38,7 @@ export default class RegisterComplete extends React.Component {
                 </ScrollView>
                 <View style={{justifyContent: 'flex-end', paddingHorizontal: normalize(20)}}>
                     <View style={{justifyContent: 'center', alignItems: 'center', width: '100%', bottom: 30}}>
-                        <TouchableOpacity onPress={() => Actions.reset("root")} style={{borderRadius: 12, width: '100%',backgroundColor: Colors.mainColor, paddingVertical: Platform.OS == 'ios' ? 17 : 12 }}>
+                        <TouchableOpacity onPress={() => Actions.reset("signup")} style={{borderRadius: 12, width: '100%',backgroundColor: Colors.mainColor, paddingVertical: Platform.OS == 'ios' ? 17 : 12 }}>
                             <RegularText style={[styles.btnText , fonts.size16]}>ログイン画面へ</RegularText>
                         </TouchableOpacity>
                     </View>

@@ -676,3 +676,30 @@ export function makeVoice() {
         {param: '', param2: ''},
     );
 }
+
+export async function logout() {
+    let token = await SecureStore.getItemAsync("token")
+    return createCall(
+        'delivery/auth/logout',
+        null,
+        { Authorization: 'Bearer '+token }, 'GET'
+    );
+}
+
+export async function updateAddress(address) {
+    let token = await SecureStore.getItemAsync("token")
+    return createCall(
+        'delivery/auth/update_address',
+        { address },
+        { Authorization: 'Bearer '+token }
+    );
+}
+
+export async function updateArea(area) {
+    let token = await SecureStore.getItemAsync("token")
+    return createCall(
+        'delivery/auth/update_area',
+        { area },
+        { Authorization: 'Bearer '+token }
+    );
+}

@@ -1,5 +1,6 @@
 const initialState = {
     area: null,
+    address: null,
     birthday: null,
     email: null,
     first_name: null,
@@ -17,6 +18,7 @@ export default user = (state = initialState , action = {}) => {
         case "SET_USER":
             return {
                 area: user.area,
+                address: user.address,
                 birthday: user.birthday,
                 email: user.email,
                 first_name: user.first_name,

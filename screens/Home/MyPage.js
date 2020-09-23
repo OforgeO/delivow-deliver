@@ -48,70 +48,66 @@ class MyPage extends React.Component {
             })
             await SecureStore.deleteItemAsync("token")
             Actions.reset("signup")
-        }
-        /*this.props.setShowDeliver({
-            showDeliver: false,
-            showBookDeliver: false,
-            orderUid: [],
-            orderBookUid: []
-        })*/
-        const { status } = await Location.requestPermissionsAsync();
-        if (status === 'granted') {
-            /*await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
-                accuracy: Location.Accuracy.BestForNavigation,
-                showsBackgroundLocationIndicator : false,
-                timeInterval: 60000
-            });*/
-        }
-        this.setState({ loaded: false })
-        this.setState({ userInfo: store.getState().user })
-        await getDeliveryInfos()
-        .then(async (response) => {
-            this.setState({ loaded: true });
-            if(response.status == 1){
-                this.setState({ todayInfo: response.info })
-                let shift_hours = response.info.shift_hours
-                shift_hours = JSON.parse(shift_hours)
-                this.setState({shift_hours})
+        } else {
+            const { status } = await Location.requestPermissionsAsync();
+            if (status === 'granted') {
+                /*await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
+                    accuracy: Location.Accuracy.BestForNavigation,
+                    showsBackgroundLocationIndicator : false,
+                    timeInterval: 60000
+                });*/
             }
-            else 
-                showToast(response.message)
-        })
-        .catch((error) => {
-            this.setState({ loaded: true });
-            showToast();
-        });
+            this.setState({ loaded: false })
+            this.setState({ userInfo: store.getState().user })
+            await getDeliveryInfos()
+            .then(async (response) => {
+                this.setState({ loaded: true });
+                if(response.status == 1){
+                    this.setState({ todayInfo: response.info })
+                    let shift_hours = response.info.shift_hours
+                    shift_hours = JSON.parse(shift_hours)
+                    this.setState({shift_hours})
+                }
+                else 
+                    showToast(response.message)
+            })
+            .catch((error) => {
+                this.setState({ loaded: true });
+                showToast();
+            });
+            
+
+            await getCurrentOrders()
+            .then(async (response) => {
+                if(response.status == 1) {
+                    let orderUid = []
+                    let orderBookUid = []
+                    response.orders.map((order) => {
+                        if(order.status == "accepted" && order.deliver_type == 'book') 
+                            orderBookUid.push(order.uid)
+                        else if(order.status == 'delivering' || ((order.status == 'accepted' || order.status == 'cooking') && order.deliver_type == 'order'))
+                            orderUid.push(order.uid)
+                    })
+                    this.props.setShowDeliver({
+                        showDeliver: orderUid.length > 0 ? true : false,
+                        showBookDeliver: orderBookUid.length > 0 ? true : false,
+                        orderUid: orderUid,
+                        orderBookUid: orderBookUid
+                    })
+                    
+                }
+            })
+            .catch((error) => {
+            });
+
+            var _self = this;
+            _self.getReservation()
+            curTimeInterval = setInterval(function () {
+                _self.setState({ currentTime: moment().format("HH:mm") })
+            }, 5000)
+            await this.registerForPushNotificationsAsync();
+        }
         
-
-        await getCurrentOrders()
-        .then(async (response) => {
-            if(response.status == 1) {
-                let orderUid = []
-                let orderBookUid = []
-                response.orders.map((order) => {
-                    if(order.status == "accepted" && order.deliver_type == 'book') 
-                        orderBookUid.push(order.uid)
-                    else if(order.status == 'delivering' || ((order.status == 'accepted' || order.status == 'cooking') && order.deliver_type == 'order'))
-                        orderUid.push(order.uid)
-                })
-                this.props.setShowDeliver({
-                    showDeliver: orderUid.length > 0 ? true : false,
-                    showBookDeliver: orderBookUid.length > 0 ? true : false,
-                    orderUid: orderUid,
-                    orderBookUid: orderBookUid
-                })
-                
-            }
-        })
-        .catch((error) => {
-        });
-
-        var _self = this;
-        _self.getReservation()
-        curTimeInterval = setInterval(function () {
-            _self.setState({ currentTime: moment().format("HH:mm") })
-        }, 5000)
-        await this.registerForPushNotificationsAsync();
     }
     UNSAFE_componentWillReceiveProps() {
         this.refresh()

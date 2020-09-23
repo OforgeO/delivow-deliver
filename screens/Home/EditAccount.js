@@ -14,12 +14,22 @@ import { RegularText, BoldText } from '../../components/StyledText';
 import store from '../../store/configuteStore';
 import { connect } from "react-redux";
 import { setUser, setShowDeliver } from '../../actions';
-import { updateAvatar, getUser } from '../../api';
+import { updateAvatar, getUser, logout } from '../../api';
 import Spinner_bar from 'react-native-loading-spinner-overlay';
 import { showToast } from '../../shared/global';
 import * as SecureStore from 'expo-secure-store';
 import Back from '../../components/Back';
 import OrderConfirm from '../../components/OrderConfirm';
+const deliverOptions = [
+    {id: 1, selected: false, text: '全域'},
+    {id: 2, selected: false, text: '豊橋駅周辺エリア'},
+    {id: 3, selected: false, text: '藤沢周辺エリア'},
+    {id: 4, selected: false, text: '大清水周辺エリア'},
+    {id: 5, selected: false, text: '岩田・牛川周辺エリア'},
+    {id: 6, selected: false, text: '向山・佐藤・三ノ輪周辺エリア'},
+    {id: 7, selected: false, text: '曙・高師・三本木周辺エリア'},
+    {id: 8, selected: false, text: '二川周辺エリア'}
+];
 class EditAccount extends React.Component {
     constructor(props) {
         super(props);
@@ -32,7 +42,8 @@ class EditAccount extends React.Component {
             name: '',
             userInfo: null,
             loaded: true,
-            myInfo : null
+            myInfo : null,
+            deliverArea: null
         }
     }
     componentDidMount() {
@@ -43,6 +54,15 @@ class EditAccount extends React.Component {
     }
     async refresh() {
         this.setState({userInfo: store.getState().user})
+        if(store.getState().user.area) {
+            let tempArea = '';
+            store.getState().user.area.map((a) => {
+                if(tempArea != '')
+                    tempArea += ', '
+                tempArea += deliverOptions[a-1].text
+            })
+            this.setState({deliverArea: tempArea})
+        }
         this.setState({ loaded: false })
         await getUser()
         .then(async (response) => {
@@ -172,6 +192,12 @@ class EditAccount extends React.Component {
         );
     }
     async log_out() {
+        await logout()
+        .then(async (response) => {
+        })
+        .catch((error) => {
+        });
+
         this.props.setShowDeliver({
             showDeliver: false,
             showBookDeliver: false,
@@ -213,7 +239,7 @@ class EditAccount extends React.Component {
                             </View>
                             <View style={styles.container}>
                                 <View style={[styles.detail, shared.flexCenter, { justifyContent: 'space-between', alignItems: 'flex-start' }]}>
-                                    <View style={{ flexDirection: 'row' }}>
+                                    <View style={{ flexDirection: 'row', flex: 1 }}>
                                         <FontAwesome size={14} color={Colors.secColor} name={"envelope"} />
                                         <View style={margin.ml2}>
                                             <BoldText style={[fonts.size14, margin.mb2]}>メールアドレス</BoldText>
@@ -225,7 +251,7 @@ class EditAccount extends React.Component {
                                     </TouchableOpacity>
                                 </View>
                                 <View style={[styles.detail, shared.flexCenter, { justifyContent: 'space-between', alignItems: 'flex-start' }]}>
-                                    <View style={{ flexDirection: 'row' }}>
+                                    <View style={{ flexDirection: 'row', flex: 1 }}>
                                         <FontAwesome5 size={14} color={Colors.secColor} name={"phone"} />
                                         <View style={margin.ml2}>
                                             <BoldText style={[fonts.size14, margin.mb2]}>携帯電話番号</BoldText>
@@ -237,7 +263,7 @@ class EditAccount extends React.Component {
                                     </TouchableOpacity>
                                 </View>
                                 <View style={[styles.detail, shared.flexCenter, { justifyContent: 'space-between', alignItems: 'flex-start' }]}>
-                                    <View style={{ flexDirection: 'row' }}>
+                                    <View style={{ flexDirection: 'row', flex: 1 }}>
                                         <FontAwesome5 size={14} color={Colors.secColor} name={"unlock-alt"} />
                                         <View style={margin.ml2}>
                                             <BoldText style={[fonts.size14, margin.mb2]}>パスワード</BoldText>
@@ -249,7 +275,31 @@ class EditAccount extends React.Component {
                                     </TouchableOpacity>
                                 </View>
                                 <View style={[styles.detail, shared.flexCenter, { justifyContent: 'space-between', alignItems: 'flex-start' }]}>
-                                    <View style={{ flexDirection: 'row' }}>
+                                    <View style={{ flexDirection: 'row', flex: 1 }}>
+                                        <FontAwesome5 size={14} color={Colors.secColor} name={"home"} />
+                                        <View style={margin.ml2}>
+                                            <BoldText style={[fonts.size14, margin.mb2]}>住所</BoldText>
+                                            <RegularText style={[fonts.size14]}>{this.state.userInfo && this.state.userInfo.address ? this.state.userInfo.address : null}</RegularText>
+                                        </View>
+                                    </View>
+                                    <TouchableOpacity onPress={() => Actions.push("updateaddress", {address: this.state.userInfo && this.state.userInfo.address ? this.state.userInfo.address : null})}>
+                                        <RegularText style={[fonts.size14, { color: Colors.secColor }]}>変更</RegularText>
+                                    </TouchableOpacity>
+                                </View>
+                                <View style={[styles.detail, shared.flexCenter, { justifyContent: 'space-between', alignItems: 'flex-start' }]}>
+                                    <View style={{ flexDirection: 'row', flex: 1 }}>
+                                        <FontAwesome size={16} color={Colors.secColor} name={"map-marker"} />
+                                        <View style={margin.ml2}>
+                                            <BoldText style={[fonts.size14, margin.mb2]}>配達希望エリア</BoldText>
+                                            <RegularText style={[fonts.size14]}>{this.state.deliverArea}</RegularText>
+                                        </View>
+                                    </View>
+                                    <TouchableOpacity onPress={() => Actions.push("updatearea", {data: store.getState().user.area})}>
+                                        <RegularText style={[fonts.size14, { color: Colors.secColor }]}>変更</RegularText>
+                                    </TouchableOpacity>
+                                </View>
+                                <View style={[styles.detail, shared.flexCenter, { justifyContent: 'space-between', alignItems: 'flex-start' }]}>
+                                    <View style={{ flexDirection: 'row', flex: 1 }}>
                                         <FontAwesome5 size={14} color={Colors.secColor} name={"car-side"} />
                                         <View style={margin.ml2}>
                                             <BoldText style={[fonts.size14, margin.mb2]}>車両情報</BoldText>
@@ -261,7 +311,7 @@ class EditAccount extends React.Component {
                                     </TouchableOpacity>
                                 </View>
                                 <View style={[styles.detail, shared.flexCenter, { justifyContent: 'space-between', alignItems: 'flex-start' }]}>
-                                    <View style={{ flexDirection: 'row' }}>
+                                    <View style={{ flexDirection: 'row', flex: 1 }}>
                                         <FontAwesome5 size={14} color={Colors.secColor} name={"piggy-bank"} />
                                         <View style={margin.ml2}>
                                             <BoldText style={[fonts.size14, margin.mb2]}>振込口座</BoldText>
@@ -273,7 +323,7 @@ class EditAccount extends React.Component {
                                     </TouchableOpacity>
                                 </View>
                                 <TouchableOpacity onPress={() => this.logout()} style={[styles.detail, shared.flexCenter, { justifyContent: 'space-between', alignItems: 'flex-start', borderBottomWidth: 0 }]}>
-                                    <View style={{ flexDirection: 'row' }}>
+                                    <View style={{ flexDirection: 'row', flex: 1 }}>
                                         <FontAwesome size={14} color={Colors.secColor} name={"sign-out"} />
                                         <View style={margin.ml2}>
                                             <BoldText style={[fonts.size14, margin.mb2]}>サインアウト</BoldText>

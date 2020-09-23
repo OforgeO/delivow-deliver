@@ -64,6 +64,8 @@ import UpdatePassword from './screens/Home/UpdatePassword';
 import AllowNotification from './screens/Home/AllowNotification';
 import AlertModal from './components/AlertModal';
 import OrderConfirm from './components/OrderConfirm';
+import UpdateAddress from './screens/Home/UpdateAddress';
+import UpdateArea from './screens/Home/UpdateArea';
 
 // define variable
 EStyleSheet.build({
@@ -116,6 +118,8 @@ export default function App(props) {
                                         <Scene key="vehicleregister" component={VehicleRegister} />
                                         <Scene key="deliverhistory" component={DeliverHistory} />
                                         <Scene key="shiftregister" component={ShiftRegister} />
+                                        <Scene key="updateaddress" component={UpdateAddress} />
+                                        <Scene key="updatearea" component={UpdateArea} />
                                     </Scene>
                                     <Scene key="order" title="売上管理" type="FontAwesome5" reset="sales" name="coins" icon={TabBarIcon} hideNavBar={true} >
                                         <Scene key="sales" component={Sales} hideNavBar={true} initial />

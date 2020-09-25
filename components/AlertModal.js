@@ -114,6 +114,12 @@ class AlertModal extends React.Component {
             notify.delivery_request_attend = false
         else if(type == "delivery_order_cancel")
             notify.delivery_order_cancel = false
+        else if(type == "cancel_delivering"){
+            notify.cancel_delivering = false
+            setTimeout(function() {
+                Actions.reset("root")
+            }, 200)
+        }
         this.props.setNotify(notify)
     }
     render() {
@@ -140,9 +146,15 @@ class AlertModal extends React.Component {
                         <View style={styles.header}>
                             <BoldText style={[fonts.size18, {textAlign: 'center', lineHeight: 20, color: store.getState().notify.delivery_no_entry || store.getState().notify.delivery_order_cancel || store.getState().notify.cancel_delivering ? '#CE082E' : 'black'}]}>{store.getState().notify.title}</BoldText>
                         </View>
-                        <View style={styles.body}>
-                            <RegularText style={[fonts.size14, {textAlign: 'center', lineHeight: 18}]}>{store.getState().notify.subtitle}</RegularText>
-                        </View>
+                        {
+                            store.getState().notify.subtitle ?
+                            <View style={styles.body}>
+                                <RegularText style={[fonts.size14, {textAlign: 'center', lineHeight: 18}]}>{store.getState().notify.subtitle}</RegularText>
+                            </View>
+                            :
+                            null
+                        }
+                        
                         {
                             store.getState().notify.delivery_before_attend || store.getState().notify.delivery_order_request || store.getState().notify.delivery_no_entry || store.getState().notify.delivery_order_car || store.getState().notify.delivery_order_serveral || store.getState().notify.delivery_request_attend || store.getState().notify.delivery_order_cancel || store.getState().notify.cancel_delivering ?
                             null

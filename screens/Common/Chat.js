@@ -41,7 +41,6 @@ export default class Chat extends React.Component {
         let chatList = []
         var _self = this;
         let my_id = store.getState().user.uid
-
         if (chat != null) {
             chat.on("child_added", function (snapshot) {
                 let chatInfo = snapshot.val()
@@ -60,6 +59,7 @@ export default class Chat extends React.Component {
             _self.setState({ chatList })
             _self.setState({ loaded: true })
         }, 1000)
+        
     }
 
     UNSAFE_componentWillMount() {

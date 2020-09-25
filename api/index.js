@@ -703,3 +703,10 @@ export async function updateArea(area) {
         { Authorization: 'Bearer '+token }
     );
 }
+
+export async function getAreas() {
+    return createCall(
+        'customer/home/get_areas',
+        null, null, 'GET'
+    );
+}

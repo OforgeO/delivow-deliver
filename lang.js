@@ -7,5 +7,6 @@ export const _e = {
     noWorkTime: '本日のシフトを設定してください。',
     noSelectDelivery: '配達手段を選択してください。',
     developing: "Developing",
-    noBookRequest: "予約配達依頼がありません。"
+    noBookRequest: "予約配達依頼がありません。",
+    noDeliverArea: '登録された配達エリアがありません。'
 }

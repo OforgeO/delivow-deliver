@@ -28,7 +28,7 @@ class UpdateArea extends React.Component {
                 {id: 8, selected: false, text: '二川周辺エリア'}
             ],
             loaded: true,
-            deliverAddress: []
+            deliverAddress: this.props.data
         };
     }
     componentDidMount(){
@@ -62,7 +62,6 @@ class UpdateArea extends React.Component {
             this.setState({loaded: true});
             showToast();
         });
-        
     }
     checkOption(id){
         let temp = this.state.deliverOptions

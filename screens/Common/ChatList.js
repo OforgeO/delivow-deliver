@@ -54,6 +54,7 @@ export default class ChatList extends React.Component {
                 }
             })
         })
+        console.log(chatList)
         setTimeout(function() {
             _self.setState({chatList})
             _self.setState({loaded: true})
@@ -100,7 +101,7 @@ export default class ChatList extends React.Component {
                                 chat.senderRole == 'deliver' ? chat.receiverName : null
                             }
                         </RegularText>
-                        <RegularText style={[fonts.size14, { color: '#848484' }]}>{chat.lastMessageSent}</RegularText>
+                        <RegularText numberOfLines={1} style={[fonts.size14, { color: '#848484' }]}>{chat.lastMessageSent}</RegularText>
                     </View>
                     {
                         chat.unread_count > 0 ?

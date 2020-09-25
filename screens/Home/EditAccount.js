@@ -192,7 +192,7 @@ class EditAccount extends React.Component {
         );
     }
     async log_out() {
-        await logout()
+        logout()
         .then(async (response) => {
         })
         .catch((error) => {

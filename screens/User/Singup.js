@@ -3,7 +3,7 @@ import { StyleSheet, Image, View, TouchableOpacity, Text, Platform, Linking } fr
 import Images from "../../assets/Images";
 import { normalize, fonts,margin } from '../../assets/styles';
 import { connect } from "react-redux";
-import { setUser, setTerms, setNotify } from '../../actions';
+import { setUser, setTerms, setNotify, setShowDeliver } from '../../actions';
 import {Actions} from 'react-native-router-flux';
 import { showToast } from '../../shared/global';
 import store from '../../store/configuteStore';
@@ -38,8 +38,8 @@ class Signup extends React.Component {
         }
         Linking.addEventListener('url', this.handleOpenURL);
         //SecureStore.deleteItemAsync("token")
-        let my_id = store.getState().user.uid
-        if(my_id) {
+        let token = await SecureStore.getItemAsync("token")
+        if(token) {
             Actions.reset("root")
         }
     }
@@ -92,9 +92,15 @@ class Signup extends React.Component {
         } else if(notify_data.body.type == "cancel_delivering") {
             let notify = store.getState().notify
             notify.cancel_delivering = true
-            notify.title = notify_data.body.title
-            notify.subtitle = notify_data.body.body
+            notify.title = notify_data.aps.alert.title
+            notify.subtitle = '';
             this.props.setNotify(notify)
+            this.props.setShowDeliver({
+                showDeliver: false,
+                showBookDeliver: store.getState().showDeliver.showBookDeliver,
+                orderUid: [],
+                orderBookUid: store.getState().showDeliver.orderBookUid
+            })
         } else if(notify_data.body.type == 'chat') {
             if(Actions.currentScene != 'chat' && Actions.currentScene != 'chatlist'){
                 Actions.push("chatlist", { order_uid: notify_data.body.order_uid, author: store.getState().user, store_name: notify_data.body.store_name })
@@ -166,7 +172,8 @@ const mapDispatchToProps = dispatch => {
     return {
         setUser : user => { dispatch(setUser(user)) },
         setTerms : terms => { dispatch(setTerms(terms))},
-        setNotify : notify => { dispatch(setNotify(notify)) }
+        setNotify : notify => { dispatch(setNotify(notify)) },
+        setShowDeliver : showDeliver => { dispatch(setShowDeliver(showDeliver))}
     }
 }
 

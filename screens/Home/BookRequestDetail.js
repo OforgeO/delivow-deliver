@@ -332,6 +332,7 @@ class BookRequestDetail extends React.Component {
         })
     }
     checkDetailOption(product_id, category_id, option_index) {
+        
         if ((!this.props.confirm && this.state.orderStauts <= 2) || this.state.orderInfo.status == 'accepted') {
             if (this.state.orderStauts == 0)
                 this.setState({ orderStauts: 1 })

@@ -22,7 +22,7 @@ export default class TodayShiftTime extends React.Component {
         this.state = {
             timeShow: false,
             startTime: '00:00',
-            endTime: '00:00',
+            endTime: '16:00',
             timeType: 0,
             loaded: true
         }
@@ -64,9 +64,9 @@ export default class TodayShiftTime extends React.Component {
         await updateShift(shift)
             .then(async (response) => {
                 if (response.status == 1) {
-                    Actions.pop({shift_hours : shift})
+                    Actions.pop({refresh: {shift_hours : shift}})
                     setTimeout(function () {
-                        Actions.refresh()
+                        Actions.refresh({shift_hours : shift})
                     }, 10);
                 } else {
                     showToast(response.message)

@@ -161,21 +161,21 @@ class CheckMap extends React.Component {
                             <MaterialIcons color={Colors.mainColor} size={28} name={"directions-bike"} />
                             <View style={margin.ml2}>
                                 <RegularText>バイク</RegularText>
-                                <BoldText style={fonts.size14}>{parseInt(this.state.driveTime/60)+10}分</BoldText>
+                                <BoldText style={fonts.size14}>{this.state.bycicleTime > 0 ? parseInt(this.state.bycicleTime/60) : '-'}分</BoldText>
                             </View>
                         </View>
                         <View style={[shared.flexCenter, {flex: 1, justifyContent:'center'}]}>
                             <FontAwesome5 color={Colors.mainColor} size={28} name={"car-side"} />
                             <View style={margin.ml2}>
                                 <RegularText>自動車</RegularText>
-                                <BoldText style={fonts.size14}>{parseInt(this.state.driveTime/60)}分</BoldText>
+                                <BoldText style={fonts.size14}>{this.state.driveTime > 0 ? parseInt(this.state.driveTime/60) : '-'}分</BoldText>
                             </View>
                         </View>
                         <View style={[shared.flexCenter, {flex: 1, justifyContent:'center'}]}>
                             <FontAwesome5 color={Colors.mainColor} size={28} name={"bicycle"} />
                             <View style={margin.ml2}>
                                 <RegularText>自転車</RegularText>
-                                <BoldText style={fonts.size14}>{parseInt(this.state.bycicleTime/60)}分</BoldText>
+                                <BoldText style={fonts.size14}>{this.state.driveTime > 0 ? parseInt(this.state.driveTime/60) : '-'}分</BoldText>
                             </View>
                         </View>
                     </View>

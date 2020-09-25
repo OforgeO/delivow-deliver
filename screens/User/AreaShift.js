@@ -11,26 +11,20 @@ import Layout from '../../constants/Layout';
 import Modal from 'react-native-modal';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import moment from 'moment';
-import { registerAreaShift } from '../../api';
+import { registerAreaShift, getAreas } from '../../api';
 import { RegularText, BoldText } from '../../components/StyledText';
 import { showToast } from '../../shared/global';
 import Spinner_bar from 'react-native-loading-spinner-overlay';
 import Constants from 'expo-constants';
 import { dayNamesShort } from '../../constants/Global';
+import { _e } from '../../lang';
+import { add } from 'react-native-reanimated';
 TouchableOpacity.defaultProps = { activeOpacity: 0.8 };
 class AreaShift extends React.Component {
     constructor(props){
         super(props);
         this.state = {
             deliverOptions: [
-                {id: 1, selected: false, text: '全域'},
-                {id: 2, selected: false, text: '豊橋駅周辺エリア'},
-                {id: 3, selected: false, text: '藤沢周辺エリア'},
-                {id: 4, selected: false, text: '大清水周辺エリア'},
-                {id: 5, selected: false, text: '岩田・牛川周辺エリア'},
-                {id: 6, selected: false, text: '向山・佐藤・三ノ輪周辺エリア'},
-                {id: 7, selected: false, text: '曙・高師・三本木周辺エリア'},
-                {id: 8, selected: false, text: '二川周辺エリア'}
             ],
             dateList: [
                 {id: 1, selected: false, date: '', time1: '11:00', time2: '16:00', weekDay: 0},
@@ -45,16 +39,35 @@ class AreaShift extends React.Component {
             timeIndex: 0,
             timeType: 0,
             loaded: true,
-            deliverAddress: []
+            deliverAddress: [],
+            checkAll : false
         };
     }
-    componentDidMount(){
+    async componentDidMount(){
         let list = this.state.dateList;
         list.map((date, index) => {
             date.date = moment().add('days', index).format('M/D') + '('+ dayNamesShort[moment().add('days', index).format('d')]+')'
             date.weekDay = moment().add('days', index).format('d')
         })
         this.setState({dateList: list})
+
+        this.setState({ loaded: false })
+        await getAreas()
+        .then(async (response) => {
+            
+            if (response.list && response.list.length > 0) {
+                response.list.map((list, index) => {
+                    list['selected'] = false
+                })
+                this.setState({ deliverOptions: response.list })
+            }
+            
+            this.setState({ loaded: true })
+        })
+        .catch((error) => {
+            this.setState({ loaded: true })
+            showToast();
+        });
     }
 
     async nextScreen(){
@@ -86,9 +99,26 @@ class AreaShift extends React.Component {
         });
         
     }
+    checkAll() {
+        let temp = this.state.deliverOptions
+        let addr = [];
+        for(var i = 0;i<temp.length;i++){
+            if(this.state.checkAll){
+                temp[i].selected = false
+                addr = [];
+            } else {
+                temp[i].selected = true
+                addr.push(temp[i].id)
+            }
+        }
+        this.setState({deliverAddress: addr})
+        this.setState({deliverOptions: temp})
+        this.setState({checkAll : !this.state.checkAll})
+    }
     checkOption(id){
         let temp = this.state.deliverOptions
         let addr = [];
+        let checkAll = true
         for(var i = 0;i<temp.length;i++){
             if(temp[i].id == id){
                 temp[i].selected = !temp[i].selected
@@ -96,7 +126,10 @@ class AreaShift extends React.Component {
             if(temp[i].selected){
                 addr.push(temp[i].id)
             }
+            if(checkAll && temp[i].selected == false)
+                checkAll = false
         }
+        this.setState({checkAll})
         this.setState({deliverAddress: addr})
         this.setState({deliverOptions: temp})
     }
@@ -190,6 +223,21 @@ class AreaShift extends React.Component {
                                 <RegularText style={{paddingTop: 0}}>※希望外からの配達依頼もあります。</RegularText>
                             </View>
                             <View style={styles.whiteSection}>
+                            {
+                                this.state.deliverOptions.length > 0 ?
+                                <TouchableOpacity onPress={() => this.checkAll()} style={margin.mb2}>
+                                    <View style={[shared.flexCenter]}>
+                                        <FontAwesome name="check-circle" size={20} color={this.state.checkAll ? Colors.secColor : '#D3D3D3'} />
+                                        <View>
+                                            <RegularText style={this.state.checkAll ? [fonts.size14, margin.ml1] : [fonts.size14, margin.ml1, {color: '#d3d3d3'}]}>全域</RegularText>
+                                        </View>
+                                    </View>
+                                </TouchableOpacity>
+                                :
+                                <View style={[shared.flexCenter,margin.pt4, margin.pb4,{width: '100%', justifyContent: 'center'}]}>
+                                    <RegularText style={fonts.size16}>{_e.noDeliverArea}</RegularText>
+                                </View>
+                            }
                             {
                                 this.renderDeliverOptions()
                             }

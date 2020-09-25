@@ -57,9 +57,12 @@ export default class DeliverFeeDetail extends React.Component {
                                 <RegularText style={[fonts.size32]}>配達報酬明細表(年度)</RegularText>
                             </View>
                             <View style={[shared.flexCenter, {position:'absolute', bottom: 20, right: 20}]}>
-                                <TouchableOpacity style={styles.btn}>
-                                    <FontAwesome name="print" size={24} color={"white"} />
-                                </TouchableOpacity>
+                                {
+                                    /*<TouchableOpacity style={styles.btn}>
+                                        <FontAwesome name="print" size={24} color={"white"} />
+                                    </TouchableOpacity>*/
+                                }
+                                
                                 <TouchableOpacity style={[styles.btn, margin.ml4]} onPress={() => this.share()}>
                                     <FontAwesome name="share-square-o" size={24} color={"white"} />
                                 </TouchableOpacity>

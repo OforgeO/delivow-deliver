@@ -7,7 +7,7 @@ import { setUser } from '../../actions';
 import {Actions} from 'react-native-router-flux';
 import Colors from '../../constants/Colors';
 import { FontAwesome } from '@expo/vector-icons';
-import { updateArea } from '../../api';
+import { updateArea, getAreas } from '../../api';
 import { RegularText, BoldText } from '../../components/StyledText';
 import { showToast } from '../../shared/global';
 import store from '../../store/configuteStore';
@@ -18,27 +18,33 @@ class UpdateArea extends React.Component {
         super(props);
         this.state = {
             deliverOptions: [
-                {id: 1, selected: false, text: '全域'},
-                {id: 2, selected: false, text: '豊橋駅周辺エリア'},
-                {id: 3, selected: false, text: '藤沢周辺エリア'},
-                {id: 4, selected: false, text: '大清水周辺エリア'},
-                {id: 5, selected: false, text: '岩田・牛川周辺エリア'},
-                {id: 6, selected: false, text: '向山・佐藤・三ノ輪周辺エリア'},
-                {id: 7, selected: false, text: '曙・高師・三本木周辺エリア'},
-                {id: 8, selected: false, text: '二川周辺エリア'}
             ],
             loaded: true,
             deliverAddress: this.props.data
         };
     }
-    componentDidMount(){
+    async componentDidMount(){
+        let deliverAreaList = null
+        this.setState({ loaded: false })
+        await getAreas()
+        .then(async (response) => {
+            deliverAreaList = response.list
+            this.setState({ loaded: true })
+        })
+        .catch((error) => {
+            this.setState({ loaded: true })
+            showToast();
+        });
+
         if(this.props.data && this.props.data.length > 0) {
-            let tempArea = this.state.deliverOptions
+            let tempArea = deliverAreaList
             this.props.data.map((area) => {
-                tempArea[area-1].selected = true
+                if(deliverAreaList[area-1])
+                    tempArea[area-1].selected = true
             })
             this.setState({deliverOptions: tempArea})
         }
+        
     }
 
     async nextScreen(){

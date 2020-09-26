@@ -14,22 +14,12 @@ import { RegularText, BoldText } from '../../components/StyledText';
 import store from '../../store/configuteStore';
 import { connect } from "react-redux";
 import { setUser, setShowDeliver } from '../../actions';
-import { updateAvatar, getUser, logout } from '../../api';
+import { updateAvatar, getUser, logout, getAreas } from '../../api';
 import Spinner_bar from 'react-native-loading-spinner-overlay';
 import { showToast } from '../../shared/global';
 import * as SecureStore from 'expo-secure-store';
 import Back from '../../components/Back';
 import OrderConfirm from '../../components/OrderConfirm';
-const deliverOptions = [
-    {id: 1, selected: false, text: '全域'},
-    {id: 2, selected: false, text: '豊橋駅周辺エリア'},
-    {id: 3, selected: false, text: '藤沢周辺エリア'},
-    {id: 4, selected: false, text: '大清水周辺エリア'},
-    {id: 5, selected: false, text: '岩田・牛川周辺エリア'},
-    {id: 6, selected: false, text: '向山・佐藤・三ノ輪周辺エリア'},
-    {id: 7, selected: false, text: '曙・高師・三本木周辺エリア'},
-    {id: 8, selected: false, text: '二川周辺エリア'}
-];
 class EditAccount extends React.Component {
     constructor(props) {
         super(props);
@@ -43,7 +33,8 @@ class EditAccount extends React.Component {
             userInfo: null,
             loaded: true,
             myInfo : null,
-            deliverArea: null
+            deliverArea: null,
+            deliverOptions: null
         }
     }
     componentDidMount() {
@@ -53,17 +44,31 @@ class EditAccount extends React.Component {
         this.refresh()
     }
     async refresh() {
+        this.setState({ loaded: false })
+        let deliverAreaList = null
+        await getAreas()
+        .then(async (response) => {
+            if (response.list && response.list.length > 0) {
+                deliverAreaList = response.list
+            }
+        })
+        .catch((error) => {
+            showToast();
+        });
+
         this.setState({userInfo: store.getState().user})
         if(store.getState().user.area) {
             let tempArea = '';
+
             store.getState().user.area.map((a) => {
                 if(tempArea != '')
                     tempArea += ', '
-                tempArea += deliverOptions[a-1].text
+                if(deliverAreaList && deliverAreaList[a-1])
+                    tempArea += deliverAreaList[a-1].text
             })
             this.setState({deliverArea: tempArea})
         }
-        this.setState({ loaded: false })
+        
         await getUser()
         .then(async (response) => {
             if(response.status == 1) {
@@ -77,6 +82,8 @@ class EditAccount extends React.Component {
             this.setState({ loaded: true })
             showToast();
         });
+        
+        
     }
     goDetail() {
 

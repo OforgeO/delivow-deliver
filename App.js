@@ -9,7 +9,7 @@ import { Router, Scene, Actions } from 'react-native-router-flux'
 import TabBarIcon from './components/TabBarIcon';
 import * as TaskManager from 'expo-task-manager';
 import { updateLocation } from './api';
-import moment from 'moment';
+
 //Splash
 import SplashScreen from './screens/SplashScreen'
 //User

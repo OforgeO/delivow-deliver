@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, TouchableWithoutFeedback, Keyboard, Image, View, TouchableOpacity, KeyboardAvoidingView, ScrollView, Ploatform, Platform } from 'react-native';
+import { StyleSheet, TouchableWithoutFeedback, Keyboard, Image, View, TouchableOpacity, KeyboardAvoidingView, ScrollView, SafeAreaView, Platform } from 'react-native';
 import { Container, Content, Item, Input, Text } from 'native-base';
 import { normalize, fonts, margin, form, shared} from '../../assets/styles';
 import { connect } from "react-redux";
@@ -158,13 +158,8 @@ class AvatarRegister extends React.Component {
     render(){
         return (
             <Container>
-                <Content contentContainerStyle={[styles.contentBg , styles.contentPD, {
-                    flexGrow: 1,
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    marginTop: Platform.OS == 'ios' ? Constants.statusBarHeight : 0
-                }]}>
-                    <ScrollView contentContainerStyle={{flex: 1}}>
+                <SafeAreaView style={[styles.contentBg]}>
+                    <ScrollView contentContainerStyle={{flex: 1, paddingHorizontal: normalize(20)}}>
                         <KeyboardAvoidingView behavior={"height"} style={{flex: 1}} keyboardVerticalOffset={10}>
                             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                                 <View style={{flex: 1}}>
@@ -215,7 +210,7 @@ class AvatarRegister extends React.Component {
                         {this._renderModalContent()}
                     </Modal>
                     <Spinner_bar color={'#27cccd'} visible={!this.state.loaded} textContent={""} overlayColor={"rgba(0, 0, 0, 0.5)"} />
-                </Content>
+                </SafeAreaView>
             </Container>
         );
     }

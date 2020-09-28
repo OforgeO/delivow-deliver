@@ -88,7 +88,8 @@ class AccountInfo extends React.Component {
                                                 style = { [form.input, fonts.size20, {lineHeight: normalize(23)}] }
                                                 onChangeText = {(text) => this.setState({firstName: text})}
                                                 placeholderTextColor = '#9da8bf'
-                                                onSubmitEditing={() => this.lastName._root.focus()}
+                                                multiline={true}
+                                                //onSubmitEditing={() => this.lastName._root.focus()}
                                             />
                                         </Item>
                                     </View>
@@ -102,14 +103,15 @@ class AccountInfo extends React.Component {
                                                 onChangeText = {(text) => this.setState({lastName: text})}
                                                 placeholderTextColor = '#9da8bf'
                                                 ref={input => {this.lastName = input;}}
-                                                onSubmitEditing={() => this.address._root.focus()}
+                                                multiline={true}
+                                                //onSubmitEditing={() => this.address._root.focus()}
                                             />
                                         </Item>
                                     </View>
                                 </View>
                                 <View>
                                     <RegularText style={styles.label}>住所</RegularText>
-                                    <Item rounded style={this.state.emailError ? [form.item, styles.error, {marginBottom: 0}] : [form.item, {marginBottom: 0}] }>
+                                    <Item rounded style={[form.item, {marginBottom: 0}] }>
                                         <Input
                                             placeholder = "住所を入力"
                                             value = { this.state.address }
@@ -117,6 +119,7 @@ class AccountInfo extends React.Component {
                                             onChangeText = {(text) => this.setState({address: text})}
                                             placeholderTextColor = '#9da8bf'
                                             returnKeyType="next"
+                                            multiline={true}
                                             ref={ref => {this.address = ref;}}
                                             onSubmitEditing={() => this.birthYear._root.focus()}
                                         />

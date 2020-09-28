@@ -82,6 +82,7 @@ class UpdateAddress extends React.Component {
                                         style = { [form.input] }
                                         onChangeText = {(text) => this.setState({address: text})}
                                         placeholderTextColor = '#9da8bf'
+                                        multiline={true}
                                     />
                                 </Item>
                             </View>

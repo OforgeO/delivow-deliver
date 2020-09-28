@@ -88,7 +88,8 @@ class EditName extends React.Component {
                                                 style = { [form.input] }
                                                 onChangeText = {(text) => this.setState({firstName: text})}
                                                 placeholderTextColor = '#9da8bf'
-                                                onSubmitEditing={() => this.lastName._root.focus()}
+                                                multiline={true}
+                                                //onSubmitEditing={() => this.lastName._root.focus()}
                                             />
                                         </Item>
                                     </View>
@@ -103,7 +104,8 @@ class EditName extends React.Component {
                                                 placeholderTextColor = '#9da8bf'
                                                 returnKeyType="go"
                                                 ref={ref => {this.lastName = ref;}}
-                                                onSubmitEditing={() => this.nextScreen()}
+                                                multiline={true}
+                                                //onSubmitEditing={() => this.nextScreen()}
                                             />
                                         </Item>
                                     </View>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, TouchableWithoutFeedback, Keyboard, View, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
+import { StyleSheet, TouchableWithoutFeedback, Keyboard, View, TouchableOpacity, KeyboardAvoidingView, Platform, SafeAreaView } from 'react-native';
 import { Container, Content, Item, Input, Text } from 'native-base';
 import { normalize, fonts, margin, form} from '../../assets/styles';
 import { connect } from "react-redux";
@@ -30,14 +30,10 @@ class TermsScreen extends React.Component {
     render(){
         return (
             <Container>
-                <Content contentContainerStyle={[styles.contentBg , styles.contentPD, {
-                    flexGrow: 1,
-                    flexDirection: 'column',
-                    justifyContent: 'center'
-                }]}>
+                <SafeAreaView style={[styles.contentBg]}>
                     <KeyboardAvoidingView behavior={"padding"} style={{flex: 1}} keyboardVerticalOffset={40}>
                         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                            <View style={{flex: 1}}>
+                            <View style={{flex: 1, paddingHorizontal: normalize(20)}}>
                                 <View style={{flex: 1, justifyContent: 'flex-end'}}>
                                     <BoldText style={fonts.size32}>利用規約を確認</BoldText>
                                     <RegularText style={[fonts.size16, margin.pt2]}>続行することにより</RegularText>
@@ -63,7 +59,7 @@ class TermsScreen extends React.Component {
                             </View>
                         </TouchableWithoutFeedback>
                     </KeyboardAvoidingView>
-                </Content>
+                </SafeAreaView>
                 
                 <Spinner_bar color={'#27cccd'} visible={!this.state.loaded} textContent={""} overlayColor={"rgba(0, 0, 0, 0.5)"} />
             </Container>

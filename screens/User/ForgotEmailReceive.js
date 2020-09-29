@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, TouchableOpacity, Alert } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Alert, SafeAreaView } from 'react-native';
 import { Container, Content, Item, Input, Text } from 'native-base';
 import { normalize, fonts, margin, form} from '../../assets/styles';
 import { showToast } from '../../shared/global';
@@ -43,12 +43,8 @@ class ForgotEmailReceive extends React.Component {
     render(){
         return (
             <Container>
-                <Content contentContainerStyle={[styles.contentBg , styles.contentPD, {
-                    flexGrow: 1,
-                    flexDirection: 'column',
-                    justifyContent: 'center'
-                }]}>
-                    <View style={{flex: 1, justifyContent: 'center', marginBottom: 70}}>
+                <SafeAreaView style={[styles.contentBg]}>
+                    <View style={{flex: 1, justifyContent: 'center', marginBottom: 70, paddingHorizontal: normalize(20)}}>
                         <BoldText style={fonts.size32}>デリボから送られたメールを確認</BoldText>
                         <RegularText style={[fonts.siz16, margin.mt4]}>本文に添付されているリンクから、パスワードの再設定をしてください。</RegularText>
                         <TouchableOpacity style={styles.goDliever} onPress={() => this.resendEmail()}>
@@ -56,7 +52,7 @@ class ForgotEmailReceive extends React.Component {
                             <BoldText style={[fonts.size14, {color: Colors.secColor, marginLeft: 5}]}>届かないのでメールを再送する</BoldText>
                         </TouchableOpacity>
                     </View>
-                </Content>
+                </SafeAreaView>
                 
                 <Spinner_bar color={'#27cccd'} visible={!this.state.loaded} textContent={""} overlayColor={"rgba(0, 0, 0, 0.5)"} />
             </Container>

@@ -155,8 +155,7 @@ class Bank extends React.Component {
                                             onChangeText = {(text) => this.setState({bankName: text})}
                                             placeholderTextColor = '#9da8bf'
                                             ref={ref => {this.bankName = ref;}}
-                                            multiline={true}
-                                            //onSubmitEditing={() => this.bankCode._root.focus()}
+                                            onSubmitEditing={() => this.bankCode._root.focus()}
                                         />
                                     </Item>
                                 </View>
@@ -170,8 +169,7 @@ class Bank extends React.Component {
                                             onChangeText = {(text) => this.setState({bankCode: text})}
                                             placeholderTextColor = '#9da8bf'
                                             ref={ref => {this.bankCode = ref;}}
-                                            multiline={true}
-                                            //onSubmitEditing={() => this.branchCode._root.focus()}
+                                            onSubmitEditing={() => this.branchCode._root.focus()}
                                         />
                                     </Item>
                                 </View>
@@ -185,8 +183,7 @@ class Bank extends React.Component {
                                             onChangeText = {(text) => this.setState({branchCode: text})}
                                             placeholderTextColor = '#9da8bf'
                                             ref={ref => {this.branchCode = ref;}}
-                                            multiline={true}
-                                            //onSubmitEditing={() => this.accountNo._root.focus()}
+                                            onSubmitEditing={() => this.accountNo._root.focus()}
                                         />
                                     </Item>
                                 </View>
@@ -200,8 +197,7 @@ class Bank extends React.Component {
                                             onChangeText = {(text) => this.setState({accountNo: text})}
                                             placeholderTextColor = '#9da8bf'
                                             ref={ref => {this.accountNo = ref;}}
-                                            multiline={true}
-                                            //onSubmitEditing={() => this.accountName._root.focus()}
+                                            onSubmitEditing={() => this.accountName._root.focus()}
                                         />
                                     </Item>
                                 </View>
@@ -215,8 +211,7 @@ class Bank extends React.Component {
                                             onChangeText = {(text) => this.setState({accountName: text})}
                                             placeholderTextColor = '#9da8bf'
                                             ref={ref => {this.accountName = ref;}}
-                                            multiline={true}
-                                            //onSubmitEditing={() => this.accountNameKana._root.focus()}
+                                            onSubmitEditing={() => this.accountNameKana._root.focus()}
                                         />
                                     </Item>
                                 </View>
@@ -230,9 +225,8 @@ class Bank extends React.Component {
                                             onChangeText = {(text) => this.setState({accountNameKana: text})}
                                             placeholderTextColor = '#9da8bf'
                                             ref={ref => {this.accountNameKana = ref;}}
-                                            multiline={true}
-                                            //onSubmitEditing={() => this.nextScreen()}
-                                            //returnKeyType="go"
+                                            onSubmitEditing={() => this.nextScreen()}
+                                            returnKeyType="go"
                                         />
                                     </Item>
                                 </View>

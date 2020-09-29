@@ -47,13 +47,13 @@ class MyPage extends React.Component {
         
         const { status } = await Location.requestPermissionsAsync();
         if (status === 'granted') {
-            await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
+            /*await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
                 accuracy: Location.Accuracy.High,
                 showsBackgroundLocationIndicator : false,
                 timeInterval: 60000,
                 deferredUpdatesInterval : 60000,
                 distanceInterval : 3
-            });
+            });*/
         }
         this.onConnectSocket();
         this.setState({ loaded: false })

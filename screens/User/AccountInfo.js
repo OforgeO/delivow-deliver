@@ -119,7 +119,6 @@ class AccountInfo extends React.Component {
                                             onChangeText = {(text) => this.setState({address: text})}
                                             placeholderTextColor = '#9da8bf'
                                             returnKeyType="next"
-                                            multiline={true}
                                             ref={ref => {this.address = ref;}}
                                             onSubmitEditing={() => this.birthYear._root.focus()}
                                         />

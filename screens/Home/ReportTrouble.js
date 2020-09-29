@@ -22,13 +22,9 @@ export default class ReportTrouble extends React.Component {
     render(){
         return (
             <Container>
-                <Content contentContainerStyle={[styles.contentBg , styles.contentPD, {
-                    flexGrow: 1,
-                    flexDirection: 'column',
-                    justifyContent: 'center'
-                }]}>
+                <SafeAreaView style={[styles.contentBg]}>
                     
-                    <View style={{flex: 1}}>
+                    <View style={{flex: 1, paddingHorizontal: normalize(20)}}>
                         <View style={{flex: 1, justifyContent: 'flex-end'}}>
                             <RegularText style={[fonts.size32, margin.mb4]}>コードが見つからない場合</RegularText>
                             <RegularText>メールが見つからない場合は、迷惑メールのフォルダを確認するか、メールを再送信してください。{'\n'}問題が解消されない場合はサポートにお問い合わせください。</RegularText>
@@ -51,7 +47,7 @@ export default class ReportTrouble extends React.Component {
                             </View>
                         </View>     
                     </View>
-                </Content>
+                </SafeAreaView>
             </Container>
         );
     }

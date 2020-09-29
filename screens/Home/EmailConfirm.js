@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, TouchableWithoutFeedback, Keyboard, Image, View, TouchableOpacity, KeyboardAvoidingView,Alert } from 'react-native';
+import { StyleSheet, TouchableWithoutFeedback, Keyboard, SafeAreaView, View, TouchableOpacity, KeyboardAvoidingView,Alert } from 'react-native';
 import { Container, Content, Item, Input, Text } from 'native-base';
 import { normalize, fonts, margin, form} from '../../assets/styles';
 import {Actions} from 'react-native-router-flux';
@@ -47,14 +47,10 @@ export default class EmailConfirm extends React.Component {
         return (
             <Container>
                 <OrderConfirm />
-                <Content contentContainerStyle={[styles.contentBg , styles.contentPD, {
-                    flexGrow: 1,
-                    flexDirection: 'column',
-                    justifyContent: 'center'
-                }]}>
+                <SafeAreaView style={[styles.contentBg]}>
                     <KeyboardAvoidingView behavior={"padding"} style={{flex: 1}} keyboardVerticalOffset={20}>
                         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                            <View style={{flex: 1}}>
+                            <View style={{flex: 1, paddingHorizontal: normalize(20)}}>
                                 <View style={{flex: 1, justifyContent: 'center'}}>
                                     <RegularText style={fonts.size32}>確認コードを入力</RegularText>
                                     <RegularText>{this.props.email}に届いた4桁のコードを入力してください</RegularText>
@@ -80,7 +76,7 @@ export default class EmailConfirm extends React.Component {
                             </View>
                         </TouchableWithoutFeedback>
                     </KeyboardAvoidingView>
-                </Content>
+                </SafeAreaView>
                 
                 <Spinner_bar color={'#27cccd'} visible={!this.state.loaded} textContent={""} overlayColor={"rgba(0, 0, 0, 0.5)"} />
             </Container>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, TouchableOpacity, Platform } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Platform, SafeAreaView } from 'react-native';
 import { Container, Content,  Text } from 'native-base';
 import { normalize, fonts, margin, form} from '../../assets/styles';
 import { resendCode } from '../../api';
@@ -40,13 +40,9 @@ class ResendCode extends React.Component {
     render(){
         return (
             <Container>
-                <Content contentContainerStyle={[styles.contentBg , styles.contentPD, { 
-                    flexGrow: 1,
-                    flexDirection: 'column',
-                    justifyContent: 'center'
-                }]}>
+                <SafeAreaView style={[styles.contentBg]}>
                     
-                    <View style={{flex: 1}}>
+                    <View style={{flex: 1, paddingHorizontal: normalize(20)}}>
                         <View style={{flex: 1, justifyContent: 'flex-end', marginBottom: 40}}>
                             <BoldText style={fonts.size32}>{this.props.phone}に確認コードを再送信します</BoldText>
                         </View>
@@ -63,7 +59,7 @@ class ResendCode extends React.Component {
                             </View>
                         </View>
                     </View>
-                </Content>
+                </SafeAreaView>
                 
                 <Spinner_bar color={'#27cccd'} visible={!this.state.loaded} textContent={""} overlayColor={"rgba(0, 0, 0, 0.5)"} />
             </Container>

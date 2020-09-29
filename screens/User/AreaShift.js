@@ -167,22 +167,22 @@ class AreaShift extends React.Component {
             return <View style={[shared.flexCenter, {justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: '#f2f2f2', paddingVertical: 10}]}>
                     <TouchableOpacity style={[shared.flexCenter]} onPress={() => this.checkDate(option.id)}>
                     <FontAwesome name="check-circle" size={20} color={option.selected ? Colors.secColor : '#D3D3D3'} />
-                    <BoldText style={option.selected ? [fonts.size14, margin.ml1] : [fonts.size14, margin.ml1, {color: '#d3d3d3'}]}>{option.date}</BoldText>
+                    <BoldText style={option.selected ? [fonts.size18, margin.ml1] : [fonts.size18, margin.ml1, {color: '#d3d3d3'}]}>{option.date}</BoldText>
                 </TouchableOpacity>
                 {
                     option.selected ?
                     <View style={shared.flexCenter}>
                         <TouchableOpacity onPress={() => this.chooseTime(option.id, 1)}>
-                            <BoldText style={[fonts.size14,{color: Colors.secColor}]}>{option.time1}</BoldText>
+                            <BoldText style={[fonts.size18,{color: Colors.secColor}]}>{option.time1}</BoldText>
                         </TouchableOpacity>
                         <BoldText style={{color: 'black'}}> - </BoldText>
                         <TouchableOpacity onPress={() => this.chooseTime(option.id, 2)}>
-                            <BoldText style={[fonts.size14,{color: Colors.secColor}]}>{option.time2}</BoldText>
+                            <BoldText style={[fonts.size18,{color: Colors.secColor}]}>{option.time2}</BoldText>
                         </TouchableOpacity>
                     </View>
                     :
                     <View>
-                        <BoldText style={[fonts.size14, {color: '#d3d3d3'}]}>{option.time1 + ' - ' + option.time2}</BoldText>
+                        <BoldText style={[fonts.size18, {color: '#d3d3d3'}]}>{option.time1 + ' - ' + option.time2}</BoldText>
                     </View>
                 }
             </View>

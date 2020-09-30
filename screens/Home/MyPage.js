@@ -23,13 +23,17 @@ import * as SecureStore from 'expo-secure-store';
 import OrderConfirm from '../../components/OrderConfirm';
 import io from 'socket.io-client';
 import { SOCKET_URL } from '../../constants/Global';
+import firebase from '../../Fire';
+export const deliverRef = firebase.database().ref('deliver_location')
+
+let socket = io.connect(SOCKET_URL, {
+    transports: ['websocket'],
+    reconnectionAttempts: 15 //Nombre de fois qu'il doit réessayer de se connecter
+});
 const LOCATION_TASK_NAME = 'background-location-task';
 var curTimeInterval = null;
 class MyPage extends React.Component {
-    socket = io.connect(SOCKET_URL, {
-        transports: ['websocket'],
-        reconnectionAttempts: 15 //Nombre de fois qu'il doit réessayer de se connecter
-    });
+    
 
     constructor(props) {
         super(props);
@@ -48,12 +52,21 @@ class MyPage extends React.Component {
         const { status } = await Location.requestPermissionsAsync();
         if (status === 'granted') {
             /*await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
-                accuracy: Location.Accuracy.High,
+                accuracy: 6,
                 showsBackgroundLocationIndicator : false,
                 timeInterval: 60000,
                 deferredUpdatesInterval : 60000,
-                distanceInterval : 3
+                deferredUpdatesDistance : 3
             });*/
+            Location.watchPositionAsync({
+                accuracy: 6,
+                distanceInterval : 1
+            }, (result) => {
+                console.log(result)
+                if(result && result.coords){
+                    this.sendMessage(result.coords.latitude, result.coords.longitude)
+                }
+            })
         }
         this.onConnectSocket();
         this.setState({ loaded: false })
@@ -110,14 +123,23 @@ class MyPage extends React.Component {
         this.refresh()
     }
     onConnectSocket = () => {
-        if(this.socket) {
-            this.socket.on('connect', () => {
-                this.socket.on('handle_reserve', data => {
+        if(socket) {
+            socket.on('connect', () => {
+                socket.on('handle_reserve', data => {
                     this.setState({noDeliverCnt : data.count})
                 })
             });
         }
     }
+
+    async sendMessage(latitude, longitude) {
+        let uid = store.getState().user.uid
+        if(uid){
+            await deliverRef.child(uid).set({latitude: latitude, longitude: longitude})
+        }
+        
+    }
+    
     async refresh() {
         await this.registerForPushNotificationsAsync();
         this.setState({ userInfo: store.getState().user })

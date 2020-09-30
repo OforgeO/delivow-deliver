@@ -35,12 +35,14 @@ class UpdateArea extends React.Component {
             this.setState({ loaded: true })
             showToast();
         });
-
         if(this.props.data && this.props.data.length > 0) {
             let tempArea = deliverAreaList
             this.props.data.map((area) => {
-                if(deliverAreaList[area-1])
-                    tempArea[area-1].selected = true
+                tempArea.map((list, index) => {
+                    if(list.id == area) {
+                        tempArea[index].selected = true
+                    }
+                })
             })
             this.setState({deliverOptions: tempArea})
         }
@@ -48,7 +50,6 @@ class UpdateArea extends React.Component {
     }
 
     async nextScreen(){
-        
         this.setState({loaded: false})
         await updateArea(this.state.deliverAddress).then(async (response) => {
             this.setState({loaded: true});

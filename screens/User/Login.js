@@ -52,64 +52,64 @@ class Login extends React.Component {
         this.setState({loaded: true})
     }
     handleNotification(notify_data, type) {
-        if(notify_data.body.type == "terms" || notify_data.body.type == "commercial" || notify_data.body.type == "personal") {
+        if(notify_data.type == "terms" || notify_data.type == "commercial" || notify_data.type == "personal") {
             let termsInfo = store.getState().terms
-            if(notify_data.body.type == "terms")
+            if(notify_data.type == "terms")
                 termsInfo.terms = true
-            else if(notify_data.body.type == "commercial")
+            else if(notify_data.type == "commercial")
                 termsInfo.commercial = true
-            else if(notify_data.body.type == "personal")
+            else if(notify_data.type == "personal")
                 termsInfo.personal = true
             this.props.setTerms(termsInfo)
-        } else if(notify_data.body.type == "delivery_before_attend" || notify_data.body.type == "delivery_order_request" || notify_data.body.type == "delivery_order_car" || notify_data.body.type == "delivery_order_serveral" || notify_data.body.type == "delivery_request_attend" || notify_data.body.type == "delivery_order_cancel") {
+        } else if(notify_data.type == "delivery_before_attend" || notify_data.type == "delivery_order_request" || notify_data.type == "delivery_order_car" || notify_data.type == "delivery_order_serveral" || notify_data.type == "delivery_request_attend" || notify_data.type == "delivery_order_cancel") {
             let notify = store.getState().notify
             notify.title = notify_data.aps.alert.title
             notify.subtitle = notify_data.aps.alert.body
-            if(notify_data.body.type == "delivery_before_attend")
+            if(notify_data.type == "delivery_before_attend")
                 notify.delivery_before_attend = true
-            else if(notify_data.body.type == "delivery_order_request")
+            else if(notify_data.type == "delivery_order_request")
             {
                 notify.delivery_order_request = true
-                notify.request_order_uid = notify_data.body.order_uid
+                notify.request_order_uid = notify_data.order_uid
             }
-            else if(notify_data.body.type == "delivery_order_car"){
+            else if(notify_data.type == "delivery_order_car"){
                 notify.delivery_order_car = true
-                notify.request_order_uid = notify_data.body.order_uid
+                notify.request_order_uid = notify_data.order_uid
             }
-            else if(notify_data.body.type == "delivery_order_serveral"){
+            else if(notify_data.type == "delivery_order_serveral"){
                 notify.delivery_order_serveral = true
-                notify.request_order_uid = notify_data.body.order_uid
+                notify.request_order_uid = notify_data.order_uid
             }
-            else if(notify_data.body.type == "delivery_request_attend")
+            else if(notify_data.type == "delivery_request_attend")
                 notify.delivery_request_attend = true
-            else if(notify_data.body.type == "delivery_order_cancel")
+            else if(notify_data.type == "delivery_order_cancel")
                 notify.delivery_order_cancel = true
             this.props.setNotify(notify)
-        } else if(notify_data.body.type == "delivery_decide" || notify_data.body.type == "delivery_no_entry") {
+        } else if(notify_data.type == "delivery_decide" || notify_data.type == "delivery_no_entry") {
             let notify = store.getState().notify
-            notify.title = notify_data.body.title
-            notify.subtitle = notify_data.body.body
-            if(notify_data.body.type == "delivery_decide"){
+            notify.title = notify_data.title
+            notify.subtitle = notify_data.body
+            if(notify_data.type == "delivery_decide"){
                 notify.delivery_decide = true
-                notify.order_uid = notify_data.body.order_uid
+                notify.order_uid = notify_data.order_uid
             }
-            else if(notify_data.body.type == "delivery_no_entry")
+            else if(notify_data.type == "delivery_no_entry")
                 notify.delivery_no_entry = true
             this.props.setNotify(notify)
-        } else if(notify_data.body.type == "cancel_delivering") {
+        } else if(notify_data.type == "cancel_delivering") {
             let notify = store.getState().notify
             notify.cancel_delivering = true
-            notify.title = notify_data.body.title
-            notify.subtitle = notify_data.body.body
+            notify.title = notify_data.title
+            notify.subtitle = notify_data.body
             this.props.setNotify(notify)
-        } else if(notify_data.body.type == 'chat') {
+        } else if(notify_data.type == 'chat') {
             if(Actions.currentScene != 'chat' && Actions.currentScene != 'chatlist'){
-                Actions.push("chatlist", { order_uid: notify_data.body.order_uid, author: store.getState().user, store_name: notify_data.body.store_name })
+                Actions.push("chatlist", { order_uid: notify_data.order_uid, author: store.getState().user, store_name: notify_data.store_name })
             }
             else
                 Actions.refresh();
         }
-        if(notify_data.body.type == "delivery_order_request" || notify_data.body.type == "delivery_order_car" || notify_data.body.type == "delivery_order_serveral") {
+        if(notify_data.type == "delivery_order_request" || notify_data.type == "delivery_order_car" || notify_data.type == "delivery_order_serveral") {
             Notifications.scheduleNotificationAsync({
                 content: {
                     title: "エントリーボタンが押されずに3分が経ちました。",

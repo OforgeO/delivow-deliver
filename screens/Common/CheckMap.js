@@ -17,6 +17,9 @@ import { connect } from "react-redux";
 import { setNotify } from '../../actions';
 import store from '../../store/configuteStore';
 import Constants from 'expo-constants';
+import firebase from '../../Fire';
+export const deliverRef = firebase.database().ref('deliver_location')
+
 class CheckMap extends React.Component {
     constructor(props) {
         super(props);
@@ -29,14 +32,25 @@ class CheckMap extends React.Component {
             distance: null,
             driveTime: null,
             motorTime: null,
-            bycicleTime: null
+            bycicleTime: null,
+            deliver_uid: null
         }
     }
     async componentDidMount() {
+        if(this.props.mapType != 'store_customer') {
+            let uid = store.getState().user.uid
+            let deliverLocation = deliverRef.child(uid);
+            deliverLocation.on("child_changed", function (snapshot) {
+                console.log(snapshot.val())
+            })
+            
+        }
         this.setState({loaded: false})
         await getOrderLocations(this.props.order_uid)
         .then(async (response) => {
             if(response.status == 1) {
+                if(response.info.deliver_uid)
+                    this.setState({deliver_uid: response.info.deliver_uid})
                 if(response.info.delivery_location && response.info.delivery_location.length > 0)
                     this.setState({orgMarker: {
                         latitude: response.info.delivery_location[0],

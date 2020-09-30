@@ -100,7 +100,7 @@ export default class Terms extends React.Component {
                             null
                         }
                     </View>
-                    <ScrollView ref={ref => this.scrollRef = ref} style={{flex: 1}} contentContainerStyle={{borderTopColor: '#f2f2f2', borderTopWidth: 1, paddingTop: 15}}>
+                    <ScrollView ref={ref => this.scrollRef = ref} style={{flex: 1}} style={{borderTopColor: '#f2f2f2', borderTopWidth: 1, paddingTop: 15}}>
                         <View style={{paddingHorizontal: normalize(20), paddingBottom: 30}}>
                             <RegularText style={[fonts.size16, {lineHeight: 20}]}>{this.state.content}</RegularText>
                         </View>

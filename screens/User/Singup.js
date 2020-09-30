@@ -19,6 +19,7 @@ class Signup extends React.Component {
     constructor(props){
         super(props);
         this.state = {
+            is_login: true
         };
     }
     async componentDidMount(){
@@ -40,56 +41,60 @@ class Signup extends React.Component {
         //SecureStore.deleteItemAsync("token")
         let token = await SecureStore.getItemAsync("token")
         if(token) {
+            this.setState({is_login: true})
             Actions.reset("root")
+        } else {
+            this.setState({is_login: false})
         }
     }
+
     handleNotification(notify_data, type) {
         console.log(notify_data)
-        if(notify_data.body.type == "terms" || notify_data.body.type == "commercial" || notify_data.body.type == "personal") {
+        if(notify_data.type == "terms" || notify_data.type == "commercial" || notify_data.type == "personal") {
             let termsInfo = store.getState().terms
-            if(notify_data.body.type == "terms")
+            if(notify_data.type == "terms")
                 termsInfo.terms = true
-            else if(notify_data.body.type == "commercial")
+            else if(notify_data.type == "commercial")
                 termsInfo.commercial = true
-            else if(notify_data.body.type == "personal")
+            else if(notify_data.type == "personal")
                 termsInfo.personal = true
             this.props.setTerms(termsInfo)
-        } else if(notify_data.body.type == "delivery_before_attend" || notify_data.body.type == "delivery_order_request" || notify_data.body.type == "delivery_order_car" || notify_data.body.type == "delivery_order_serveral" || notify_data.body.type == "delivery_request_attend" || notify_data.body.type == "delivery_order_cancel") {
+        } else if(notify_data.type == "delivery_before_attend" || notify_data.type == "delivery_order_request" || notify_data.type == "delivery_order_car" || notify_data.type == "delivery_order_serveral" || notify_data.type == "delivery_request_attend" || notify_data.type == "delivery_order_cancel") {
             let notify = store.getState().notify
             notify.title = notify_data.aps.alert.title
             notify.subtitle = notify_data.aps.alert.body
-            if(notify_data.body.type == "delivery_before_attend")
+            if(notify_data.type == "delivery_before_attend")
                 notify.delivery_before_attend = true
-            else if(notify_data.body.type == "delivery_order_request")
+            else if(notify_data.type == "delivery_order_request")
             {
                 notify.delivery_order_request = true
-                notify.request_order_uid = notify_data.body.order_uid
+                notify.request_order_uid = notify_data.order_uid
             }
-            else if(notify_data.body.type == "delivery_order_car"){
+            else if(notify_data.type == "delivery_order_car"){
                 notify.delivery_order_car = true
-                notify.request_order_uid = notify_data.body.order_uid
+                notify.request_order_uid = notify_data.order_uid
             }
-            else if(notify_data.body.type == "delivery_order_serveral"){
+            else if(notify_data.type == "delivery_order_serveral"){
                 notify.delivery_order_serveral = true
-                notify.request_order_uid = notify_data.body.order_uid
+                notify.request_order_uid = notify_data.order_uid
             }
-            else if(notify_data.body.type == "delivery_request_attend")
+            else if(notify_data.type == "delivery_request_attend")
                 notify.delivery_request_attend = true
-            else if(notify_data.body.type == "delivery_order_cancel")
+            else if(notify_data.type == "delivery_order_cancel")
                 notify.delivery_order_cancel = true
             this.props.setNotify(notify)
-        } else if(notify_data.body.type == "delivery_decide" || notify_data.body.type == "delivery_no_entry") {
+        } else if(notify_data.type == "delivery_decide" || notify_data.type == "delivery_no_entry") {
             let notify = store.getState().notify
-            notify.title = notify_data.body.title
-            notify.subtitle = notify_data.body.body
-            if(notify_data.body.type == "delivery_decide"){
+            notify.title = notify_data.title
+            notify.subtitle = notify_data.body
+            if(notify_data.type == "delivery_decide"){
                 notify.delivery_decide = true
-                notify.order_uid = notify_data.body.order_uid
+                notify.order_uid = notify_data.order_uid
             }
-            else if(notify_data.body.type == "delivery_no_entry")
+            else if(notify_data.type == "delivery_no_entry")
                 notify.delivery_no_entry = true
             this.props.setNotify(notify)
-        } else if(notify_data.body.type == "cancel_delivering") {
+        } else if(notify_data.type == "cancel_delivering") {
             let notify = store.getState().notify
             notify.cancel_delivering = true
             notify.title = notify_data.aps.alert.title
@@ -101,14 +106,14 @@ class Signup extends React.Component {
                 orderUid: [],
                 orderBookUid: store.getState().showDeliver.orderBookUid
             })
-        } else if(notify_data.body.type == 'chat') {
+        } else if(notify_data.type == 'chat') {
             if(Actions.currentScene != 'chat' && Actions.currentScene != 'chatlist'){
-                Actions.push("chatlist", { order_uid: notify_data.body.order_uid, author: store.getState().user, store_name: notify_data.body.store_name })
+                Actions.push("chatlist", { order_uid: notify_data.order_uid, author: store.getState().user, store_name: notify_data.store_name })
             }
             else
                 Actions.refresh();
         }
-        if(notify_data.body.type == "delivery_order_request" || notify_data.body.type == "delivery_order_car" || notify_data.body.type == "delivery_order_serveral") {
+        if(notify_data.type == "delivery_order_request" || notify_data.type == "delivery_order_car" || notify_data.type == "delivery_order_serveral") {
             Notifications.scheduleNotificationAsync({
                 content: {
                     title: "エントリーボタンが押されずに3分が経ちました。",
@@ -145,24 +150,32 @@ class Signup extends React.Component {
     render(){
         return (
             <View style={styles.contentBg}>
-                <View style={{flex: 1, justifyContent: 'flex-end',marginBottom: 50, alignItems: 'center'}}>
-                    <Logo />
-                </View>
-                <View style={{flex: 1, paddingHorizontal: normalize(20),marginTop: 40, zIndex: 99}}>
-                    
-                    <TouchableOpacity style={[styles.loginBtn, {backgroundColor: Colors.mainColor, marginTop: normalize(30), borderColor: Colors.mainColor, borderWidth: 1}]} onPress={() => Actions.push("phonelogin")}>
-                        <BoldText style={[fonts.size16, {color: 'white'}]}>デリバーのログイン</BoldText>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={[styles.loginBtn, styles.fbLogin, { borderColor: Colors.mainColor}]} onPress={() => Actions.push("phonesignup")}>
-                        <BoldText style={[fonts.size16, {color: Colors.mainColor}]}>デリバーの新規登録 </BoldText>
-                    </TouchableOpacity>
-                    
-                    <BoldText style={[margin.mt4]}>※新規登録をされる方へ</BoldText>
-                    <RegularText style={{paddingTop: 0, lineHeight: 18}}>登録作業はできますが、<RegularText style={[{color: Colors.redColor}]}>本登録には面接が必要</RegularText>です。ご登録後、本部よりご連絡します。</RegularText>
-                    
-                </View>
-                <Image source={Images.right_cloud} style={{position: 'absolute', right: -70, top: -20}} />
-                <Image source={Images.left_cloud} style={{position: 'absolute', bottom: -50, left: -50}} />
+                {
+                    !this.state.is_login ?
+                    <View style={{flex: 1}}>
+                        <View style={{flex: 1, justifyContent: 'flex-end',marginBottom: 50, alignItems: 'center'}}>
+                            <Logo />
+                        </View>
+                        <View style={{flex: 1, paddingHorizontal: normalize(20),marginTop: 40, zIndex: 99}}>
+                            
+                            <TouchableOpacity style={[styles.loginBtn, {backgroundColor: Colors.mainColor, marginTop: normalize(30), borderColor: Colors.mainColor, borderWidth: 1}]} onPress={() => Actions.push("phonelogin")}>
+                                <BoldText style={[fonts.size16, {color: 'white'}]}>デリバーのログイン</BoldText>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={[styles.loginBtn, styles.fbLogin, { borderColor: Colors.mainColor}]} onPress={() => Actions.push("phonesignup")}>
+                                <BoldText style={[fonts.size16, {color: Colors.mainColor}]}>デリバーの新規登録 </BoldText>
+                            </TouchableOpacity>
+                            
+                            <BoldText style={[margin.mt4]}>※新規登録をされる方へ</BoldText>
+                            <RegularText style={{paddingTop: 0, lineHeight: 18}}>登録作業はできますが、<RegularText style={[{color: Colors.redColor}]}>本登録には面接が必要</RegularText>です。ご登録後、本部よりご連絡します。</RegularText>
+                            
+                        </View>
+                        <Image source={Images.right_cloud} style={{position: 'absolute', right: -70, top: -20}} />
+                        <Image source={Images.left_cloud} style={{position: 'absolute', bottom: -50, left: -50}} />
+                    </View>
+                    :
+                    null
+                }
+                
             </View>
         );
     }

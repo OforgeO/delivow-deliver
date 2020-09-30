@@ -59,12 +59,14 @@ class EditAccount extends React.Component {
         this.setState({userInfo: store.getState().user})
         if(store.getState().user.area) {
             let tempArea = '';
-
             store.getState().user.area.map((a) => {
                 if(tempArea != '')
                     tempArea += ', '
-                if(deliverAreaList && deliverAreaList[a-1])
-                    tempArea += deliverAreaList[a-1].text
+                deliverAreaList.map((area) => {
+                    if(area.id == a) {
+                        tempArea += area.text
+                    }
+                })
             })
             this.setState({deliverArea: tempArea})
         }
@@ -132,12 +134,14 @@ class EditAccount extends React.Component {
 
     _handleImagePicked = async pickerResult => {
         try {
+            console.log(pickerResult)
             if (pickerResult.uri) {
                 var _self = this;
                 setTimeout(async function () {
                     _self.setState({ loaded: false })
                     await updateAvatar(pickerResult.uri)
                         .then(async (response) => {
+                            console.log(response)
                             if (response.status == 1) {
                                 let info = store.getState().user
                                 info.photo = response.avatar_link
@@ -148,6 +152,7 @@ class EditAccount extends React.Component {
                             _self.setState({ loaded: true });
                         })
                         .catch((error) => {
+                            console.log(error)
                             _self.setState({ loaded: true });
                             showToast();
                         });

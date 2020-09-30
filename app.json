@@ -47,7 +47,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.delivow.deliver.jp",
-      "buildNumber" : "31",
+      "buildNumber" : "32",
       "config" : {
         "googleMapsApiKey" : "AIzaSyDKnoMsrfivglgqGV875Q-emWYkIBHvBWs"
       },

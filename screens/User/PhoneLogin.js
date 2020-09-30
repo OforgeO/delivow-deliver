@@ -44,10 +44,7 @@ class PhoneLogin extends React.Component {
           const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
           finalStatus = status;
         }
-        if (finalStatus !== 'granted') {
-            
-          return;
-        }
+        
         try {
           let token = await Notifications.getExpoPushTokenAsync();
           this.setState({token : token.data})

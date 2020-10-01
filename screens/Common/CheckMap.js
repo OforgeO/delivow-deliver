@@ -5,7 +5,7 @@ import { Actions } from 'react-native-router-flux';
 import Layout from '../../constants/Layout';
 import { FontAwesome, FontAwesome5, Entypo, MaterialIcons } from '@expo/vector-icons';
 import { Container, Content, Item, Input, Col } from 'native-base';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker, Polyline } from 'react-native-maps';
 import { RegularText, BoldText } from '../../components/StyledText';
 import { getOrderLocations, calcDistance } from '../../api';
 import Spinner_bar from 'react-native-loading-spinner-overlay';
@@ -18,7 +18,7 @@ import { setNotify } from '../../actions';
 import store from '../../store/configuteStore';
 import Constants from 'expo-constants';
 import firebase from '../../Fire';
-export const deliverRef = firebase.database().ref('deliver_location')
+const deliverRef = firebase.database().ref('deliver_location')
 
 class CheckMap extends React.Component {
     constructor(props) {
@@ -33,22 +33,23 @@ class CheckMap extends React.Component {
             driveTime: null,
             motorTime: null,
             bycicleTime: null,
-            deliver_uid: null
+            deliver_uid: null,
+            deliverAddr: null,
+            vehicle_type : "DRIVING"
         }
     }
     async componentDidMount() {
-        if(this.props.mapType != 'store_customer') {
-            let uid = store.getState().user.uid
-            let deliverLocation = deliverRef.child(uid);
-            deliverLocation.on("child_changed", function (snapshot) {
-                console.log(snapshot.val())
-            })
-            
-        }
+        var _self = this;        
+
         this.setState({loaded: false})
         await getOrderLocations(this.props.order_uid)
         .then(async (response) => {
             if(response.status == 1) {
+                this.setState({orderInfo: response.info})
+                if(response.info.vehicle_type == 'bike')
+                    this.setState({vehicle_type: "BICYCLING"})
+                if(response.info.customer_address)
+                    this.setState({deliverAddr: response.info.customer_address})
                 if(response.info.deliver_uid)
                     this.setState({deliver_uid: response.info.deliver_uid})
                 if(response.info.delivery_location && response.info.delivery_location.length > 0)
@@ -56,67 +57,7 @@ class CheckMap extends React.Component {
                         latitude: response.info.delivery_location[0],
                         longitude: response.info.delivery_location[1]
                     }})
-                
-                if(this.props.mapType == 'deliver_store') {
-                    if(response.info.store_location && response.info.store_location.length > 0)
-                        this.setState({targetMarker: {
-                            latitude: response.info.store_location[0],
-                            longitude: response.info.store_location[1]
-                        }})
-                    if(response.info.delivery_location.length > 0 && response.info.store_location.length > 0) {
-                        await this.calcDistance(response.info.delivery_location[0], response.info.delivery_location[1], response.info.store_location[0], response.info.store_location[1], 'driving')
-                        await this.calcDistance(response.info.delivery_location[0], response.info.delivery_location[1], response.info.store_location[0], response.info.store_location[1], 'bicycling')
-                        this.setState({loaded: true});
-                        let region = {
-                            latitude: (parseFloat(response.info.delivery_location[0]) + parseFloat(response.info.store_location[0]))/2,
-                            longitude: (parseFloat(response.info.delivery_location[1]) + parseFloat(response.info.store_location[1]))/2,
-                            latitudeDelta: Math.abs(parseFloat(response.info.delivery_location[0]) - parseFloat(response.info.store_location[0])) + 2,
-                            longitudeDelta: Math.abs(parseFloat(response.info.delivery_location[1]) - parseFloat(response.info.store_location[1])) + 1
-                        }
-                        this.setState({region: region})
-                    }
-                } else if(this.props.mapType == 'deliver_customer') {
-                    if(response.info.customer_location && response.info.customer_location.length > 0)
-                        this.setState({targetMarker: {
-                            latitude: response.info.customer_location[0],
-                            longitude: response.info.customer_location[1]
-                        }})
-                    if(response.info.delivery_location.length > 0 && response.info.customer_location.length > 0) {
-                        await this.calcDistance(response.info.delivery_location[0], response.info.delivery_location[1], response.info.customer_location[0], response.info.customer_location[1], 'driving')
-                        await this.calcDistance(response.info.delivery_location[0], response.info.delivery_location[1], response.info.customer_location[0], response.info.customer_location[1], 'bicycling')
-                        this.setState({loaded: true});
-                        let region = {
-                            latitude: (parseFloat(response.info.delivery_location[0]) + parseFloat(response.info.customer_location[0]))/2,
-                            longitude: (parseFloat(response.info.delivery_location[1]) + parseFloat(response.info.customer_location[1]))/2,
-                            latitudeDelta: Math.abs(parseFloat(response.info.delivery_location[0]) - parseFloat(response.info.customer_location[0])) + 2,
-                            longitudeDelta: Math.abs(parseFloat(response.info.delivery_location[1]) - parseFloat(response.info.customer_location[1])) + 1
-                        }
-                        this.setState({region: region})
-                    }
-                } else if(this.props.mapType == 'store_customer') {
-                    if(response.info.store_location && response.info.store_location.length > 0)
-                        this.setState({orgMarker: {
-                            latitude: response.info.store_location[0],
-                            longitude: response.info.store_location[1]
-                        }})
-                    if(response.info.customer_location && response.info.customer_location.length > 0)
-                        this.setState({targetMarker: {
-                            latitude: response.info.customer_location[0],
-                            longitude: response.info.customer_location[1]
-                        }})
-                    if(response.info.store_location.length > 0 && response.info.customer_location.length > 0) {
-                        await this.calcDistance(response.info.store_location[0], response.info.store_location[1], response.info.customer_location[0], response.info.customer_location[1], 'driving')
-                        await this.calcDistance(response.info.store_location[0], response.info.store_location[1], response.info.customer_location[0], response.info.customer_location[1], 'bicycling')
-                        this.setState({loaded: true});
-                        let region = {
-                            latitude: (parseFloat(response.info.store_location[0]) + parseFloat(response.info.customer_location[0]))/2,
-                            longitude: (parseFloat(response.info.store_location[1]) + parseFloat(response.info.customer_location[1]))/2,
-                            latitudeDelta: Math.abs(parseFloat(response.info.store_location[0]) - parseFloat(response.info.customer_location[0])) + 2,
-                            longitudeDelta: Math.abs(parseFloat(response.info.store_location[1]) - parseFloat(response.info.customer_location[1])) + 1
-                        }
-                        this.setState({region: region})
-                    }
-                }
+                this.getLocation()
                 
             } else {
                 showToast(response.message)
@@ -127,6 +68,95 @@ class CheckMap extends React.Component {
             this.setState({loaded: true});
             showToast();
         });
+
+        if(this.props.mapType != 'store_customer') {
+            let uid = store.getState().user.uid
+            
+            deliverRef.on("child_changed", function (snapshot) {
+                if(snapshot.key == uid && snapshot.val()){
+                    if(_self.props.mapType != 'store_customer')
+                        _self.getLocation()
+                    _self.setState({orgMarker: {
+                        latitude: snapshot.val().latitude,
+                        longitude: snapshot.val().longitude
+                    }})
+                }
+            })
+            
+        }
+    }
+
+    componentWillUnmount() {
+        //deliverRef = null
+    }
+
+    async getLocation() {
+        if(this.props.mapType == 'deliver_store') {
+            if(this.state.orderInfo.store_location && this.state.orderInfo.store_location.length > 0)
+                this.setState({targetMarker: {
+                    latitude: this.state.orderInfo.store_location[0],
+                    longitude: this.state.orderInfo.store_location[1]
+                }})
+            if(this.state.orgMarker.length > 0 && this.state.orderInfo.store_location.length > 0) {
+                if(this.state.distance != 0 && this.state.driveTime != 0)
+                    await this.calcDistance(this.state.orgMarker.latitude, this.state.orgMarker.longitude, this.state.orderInfo.store_location[0], this.state.orderInfo.store_location[1], 'driving')
+                if(this.state.bycicleTime != 0)
+                    await this.calcDistance(this.state.orgMarker.latitude, this.state.orgMarker.longitude, this.state.orderInfo.store_location[0], this.state.orderInfo.store_location[1], 'bicycling')
+                this.setState({loaded: true});
+                let region = {
+                    latitude: (parseFloat(this.state.orgMarker.latitude) + parseFloat(this.state.orderInfo.store_location[0]))/2,
+                    longitude: (parseFloat(this.state.orgMarker.longitude) + parseFloat(this.state.orderInfo.store_location[1]))/2,
+                    latitudeDelta: Math.abs(parseFloat(this.state.orgMarker.latitude) - parseFloat(this.state.orderInfo.store_location[0])) + 2,
+                    longitudeDelta: Math.abs(parseFloat(this.state.orgMarker.longitude) - parseFloat(this.state.orderInfo.store_location[1])) + 1
+                }
+                this.setState({region: region})
+            }
+        } else if(this.props.mapType == 'deliver_customer') {
+            if(this.state.orderInfo.customer_location && this.state.orderInfo.customer_location.length > 0)
+                this.setState({targetMarker: {
+                    latitude: this.state.orderInfo.customer_location[0],
+                    longitude: this.state.orderInfo.customer_location[1]
+                }})
+            if(this.state.orderInfo.delivery_location.length > 0 && this.state.orderInfo.customer_location.length > 0) {
+                if(this.state.distance != 0 && this.state.driveTime != 0)
+                    await this.calcDistance(this.state.orgMarker.latitude, this.state.orgMarker.longitude, this.state.orderInfo.customer_location[0], this.state.orderInfo.customer_location[1], 'driving')
+                if(this.state.bycicleTime != 0)
+                    await this.calcDistance(this.state.orgMarker.latitude, this.state.orgMarker.longitude, this.state.orderInfo.customer_location[0], this.state.orderInfo.customer_location[1], 'bicycling')
+                this.setState({loaded: true});
+                let region = {
+                    latitude: (parseFloat(this.state.orgMarker.latitude) + parseFloat(this.state.orderInfo.customer_location[0]))/2,
+                    longitude: (parseFloat(this.state.orgMarker.longitude) + parseFloat(this.state.orderInfo.customer_location[1]))/2,
+                    latitudeDelta: Math.abs(parseFloat(this.state.orgMarker.latitude) - parseFloat(this.state.orderInfo.customer_location[0])) + 2,
+                    longitudeDelta: Math.abs(parseFloat(this.state.orgMarker.longitude) - parseFloat(this.state.orderInfo.customer_location[1])) + 1
+                }
+                this.setState({region: region})
+            }
+        } else if(this.props.mapType == 'store_customer') {
+            if(this.state.orderInfo.store_location && this.state.orderInfo.store_location.length > 0)
+                this.setState({orgMarker: {
+                    latitude: this.state.orderInfo.store_location[0],
+                    longitude: this.state.orderInfo.store_location[1]
+                }})
+            if(this.state.orderInfo.customer_location && this.state.orderInfo.customer_location.length > 0)
+                this.setState({targetMarker: {
+                    latitude: this.state.orderInfo.customer_location[0],
+                    longitude: this.state.orderInfo.customer_location[1]
+                }})
+            if(this.state.orderInfo.store_location.length > 0 && this.state.orderInfo.customer_location.length > 0) {
+                if(this.state.distance != 0 && this.state.driveTime != 0)
+                    await this.calcDistance(this.state.orderInfo.store_location[0], this.state.orderInfo.store_location[1], this.state.orderInfo.customer_location[0], this.state.orderInfo.customer_location[1], 'driving')
+                if(this.state.bycicleTime != 0)
+                    await this.calcDistance(this.state.orderInfo.store_location[0], this.state.orderInfo.store_location[1], this.state.orderInfo.customer_location[0], this.state.orderInfo.customer_location[1], 'bicycling')
+                this.setState({loaded: true});
+                let region = {
+                    latitude: (parseFloat(this.state.orderInfo.store_location[0]) + parseFloat(this.state.orderInfo.customer_location[0]))/2,
+                    longitude: (parseFloat(this.state.orderInfo.store_location[1]) + parseFloat(this.state.orderInfo.customer_location[1]))/2,
+                    latitudeDelta: Math.abs(parseFloat(this.state.orderInfo.store_location[0]) - parseFloat(this.state.orderInfo.customer_location[0])) + 2,
+                    longitudeDelta: Math.abs(parseFloat(this.state.orderInfo.store_location[1]) - parseFloat(this.state.orderInfo.customer_location[1])) + 1
+                }
+                this.setState({region: region})
+            }
+        }
     }
 
     async calcDistance(orgLat, orgLng, targetLat, targetLng, type) {
@@ -139,7 +169,11 @@ class CheckMap extends React.Component {
                 } else if(type == 'bicycling')
                     this.setState({bycicleTime: result1.rows[0].elements[0].duration.value})
             } else {
-                //showToast();
+                if(type == 'driving') {
+                    this.setState({distance: 0})
+                    this.setState({driveTime: 0})
+                } else if(type == 'bicycling')
+                    this.setState({bycicleTime: 0})
             }
         })
         .catch((error) => {
@@ -198,17 +232,17 @@ class CheckMap extends React.Component {
                             this.state.region ?
                             <MapView style={styles.map}
                             initialRegion={this.state.region}>
-                                <Marker
+                                <Marker.Animated
                                     coordinate={this.state.orgMarker}
                                 >
                                     <FontAwesome5 name={"map-marker-alt"} size={30} color={'#0E1D3B'} />
-                                </Marker>
+                                </Marker.Animated>
                                 <Marker
                                     coordinate={this.state.targetMarker}
                                 >
                                     <View style={styles.marker}>
                                         <FontAwesome color="white" name="cutlery" size={18} />
-                                        <RegularText style={[{ color: 'white', marginLeft: 10 }, fonts.size16]}>{this.props.store_name}</RegularText>
+                                        <RegularText style={[{ color: 'white', marginLeft: 10 }, fonts.size16]}>{this.props.mapType == 'deliver_customer' ? this.state.deliverAddr: this.props.store_name}</RegularText>
                                     </View>
                                     <View style={{ alignItems: 'center' }}>
                                         <Entypo name="triangle-down" color="#0E1D3B" size={30} style={{ position: 'absolute', top: -10 }} />
@@ -220,6 +254,8 @@ class CheckMap extends React.Component {
                                     apikey={GoogleMapKey}
                                     language="ja"
                                     strokeWidth={3}
+                                    resetOnChange={false}
+                                    mode={this.state.vehicle_type}
                                     strokeColor={Colors.mainColor}
                                 />
                             </MapView>

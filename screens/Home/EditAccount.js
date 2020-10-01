@@ -134,14 +134,12 @@ class EditAccount extends React.Component {
 
     _handleImagePicked = async pickerResult => {
         try {
-            console.log(pickerResult)
             if (pickerResult.uri) {
                 var _self = this;
                 setTimeout(async function () {
                     _self.setState({ loaded: false })
                     await updateAvatar(pickerResult.uri)
                         .then(async (response) => {
-                            console.log(response)
                             if (response.status == 1) {
                                 let info = store.getState().user
                                 info.photo = response.avatar_link

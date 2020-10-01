@@ -24,7 +24,7 @@ import OrderConfirm from '../../components/OrderConfirm';
 import io from 'socket.io-client';
 import { SOCKET_URL } from '../../constants/Global';
 import firebase from '../../Fire';
-export const deliverRef = firebase.database().ref('deliver_location')
+const deliverRef = firebase.database().ref('deliver_location')
 
 let socket = io.connect(SOCKET_URL, {
     transports: ['websocket'],
@@ -60,9 +60,9 @@ class MyPage extends React.Component {
             });*/
             Location.watchPositionAsync({
                 accuracy: 6,
-                distanceInterval : 1
+                timeInterval: 1500,
+                distanceInterval : 5
             }, (result) => {
-                console.log(result)
                 if(result && result.coords){
                     this.sendMessage(result.coords.latitude, result.coords.longitude)
                 }
@@ -137,7 +137,6 @@ class MyPage extends React.Component {
         if(uid){
             await deliverRef.child(uid).set({latitude: latitude, longitude: longitude})
         }
-        
     }
     
     async refresh() {

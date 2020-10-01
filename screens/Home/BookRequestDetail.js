@@ -3,7 +3,6 @@ import { StyleSheet, View, Platform, Text, Linking, TouchableOpacity, StatusBar,
 import { shared, fonts, margin, normalize } from '../../assets/styles';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Actions } from 'react-native-router-flux';
-import Layout from '../../constants/Layout';
 import { FontAwesome, FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Container, Content, Col } from 'native-base';
 import Colors from '../../constants/Colors';
@@ -13,8 +12,6 @@ import Tag from '../../components/Tag';
 import { RegularText, BoldText } from '../../components/StyledText';
 import Spinner_bar from 'react-native-loading-spinner-overlay';
 import { showToast } from '../../shared/global';
-import * as Permissions from 'expo-permissions';
-import * as Location from 'expo-location';
 import { getOrderDetails, calcDistance, departStore, completeDelivery, setDeliveryStatus, getUser } from '../../api';
 import moment from 'moment';
 import Back from '../../components/Back';
@@ -66,6 +63,7 @@ class BookRequestDetail extends React.Component {
 
         await getOrderDetails(this.props.order_uid)
         .then(async (response) => {
+            console.log(response)
             if (response.status == 1) {
                 this.setState({ orderInfo: response.info })
                 if(response.info.status == 'delivering')
@@ -296,8 +294,8 @@ class BookRequestDetail extends React.Component {
     }
     renderOrderList(products) {
         return products.map((product, index) => {
-            return <View>
-                <TouchableOpacity key={product.product_uid}  onPress={() => this.checkOption(product.product_uid)}>
+            return <View key={index+"-"+product.product_uid}>
+                <TouchableOpacity  onPress={() => this.checkOption(product.product_uid)}>
                     <View key={product.product_uid} style={[shared.flexCenter, { justifyContent: 'space-between', borderTopWidth: 1, borderTopColor: '#f2f2f2', paddingVertical: 13 }]}>
                     <View style={[shared.flexCenter, { flex: 1, alignItems: 'flex-start' }]}>
                         <FontAwesome name={"check-circle"} size={20} color={product.selected || (this.state.orderInfo && this.state.orderInfo.status == 'delivering') ? Colors.secColor : '#848484'} />

@@ -83,15 +83,15 @@ class Signup extends React.Component {
             else if(notify_data.type == "delivery_order_cancel")
                 notify.delivery_order_cancel = true
             this.props.setNotify(notify)
-        } else if(notify_data.type == "delivery_decide" || notify_data.type == "delivery_no_entry") {
+        } else if(notify_data.body.type == "delivery_decide" || notify_data.body.type == "delivery_no_entry") {
             let notify = store.getState().notify
-            notify.title = notify_data.title
-            notify.subtitle = notify_data.body
-            if(notify_data.type == "delivery_decide"){
+            notify.title = notify_data.body.title
+            notify.subtitle = notify_data.body.body
+            if(notify_data.body.type == "delivery_decide"){
                 notify.delivery_decide = true
-                notify.order_uid = notify_data.order_uid
+                notify.order_uid = notify_data.body.order_uid
             }
-            else if(notify_data.type == "delivery_no_entry")
+            else if(notify_data.body.type == "delivery_no_entry")
                 notify.delivery_no_entry = true
             this.props.setNotify(notify)
         } else if(notify_data.type == "cancel_delivering") {

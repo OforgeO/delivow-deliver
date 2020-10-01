@@ -1,6 +1,9 @@
 import { BACKEND_URL } from './../constants/Global';
 import * as SecureStore from 'expo-secure-store';
 import { GoogleMapKey } from '../constants/Global'
+import * as FileSystem from 'expo-file-system';
+import { FileSystemUploadType } from "expo-file-system";
+
 let base_url = BACKEND_URL;
 let _headers = {
     'Accept': 'application/json',
@@ -35,27 +38,25 @@ function createCall(path, data = null, headers = {}, method = 'POST') {
             },
         ).then((resp) => resp.json());
 }
-function uploadImage(uri, link, phone, type){
+async function uploadImage(uri, link, phone, type){
     let uriParts = uri.split('.');
     let fileType = uriParts[uriParts.length - 1];
     
-    let formData = new FormData();
-    formData.append(type, {
-        uri: uri,
-        name: `photo.${fileType}`,
-        type: `image/${fileType}`,
-    });
-    formData.append('phone', phone)
-    
-    let options = {
-        method: 'POST',
-        body: formData,
+    const response = await FileSystem.uploadAsync(`${base_url}${link}`, uri, {
+        uploadType: FileSystemUploadType.MULTIPART,
+        httpMethod: "POST",
         headers: {
-            'Accept': 'application/json',
+            Accept: 'application/json',
             'Content-Type': 'multipart/form-data'
         },
-    };
-    return fetch(`${base_url}${link}`, options).then((resp) => resp.json());
+        fieldName: type,
+        mimeType: `image/${fileType}`,
+        parameters: {
+            phone
+        }
+    });
+    
+    return JSON.parse(response.body)
 }
 
 
@@ -102,104 +103,96 @@ export function registerVehicleType(phone, type) {
     );
 }
 
-export function registerLicense(frontUri, backUri, number, expire_date, phone) {
+export async function registerLicense(frontUri, backUri, number, expire_date, phone) {
     let uriFront = frontUri.split('.');
     let frontType = uriFront[uriFront.length - 1];
     let uriBack = backUri.split('.');
     let backType = uriBack[uriBack.length - 1];
-    
-    let formData = new FormData();
-    if(frontUri){
-        formData.append('license_front', {
-            uri: frontUri,
-            name: `photo.${frontType}`,
-            type: `image/${frontType}`,
-        });
-    }
-    if(backUri){
-        formData.append('license_back', {
-            uri: backUri,
-            name: `photo.${backType}`,
-            type: `image/${backType}`,
-        });
-    }
-    
-    formData.append('phone', phone)
-    formData.append('number', number)
-    formData.append('expire_date', expire_date)
-    
-    let options = {
-        method: 'POST',
-        body: formData,
+    await FileSystem.uploadAsync(`${base_url}delivery/auth/register_license`, frontUri, {
+        uploadType: FileSystemUploadType.MULTIPART,
+        httpMethod: "POST",
         headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'multipart/form-data'
+            Accept: 'application/json',
+            'Content-Type': 'multipart/form-data',
         },
-    };
-    return fetch(`${base_url}delivery/auth/register_license`, options).then((resp) => resp.json());
+        fieldName: "license_front",
+        mimeType: `image/${frontType}`,
+        parameters: {
+            phone, number, expire_date
+        }
+    });
+    
+    const response = await FileSystem.uploadAsync(`${base_url}delivery/auth/register_license`, backUri, {
+        uploadType: FileSystemUploadType.MULTIPART,
+        httpMethod: "POST",
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'multipart/form-data',
+        },
+        fieldName: "license_back",
+        mimeType: `image/${backType}`,
+        parameters: {
+            phone, number, expire_date
+        }
+    });
+    
+    return JSON.parse(response.body)
 }
 
-export function registerVehicleImage(vehicle, number, phone) {
+export async function registerVehicleImage(vehicle, number, phone) {
     let uriFront = vehicle.split('.');
     let frontType = uriFront[uriFront.length - 1];
-    
-    let formData = new FormData();
-    if(vehicle){
-        formData.append('vehicle', {
-            uri: vehicle,
-            name: `photo.${frontType}`,
-            type: `image/${frontType}`,
-        });
-    }
-    
-    formData.append('phone', phone)
-    formData.append('number', number)
-    let options = {
-        method: 'POST',
-        body: formData,
+    const response = await FileSystem.uploadAsync(`${base_url}delivery/auth/register_vehicle_image`, vehicle, {
+        uploadType: FileSystemUploadType.MULTIPART,
+        httpMethod: "POST",
         headers: {
             'Accept': 'application/json',
-            'Content-Type': 'multipart/form-data'
+            'Content-Type': 'multipart/form-data',
         },
-    };
-    return fetch(`${base_url}delivery/auth/register_vehicle_image`, options).then((resp) => resp.json());
+        fieldName: "vehicle",
+        mimeType: `image/${frontType}`,
+        parameters: {
+            number, phone
+        }
+    });
+    
+    return JSON.parse(response.body)
 }
 
-export function registerInsurance(liability_photo, voluntary_photo, liability_expire_date, voluntary_expire_date, phone) {
+export async function registerInsurance(liability_photo, voluntary_photo, liability_expire_date, voluntary_expire_date, phone) {
     let uriFront = liability_photo.split('.');
     let frontType = uriFront[uriFront.length - 1];
     let uriBack = voluntary_photo.split('.');
     let backType = uriBack[uriBack.length - 1];
-    
-    let formData = new FormData();
-    if(liability_photo){
-        formData.append('liability_photo', {
-            uri: liability_photo,
-            name: `photo.${frontType}`,
-            type: `image/${frontType}`,
-        });
-    }
-    if(voluntary_photo){
-        formData.append('voluntary_photo', {
-            uri: voluntary_photo,
-            name: `photo.${backType}`,
-            type: `image/${backType}`,
-        });
-    }
-    
-    formData.append('phone', phone)
-    formData.append('liability_expire_date', liability_expire_date)
-    formData.append('voluntary_expire_date', voluntary_expire_date)
-    
-    let options = {
-        method: 'POST',
-        body: formData,
+    await FileSystem.uploadAsync(`${base_url}delivery/auth/register_insurance`, liability_photo, {
+        uploadType: FileSystemUploadType.MULTIPART,
+        httpMethod: "POST",
         headers: {
-            'Accept': 'application/json',
+            Accept: 'application/json',
             'Content-Type': 'multipart/form-data'
         },
-    };
-    return fetch(`${base_url}delivery/auth/register_insurance`, options).then((resp) => resp.json());
+        fieldName: "liability_photo",
+        mimeType: `image/${frontType}`,
+        parameters: {
+            phone, liability_expire_date, voluntary_expire_date
+        }
+    });
+
+    const response = await FileSystem.uploadAsync(`${base_url}delivery/auth/register_insurance`, voluntary_photo, {
+        uploadType: FileSystemUploadType.MULTIPART,
+        httpMethod: "POST",
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'multipart/form-data'
+        },
+        fieldName: "voluntary_photo",
+        mimeType: `image/${backType}`,
+        parameters: {
+            phone, liability_expire_date, voluntary_expire_date
+        }
+    });
+    
+    return JSON.parse(response.body)
 }
 
 export function registerArea(area, phone) {
@@ -216,39 +209,40 @@ export function registerBank(name, code, branch_code, account_number, account_na
     );
 }
 
-export function registerBankPhoto(bank_front, bank_back, phone) {
+export async function registerBankPhoto(bank_front, bank_back, phone) {
     let uriFront = bank_front.split('.');
     let frontType = uriFront[uriFront.length - 1];
     let uriBack = bank_back.split('.');
     let backType = uriBack[uriBack.length - 1];
-    
-    let formData = new FormData();
-    if(bank_front){
-        formData.append('bank_front', {
-            uri: bank_front,
-            name: `photo.${frontType}`,
-            type: `image/${frontType}`,
-        });
-    }
-    if(bank_back){
-        formData.append('bank_back', {
-            uri: bank_back,
-            name: `photo.${backType}`,
-            type: `image/${backType}`,
-        });
-    }
-    
-    formData.append('phone', phone)
-    
-    let options = {
-        method: 'POST',
-        body: formData,
+    await FileSystem.uploadAsync(`${base_url}delivery/auth/register_bank_photo`, bank_front, {
+        uploadType: FileSystemUploadType.MULTIPART,
+        httpMethod: "POST",
         headers: {
-            'Accept': 'application/json',
+            Accept: 'application/json',
             'Content-Type': 'multipart/form-data'
         },
-    };
-    return fetch(`${base_url}delivery/auth/register_bank_photo`, options).then((resp) => resp.json());
+        fieldName: "bank_front",
+        mimeType: `image/${frontType}`,
+        parameters: {
+            phone
+        }
+    });
+
+    const response = await FileSystem.uploadAsync(`${base_url}delivery/auth/register_bank_photo`, bank_back, {
+        uploadType: FileSystemUploadType.MULTIPART,
+        httpMethod: "POST",
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'multipart/form-data'
+        },
+        fieldName: "bank_back",
+        mimeType: `image/${backType}`,
+        parameters: {
+            phone
+        }
+    });
+    
+    return JSON.parse(response.body)
 }
 
 export function login(phone, password, push_id) {
@@ -356,26 +350,21 @@ export async function updateAvatar(avatar) {
     let token = await SecureStore.getItemAsync("token")
     let uriFront = avatar.split('.');
     let frontType = uriFront[uriFront.length - 1];
-    
-    let formData = new FormData();
-    if(avatar){
-        formData.append('avatar', {
-            uri: avatar,
-            name: `photo.${frontType}`,
-            type: `image/${frontType}`,
-        });
-    }
-    
-    let options = {
-        method: 'POST',
-        body: formData,
+    const response = await FileSystem.uploadAsync(`${base_url}delivery/user/update_avatar`, avatar, {
+        uploadType: FileSystemUploadType.MULTIPART,
+        httpMethod: "POST",
         headers: {
-            'Accept': 'application/json',
+            Accept: 'application/json',
             'Content-Type': 'multipart/form-data',
             'Authorization': 'Bearer '+token
         },
-    };
-    return fetch(`${base_url}delivery/user/update_avatar`, options).then((resp) => resp.json());
+        fieldName: "avatar",
+        mimeType: `image/${frontType}`,
+        
+    });
+    
+    return JSON.parse(response.body)
+
 }
 
 export async function updateName(first_name, last_name) {
@@ -559,35 +548,37 @@ export async function updateLicense(frontUri, backUri, number, expire_date) {
     let frontType = uriFront[uriFront.length - 1];
     let uriBack = backUri.split('.');
     let backType = uriBack[uriBack.length - 1];
-    
-    let formData = new FormData();
-    if(frontUri){
-        formData.append('license_front', {
-            uri: frontUri,
-            name: `photo.${frontType}`,
-            type: `image/${frontType}`,
-        });
-    }
-    if(backUri){
-        formData.append('license_back', {
-            uri: backUri,
-            name: `photo.${backType}`,
-            type: `image/${backType}`,
-        });
-    }
-    
-    formData.append('number', number)
-    formData.append('expire_date', expire_date)
-    let options = {
-        method: 'POST',
-        body: formData,
+    await FileSystem.uploadAsync(`${base_url}delivery/user/update_license`, frontUri, {
+        uploadType: FileSystemUploadType.MULTIPART,
+        httpMethod: "POST",
         headers: {
-            'Accept': 'application/json',
+            Accept: 'application/json',
             'Content-Type': 'multipart/form-data',
-            'Authorization': 'Bearer '+token
+            Authorization: 'Bearer '+token
         },
-    };
-    return fetch(`${base_url}delivery/user/update_license`, options).then((resp) => resp.json());
+        fieldName: "avatar",
+        mimeType: `image/${frontType}`,
+        parameters: {
+            number, expire_date
+        }
+    });
+
+    const response = await FileSystem.uploadAsync(`${base_url}delivery/user/update_license`, backUri, {
+        uploadType: FileSystemUploadType.MULTIPART,
+        httpMethod: "POST",
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'multipart/form-data',
+            Authorization: 'Bearer '+token
+        },
+        fieldName: "avatar",
+        mimeType: `image/${backType}`,
+        parameters: {
+            number, expire_date
+        }
+    });
+    
+    return JSON.parse(response.body)
 }
 
 export async function updateInsurance(liability_photo, voluntary_photo, liability_expire_date, voluntary_expire_date) {
@@ -596,63 +587,59 @@ export async function updateInsurance(liability_photo, voluntary_photo, liabilit
     let frontType = uriFront[uriFront.length - 1];
     let uriBack = voluntary_photo.split('.');
     let backType = uriBack[uriBack.length - 1];
-    
-    let formData = new FormData();
-    if(liability_photo){
-        formData.append('liability_photo', {
-            uri: liability_photo,
-            name: `photo.${frontType}`,
-            type: `image/${frontType}`,
-        });
-    }
-    if(voluntary_photo){
-        formData.append('voluntary_photo', {
-            uri: voluntary_photo,
-            name: `photo.${backType}`,
-            type: `image/${backType}`,
-        });
-    }
-    
-    formData.append('liability_expire_date', liability_expire_date)
-    formData.append('voluntary_expire_date', voluntary_expire_date)
-    
-    let options = {
-        method: 'POST',
-        body: formData,
+    await FileSystem.uploadAsync(`${base_url}delivery/user/update_insurance`, liability_photo, {
+        uploadType: FileSystemUploadType.MULTIPART,
+        httpMethod: "POST",
         headers: {
-            'Accept': 'application/json',
+            Accept: 'application/json',
             'Content-Type': 'multipart/form-data',
             'Authorization': 'Bearer '+token
         },
-    };
-    return fetch(`${base_url}delivery/user/update_insurance`, options).then((resp) => resp.json());
+        fieldName: "liability_photo",
+        mimeType: `image/${frontType}`,
+        parameters: {
+            liability_expire_date, voluntary_expire_date
+        }
+    });
+
+    const response = await FileSystem.uploadAsync(`${base_url}delivery/user/update_insurance`, voluntary_photo, {
+        uploadType: FileSystemUploadType.MULTIPART,
+        httpMethod: "POST",
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'multipart/form-data',
+            'Authorization': 'Bearer '+token
+        },
+        fieldName: "voluntary_photo",
+        mimeType: `image/${backType}`,
+        parameters: {
+            liability_expire_date, voluntary_expire_date
+        }
+    });
+    
+    return JSON.parse(response.body)
 }
 
 export async function updateVehicleImage(vehicle, number) {
     let token = await SecureStore.getItemAsync("token")
     let uriFront = vehicle.split('.');
     let frontType = uriFront[uriFront.length - 1];
-    
-    let formData = new FormData();
-    if(vehicle){
-        formData.append('vehicle', {
-            uri: vehicle,
-            name: `photo.${frontType}`,
-            type: `image/${frontType}`,
-        });
-    }
-    
-    formData.append('number', number)
-    let options = {
-        method: 'POST',
-        body: formData,
+    const response = await FileSystem.uploadAsync(`${base_url}delivery/user/update_vehicle_image`, vehicle, {
+        uploadType: FileSystemUploadType.MULTIPART,
+        httpMethod: "POST",
         headers: {
-            'Accept': 'application/json',
+            Accept: 'application/json',
             'Content-Type': 'multipart/form-data',
             'Authorization': 'Bearer '+token
         },
-    };
-    return fetch(`${base_url}delivery/user/update_vehicle_image`, options).then((resp) => resp.json());
+        fieldName: "vehicle",
+        mimeType: `image/${frontType}`,
+        parameters: {
+            number
+        }
+    });
+    
+    return JSON.parse(response.body)
 }
 
 export async function sendNotification(author, target, message, order_uid) {

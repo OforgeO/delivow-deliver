@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Platform, StatusBar, StyleSheet, Linking } from 'react-native';
+import { Platform, StatusBar, StyleSheet, LogBox } from 'react-native';
 import { Root } from 'native-base';
 import useCachedResources from './hooks/useCachedResources';
 import EStyleSheet from 'react-native-extended-stylesheet';
@@ -78,9 +78,11 @@ EStyleSheet.build({
     $bigTextColor: '#454F63'
 });
 
-console.disableYellowBox = true;
+LogBox.ignoreAllLogs();
 const LOCATION_TASK_NAME = 'background-location-task';
 // const Stack = createStackNavigator();
+import firebase from './Fire';
+const deliverRef = firebase.database().ref('deliver_location')
 export default function App(props) {
     const isLoadingComplete = useCachedResources();
 
@@ -183,6 +185,10 @@ TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
     if (data) {
         const { locations } = data;
         if (locations) {
+            let uid = store.getState().user.uid
+            if(uid){
+                await deliverRef.child(uid).set({latitude: locations[0].coords.latitude, longitude: locations[0].coords.longitude})
+            }
             await updateLocation(locations[0].coords.latitude, locations[0].coords.longitude)
             .then(async (response) => {
             })

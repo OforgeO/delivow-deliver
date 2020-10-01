@@ -49,7 +49,6 @@ class SplashScreen extends React.Component {
                 ? false
                 : true;
         } catch(error) {
-            console.log(error)
         }
     }
     moveAnotherPage(pageName) {

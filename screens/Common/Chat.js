@@ -66,7 +66,7 @@ export default class Chat extends React.Component {
         this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
         this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide);
     }
-
+    
     componentWillUnmount() {
         chat = null;
         this.keyboardDidShowListener.remove();

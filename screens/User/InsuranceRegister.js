@@ -312,7 +312,7 @@ class InsuranceRegister extends React.Component {
                                     <View style={this.state.insuranceImageError ? [styles.licenseImg, styles.error] : styles.licenseImg}>
                                         {
                                             this.state.insuranceImage ?
-                                            <Image source={{uri: this.state.insuranceImage, cache: 'force-cache'}} style={{width: '100%', height: '100%'}} resizeMode="stretch" />
+                                            <Image source={{uri: this.state.insuranceImage, cache: 'force-cache'}} style={{width: '100%', height: '100%'}} resizeMode="contain" />
                                             :
                                             <TouchableOpacity onPress={() => this.chooseImage(1)} style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
                                                 <FontAwesome name={"upload"} color={Colors.secColor} size={40} />
@@ -387,7 +387,7 @@ class InsuranceRegister extends React.Component {
                                 <View style={this.state.anyImageError ? [styles.licenseImg, styles.error] : styles.licenseImg}>
                                     {
                                         this.state.anyImage ?
-                                        <Image source={{uri: this.state.anyImage, cache: 'force-cache'}} style={{width: '100%', height: '100%'}} resizeMode="stretch" />
+                                        <Image source={{uri: this.state.anyImage, cache: 'force-cache'}} style={{width: '100%', height: '100%'}} resizeMode="contain" />
                                         :
                                         <TouchableOpacity onPress={() => this.chooseImage(2)} style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
                                             <FontAwesome name={"upload"} color={Colors.secColor} size={40} />

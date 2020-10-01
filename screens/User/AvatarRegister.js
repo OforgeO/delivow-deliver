@@ -43,6 +43,7 @@ class AvatarRegister extends React.Component {
             this.setState({loaded: false})
             await registerFace(this.state.imagePath, this.props.phone, 'face')
                 .then(async (response) => {
+                    console.log(response)
                 this.setState({loaded: true});
                 if(response.status == 1)
                     Actions.push("vehicleregister", {phone: this.props.phone, type: 'register'})
@@ -50,6 +51,7 @@ class AvatarRegister extends React.Component {
                     showToast(response.message)
             })
             .catch((error) => {
+                console.log(error)
                 this.setState({loaded: true});
                 showToast();
             });
@@ -169,7 +171,7 @@ class AvatarRegister extends React.Component {
                                             <TouchableOpacity style={styles.avatarSection} onPress={() => this.chooseAvatar()}>
                                                 {
                                                     this.state.imagePath ?
-                                                    <Image source={{uri: this.state.imagePath, cache: 'force-cache'}} resizeMode="stretch" style={{width: '100%', height: '100%'}} />
+                                                    <Image source={{uri: this.state.imagePath, cache: 'force-cache'}} resizeMode="contain" style={{width: '100%', height: '100%'}} />
                                                     :
                                                     <View style={shared.flexCenter}>
                                                         <FontAwesome name={"upload"} color={Colors.secColor} size={18} />

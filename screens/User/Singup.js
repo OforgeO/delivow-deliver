@@ -36,8 +36,9 @@ class Signup extends React.Component {
             Linking.getInitialURL().then(url => {
                 this.navigate(url);
             });
+        } else {
+            Linking.addEventListener('url', this.handleOpenURL);
         }
-        Linking.addEventListener('url', this.handleOpenURL);
         //SecureStore.deleteItemAsync("token")
         let token = await SecureStore.getItemAsync("token")
         if(token) {

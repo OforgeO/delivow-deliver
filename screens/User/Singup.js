@@ -5,7 +5,6 @@ import { normalize, fonts,margin } from '../../assets/styles';
 import { connect } from "react-redux";
 import { setUser, setTerms, setNotify, setShowDeliver } from '../../actions';
 import {Actions} from 'react-native-router-flux';
-import { showToast } from '../../shared/global';
 import store from '../../store/configuteStore';
 import Colors from '../../constants/Colors';
 import Logo from '../../assets/images/logo.svg';
@@ -41,7 +40,7 @@ class Signup extends React.Component {
         }
         //SecureStore.deleteItemAsync("token")
         let token = await SecureStore.getItemAsync("token")
-        if(token) {
+        if(token && store.getState().user.uid) {
             this.setState({is_login: true})
             Actions.reset("root")
         } else {
@@ -60,12 +59,19 @@ class Signup extends React.Component {
             else if(notify_data.type == "personal")
                 termsInfo.personal = true
             this.props.setTerms(termsInfo)
-        } else if(notify_data.type == "delivery_before_attend" || notify_data.type == "delivery_order_request" || notify_data.type == "delivery_order_car" || notify_data.type == "delivery_order_serveral" || notify_data.type == "delivery_request_attend" || notify_data.type == "delivery_order_cancel") {
+        } else if(notify_data.type == "chat") {
+            if(Actions.currentScene != "chat" && Actions.currentScene != 'chatlist'){
+                Actions.push("chatlist", { order_uid: notify_data.order_uid, author: store.getState().user, store_name: notify_data.store_name })
+            }
+            else
+                Actions.refresh();
+        } else if(notify_data.type == "delivery_before_attend" || notify_data.type == "delivery_order_request" || notify_data.type == "delivery_order_car" || notify_data.type == "delivery_request_attend" || notify_data.type == "delivery_order_cancel") {
             let notify = store.getState().notify
             notify.title = notify_data.aps.alert.title
             notify.subtitle = notify_data.aps.alert.body
-            if(notify_data.type == "delivery_before_attend")
+            if(notify_data.type == "delivery_before_attend"){
                 notify.delivery_before_attend = true
+            }
             else if(notify_data.type == "delivery_order_request")
             {
                 notify.delivery_order_request = true
@@ -75,25 +81,12 @@ class Signup extends React.Component {
                 notify.delivery_order_car = true
                 notify.request_order_uid = notify_data.order_uid
             }
-            else if(notify_data.type == "delivery_order_serveral"){
-                notify.delivery_order_serveral = true
-                notify.request_order_uid = notify_data.order_uid
-            }
-            else if(notify_data.type == "delivery_request_attend")
+            else if(notify_data.type == "delivery_request_attend"){
                 notify.delivery_request_attend = true
-            else if(notify_data.type == "delivery_order_cancel")
-                notify.delivery_order_cancel = true
-            this.props.setNotify(notify)
-        } else if(notify_data.body.type == "delivery_decide" || notify_data.body.type == "delivery_no_entry") {
-            let notify = store.getState().notify
-            notify.title = notify_data.body.title
-            notify.subtitle = notify_data.body.body
-            if(notify_data.body.type == "delivery_decide"){
-                notify.delivery_decide = true
-                notify.order_uid = notify_data.body.order_uid
             }
-            else if(notify_data.body.type == "delivery_no_entry")
-                notify.delivery_no_entry = true
+            else if(notify_data.type == "delivery_order_cancel"){
+                notify.delivery_order_cancel = true
+            }
             this.props.setNotify(notify)
         } else if(notify_data.type == "cancel_delivering") {
             let notify = store.getState().notify
@@ -107,14 +100,19 @@ class Signup extends React.Component {
                 orderUid: [],
                 orderBookUid: store.getState().showDeliver.orderBookUid
             })
-        } else if(notify_data.type == 'chat') {
-            if(Actions.currentScene != 'chat' && Actions.currentScene != 'chatlist'){
-                Actions.push("chatlist", { order_uid: notify_data.order_uid, author: store.getState().user, store_name: notify_data.store_name })
+        } else if(notify_data.body  && (notify_data.body.type == "delivery_decide" || notify_data.body.type == "delivery_no_entry")) {
+            let notify = store.getState().notify
+            notify.title = notify_data.body.title
+            notify.subtitle = notify_data.body.body
+            if(notify_data.body.type == "delivery_decide"){
+                notify.delivery_decide = true
+                notify.order_uid = notify_data.body.order_uid
             }
-            else
-                Actions.refresh();
+            else if(notify_data.body.type == "delivery_no_entry")
+                notify.delivery_no_entry = true
+            this.props.setNotify(notify)
         }
-        if(notify_data.type == "delivery_order_request" || notify_data.type == "delivery_order_car" || notify_data.type == "delivery_order_serveral") {
+        if(notify_data.type == "delivery_order_request" || notify_data.type == "delivery_order_car") {
             Notifications.scheduleNotificationAsync({
                 content: {
                     title: "エントリーボタンが押されずに3分が経ちました。",

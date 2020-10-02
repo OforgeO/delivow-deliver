@@ -13,7 +13,6 @@ import { updateLocation } from './api';
 //Splash
 import SplashScreen from './screens/SplashScreen'
 //User
-import Login from './screens/User/Login';
 import Signup from './screens/User/Singup';
 import PhoneSignup from './screens/User/PhoneSignup';
 import ForgotEmailInput from './screens/User/ForgotEmailInput';

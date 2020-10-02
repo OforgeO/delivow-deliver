@@ -54,6 +54,7 @@ class BookRequestDetail extends React.Component {
         this.setState({ loaded: false })
         await getUser()
         .then(async (response) => {
+
             if(response.status == 1) {
                 this.setState({is_attend: response.user.is_attend})
             }
@@ -63,7 +64,6 @@ class BookRequestDetail extends React.Component {
 
         await getOrderDetails(this.props.order_uid)
         .then(async (response) => {
-            console.log(response)
             if (response.status == 1) {
                 this.setState({ orderInfo: response.info })
                 if(response.info.status == 'delivering')
@@ -140,12 +140,10 @@ class BookRequestDetail extends React.Component {
                 this.setState({ loaded: true });
             } else {
                 this.setState({ loaded: true });
-                showToast();
             }
         })
         .catch((error) => {
             this.setState({ loaded: true });
-            showToast();
         });
                 
     }
@@ -378,7 +376,7 @@ class BookRequestDetail extends React.Component {
         let targetRoomList = targetRoom.val()
         if (targetRoomList === null) {
             targetRoomList = [roomId]
-        } else if (!targetRoomList.includes(roomId)) {
+        } else if (Object.values(targetRoomList).indexOf(roomId) <= -1) {
             targetRoomList.push(roomId)
         }
         await userChatsRef.child(target.uid).set(targetRoomList)
@@ -401,15 +399,19 @@ class BookRequestDetail extends React.Component {
     async chat(type) {
         let myInfo = store.getState().user
         if(type == 'both') {
-            this.toStoreChat()
-            this.toCustomerChat()
+            this.setState({loaded: false})
+            await this.toStoreChat()
+            await this.toCustomerChat()
+            this.setState({loaded: true})
             Actions.push("chatlist", { store_name: this.state.orderInfo.store_name, author: myInfo, order_uid: this.props.order_uid})
         } else {
+            this.setState({loaded: false})
             if(type== 'store'){
-                this.toStoreChat()
+                await this.toStoreChat()
             } else if(type == 'customer') {
-                this.toCustomerChat()
+                await this.toCustomerChat()
             }
+            this.setState({loaded: true})
             Actions.push("chatlist", {store_name: this.state.orderInfo.store_name, author: myInfo, order_uid: this.props.order_uid})
         }
         
@@ -491,12 +493,54 @@ class BookRequestDetail extends React.Component {
             showToast();
         });
     }
+    removeFromFB(store_uid, customer_uid, deliver_uid) {
+        var _self = this;
+        userChatsRef.once('value', function(snapshot) {
+            let userChats = snapshot.val()
+            for(const property in userChats) {
+                if(property == store_uid) {
+                    userChatsRef.child(store_uid).once('value', function(snap) {
+                        snap.forEach(function(s){
+                            if(s.val() == store_uid < customer_uid ? store_uid+customer_uid : customer_uid+store_uid || s.val() == store_uid < deliver_uid ? store_uid+deliver_uid : deliver_uid+store_uid) {
+                                userChatsRef.child(store_uid).child(s.key).remove();
+                                _self.removeChat(s.val())
+                            }
+                        });
+                    });
+                } else if(property == customer_uid) {
+                    userChatsRef.child(customer_uid).once('value', function(snap) {
+                        snap.forEach(function(s){
+                            if(s.val() == customer_uid < store_uid ? customer_uid+store_uid : store_uid+customer_uid || s.val() == customer_uid < deliver_uid ? customer_uid+deliver_uid : deliver_uid+customer_uid) {
+                                userChatsRef.child(customer_uid).child(s.key).remove();
+                                _self.removeChat(s.val())
+                            }
+                        });
+                        
+                    });
+                } else if(property == deliver_uid) {
+                    userChatsRef.child(deliver_uid).once('value', function(snap) {
+                        snap.forEach(function(s){
+                            if(s.val() == deliver_uid < store_uid ? deliver_uid+store_uid : store_uid+deliver_uid || s.val() == deliver_uid < customer_uid ? deliver_uid+customer_uid : customer_uid+deliver_uid) {
+                                userChatsRef.child(deliver_uid).child(s.key).remove();
+                                _self.removeChat(s.val())
+                            }
+                        })
+                    });
+                }
+            } 
+        })
+    }
+    removeChat(id) {
+        chatsRef.child(id).remove();
+        messagesRef.child(id).remove();
+    }
     async endComplete() {
         this.setState({ loaded: false })
         await completeDelivery(this.props.order_uid)
         .then(async (response) => {
             this.setState({ loaded: true });
             if (response.status == 1) {
+                this.removeFromFB(response.store_uid, response.customer_uid, response.deliver_uid)
                 var _self = this;
                 setTimeout(function() {
                     Alert.alert("MISSION COMPLETE!配達、お疲れ様でした。", "次の配達依頼もエントリーをお願いします！", [
@@ -521,6 +565,7 @@ class BookRequestDetail extends React.Component {
         });
         
     }
+
     showMap(order_uid, type, store_name) {
         Actions.push("checkmap", { order_uid: order_uid, mapType: type, store_name: store_name })
     }
@@ -659,7 +704,7 @@ class BookRequestDetail extends React.Component {
                                         <FontAwesome5 name={"map-marker-alt"} size={14} color={Colors.secColor} />
                                         <BoldText style={[fonts.size14, margin.ml1]}>お届け先住所</BoldText>
                                     </View>
-                                    <View>
+                                    <View style={{flex: 1, paddingLeft: 4}}>
                                         {
                                             this.state.customerInfo && this.state.customerInfo.postcode ?
                                                 <RegularText style={[fonts.size14, { textAlign: 'right' }]}>〒{this.state.customerInfo.postcode}</RegularText>
@@ -697,7 +742,7 @@ class BookRequestDetail extends React.Component {
                                     </View>
                                     {
                                         this.state.customerInfo && this.state.customerInfo.address_note ?
-                                            <View style={{ flex: 1 }}>
+                                            <View style={{flex: 1, paddingLeft: 4}}>
                                                 <RegularText style={[fonts.size14, { textAlign: 'right', flex: 1, flexWrap: 'wrap' }]}>{this.state.customerInfo.address_note}</RegularText>
                                             </View>
                                             :

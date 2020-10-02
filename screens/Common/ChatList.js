@@ -34,7 +34,7 @@ export default class ChatList extends React.Component {
     }
 
     async refresh() {
-        this.setState({loaded: false})
+        
         const myChats = fbChat.child('userChats/'+this.state.myInfo.uid);
         let chatList = [];
         var _self = this;
@@ -57,7 +57,7 @@ export default class ChatList extends React.Component {
         console.log(chatList)
         setTimeout(function() {
             _self.setState({chatList})
-            _self.setState({loaded: true})
+            
         }, 1000)
     }
 

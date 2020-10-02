@@ -47,7 +47,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.delivow.deliver.jp",
-      "buildNumber" : "33",
+      "buildNumber" : "35",
       "config" : {
         "googleMapsApiKey" : "AIzaSyDKnoMsrfivglgqGV875Q-emWYkIBHvBWs"
       },
@@ -57,6 +57,7 @@
           "fetch",
           "remote-notification"
         ],
+        "NSAllowsArbitraryLoads": true,
         "CFBundleAllowMixedLocalizations" : true,
         "CFBundleLocalizations" : ["ja"],
         "CFBundleDevelopmentRegion" : "ja_JP"

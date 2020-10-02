@@ -24,6 +24,7 @@ import OrderConfirm from '../../components/OrderConfirm';
 import io from 'socket.io-client';
 import { SOCKET_URL } from '../../constants/Global';
 import firebase from '../../Fire';
+const userChatsRef = firebase.database().ref('userChats')
 const deliverRef = firebase.database().ref('deliver_location')
 
 let socket = io.connect(SOCKET_URL, {
@@ -48,7 +49,9 @@ class MyPage extends React.Component {
         }
     }
     async componentDidMount() {
-        
+        if(!store.getState().user.uid) {
+            Actions.reset("signup")
+        }
         const { status } = await Location.requestPermissionsAsync();
         if (status === 'granted') {
             /*await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {

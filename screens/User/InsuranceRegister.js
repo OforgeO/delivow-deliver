@@ -52,15 +52,20 @@ class InsuranceRegister extends React.Component {
             this.setState({ loaded: false })
             await getUser()
             .then(async (response) => {
+                console.log(response.user)
                 if(response.status == 1) {
                     this.setState({insuranceImage: response.user.insurance_image})
                     this.setState({anyImage: response.user.voluntary_image})
-                    this.setState({insuranceYear: response.user.insurance_valid_date ? moment(response.user.insurance_valid_date).format("YYYY") : ''})
-                    this.setState({insuranceMonth: response.user.insurance_valid_date ? moment(response.user.insurance_valid_date).format("MM") : ''})
-                    this.setState({insuranceDay: response.user.insurance_valid_date ? moment(response.user.insurance_valid_date).format("DD") : ''})
-                    this.setState({anyYear: response.user.voluntary_expire_date ? moment(response.user.voluntary_expire_date).format("YYYY") : ''})
-                    this.setState({anyMonth: response.user.voluntary_expire_date ? moment(response.user.voluntary_expire_date).format("MM") : ''})
-                    this.setState({anyDay: response.user.voluntary_expire_date ? moment(response.user.voluntary_expire_date).format("DD") : ''})
+                    if(response.user.insurance_valid_date && moment(response.user.insurance_valid_date).isValid()) {
+                        this.setState({insuranceYear: response.user.insurance_valid_date ? moment(response.user.insurance_valid_date).format("YYYY") : ''})
+                        this.setState({insuranceMonth: response.user.insurance_valid_date ? moment(response.user.insurance_valid_date).format("MM") : ''})
+                        this.setState({insuranceDay: response.user.insurance_valid_date ? moment(response.user.insurance_valid_date).format("DD") : ''})
+                    }
+                    if(response.user.voluntary_expire_date && moment(response.user.voluntary_expire_date).isValid()) {
+                        this.setState({anyYear: response.user.voluntary_expire_date ? moment(response.user.voluntary_expire_date).format("YYYY") : ''})
+                        this.setState({anyMonth: response.user.voluntary_expire_date ? moment(response.user.voluntary_expire_date).format("MM") : ''})
+                        this.setState({anyDay: response.user.voluntary_expire_date ? moment(response.user.voluntary_expire_date).format("DD") : ''})
+                    }
                 } else {
                     showToast(response.message)
                 }
@@ -126,7 +131,7 @@ class InsuranceRegister extends React.Component {
         if(valid){
             this.setState({loaded: false})
             if(this.props.type == 'update') {
-                await updateInsurance(this.state.insuranceImage, this.state.anyImage, this.state.insuranceYear+'-'+this.state.insuranceMonth+'-'+this.state.insuranceDay, this.state.anyYear+'-'+this.state.anyMonth+'-'+this.state.anyDay)
+                await updateInsurance(this.state.insuranceImage && this.state.insuranceImage.includes("file://") ? this.state.insuranceImage : null, this.state.anyImage && this.state.anyImage.includes("file://") ? this.state.anyImage : null, this.state.insuranceYear+'-'+this.state.insuranceMonth+'-'+this.state.insuranceDay, this.state.anyYear+'-'+this.state.anyMonth+'-'+this.state.anyDay)
                 .then(async (response) => {
                     this.setState({loaded: true});
                     if(response.status == 1){
@@ -137,6 +142,7 @@ class InsuranceRegister extends React.Component {
                     }
                 })
                 .catch((error) => {
+                    console.log(error)
                     this.setState({loaded: true});
                     showToast();
                 });
@@ -212,9 +218,9 @@ class InsuranceRegister extends React.Component {
 
     _handleImagePicked = async pickerResult => {
         try {
-            if(this.state.insuranceSelect)
+            if(this.state.insuranceSelect && pickerResult.uri)
                 this.setState({insuranceImage: pickerResult.uri})
-            else if(this.state.anySelect)
+            else if(this.state.anySelect && pickerResult.uri)
                 this.setState({anyImage: pickerResult.uri})
         } catch (e) {
         }
@@ -309,17 +315,17 @@ class InsuranceRegister extends React.Component {
                                         </View>
                                     </View>
                                     <RegularText style={margin.mb1}>自賠責保険の写真</RegularText>
-                                    <View style={this.state.insuranceImageError ? [styles.licenseImg, styles.error] : styles.licenseImg}>
+                                    <TouchableOpacity onPress={() => this.chooseImage(1)} style={this.state.insuranceImageError ? [styles.licenseImg, styles.error] : styles.licenseImg}>
                                         {
                                             this.state.insuranceImage ?
                                             <Image source={{uri: this.state.insuranceImage, cache: 'force-cache'}} style={{width: '100%', height: '100%'}} resizeMode="contain" />
                                             :
-                                            <TouchableOpacity onPress={() => this.chooseImage(1)} style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
+                                            <View style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
                                                 <FontAwesome name={"upload"} color={Colors.secColor} size={40} />
                                                 <BoldText style={[fonts.size14, margin.mt2, {color: Colors.secColor}]}>自賠責保険の写真</BoldText>
-                                            </TouchableOpacity>
+                                            </View>
                                         }
-                                    </View>
+                                    </TouchableOpacity>
                                     <View style={margin.mt4}>
                                         <RegularText style={styles.label}>任意保険の有効期限</RegularText>
                                         <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -384,17 +390,17 @@ class InsuranceRegister extends React.Component {
                                     </View>
                                 </View>
                                 <RegularText style={[margin.mb1]}>任意保険の写真</RegularText>
-                                <View style={this.state.anyImageError ? [styles.licenseImg, styles.error] : styles.licenseImg}>
+                                <TouchableOpacity onPress={() => this.chooseImage(2)} style={this.state.anyImageError ? [styles.licenseImg, styles.error] : styles.licenseImg}>
                                     {
                                         this.state.anyImage ?
                                         <Image source={{uri: this.state.anyImage, cache: 'force-cache'}} style={{width: '100%', height: '100%'}} resizeMode="contain" />
                                         :
-                                        <TouchableOpacity onPress={() => this.chooseImage(2)} style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
+                                        <View style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
                                             <FontAwesome name={"upload"} color={Colors.secColor} size={40} />
                                             <BoldText style={[fonts.size14, margin.mt2, {color: Colors.secColor}]}>任意保険の写真</BoldText>
-                                        </TouchableOpacity>
+                                        </View>
                                     }
-                                </View>
+                                </TouchableOpacity>
                             </View>
                             <View style={{justifyContent: 'center', alignItems: 'center', width: '100%',flex: 1, marginVertical: 30}}>
                                 <TouchableOpacity onPress={() => this.nextScreen()} style={[styles.nextBtn]}>

@@ -126,7 +126,8 @@ class AvatarRegister extends React.Component {
 
     _handleImagePicked = async pickerResult => {
         try {
-            this.setState({imagePath: pickerResult.uri})
+            if(pickerResult.uri)
+                this.setState({imagePath: pickerResult.uri})
             let temp = this.state.required
             let checkedCnt = 0
             for(var i = 0;i<temp.length;i++){

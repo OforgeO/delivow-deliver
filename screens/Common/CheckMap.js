@@ -39,8 +39,7 @@ class CheckMap extends React.Component {
         }
     }
     async componentDidMount() {
-        var _self = this;        
-
+        var _self = this;
         this.setState({loaded: false})
         await getOrderLocations(this.props.order_uid)
         .then(async (response) => {
@@ -97,7 +96,8 @@ class CheckMap extends React.Component {
                     latitude: this.state.orderInfo.store_location[0],
                     longitude: this.state.orderInfo.store_location[1]
                 }})
-            if(this.state.orgMarker.length > 0 && this.state.orderInfo.store_location.length > 0) {
+            
+            if(this.state.orgMarker && this.state.orderInfo.store_location) {
                 if(this.state.distance != 0 && this.state.driveTime != 0)
                     await this.calcDistance(this.state.orgMarker.latitude, this.state.orgMarker.longitude, this.state.orderInfo.store_location[0], this.state.orderInfo.store_location[1], 'driving')
                 if(this.state.bycicleTime != 0)
@@ -110,6 +110,13 @@ class CheckMap extends React.Component {
                     longitudeDelta: Math.abs(parseFloat(this.state.orgMarker.longitude) - parseFloat(this.state.orderInfo.store_location[1])) + 1
                 }
                 this.setState({region: region})
+            } else {
+                this.setState({region: {
+                    latitude: 35.6804,
+                    longitude: 139.769,
+                    latitudeDelta: 0.4,
+                    longitudeDelta: 0.4
+                }})
             }
         } else if(this.props.mapType == 'deliver_customer') {
             if(this.state.orderInfo.customer_location && this.state.orderInfo.customer_location.length > 0)
@@ -130,6 +137,13 @@ class CheckMap extends React.Component {
                     longitudeDelta: Math.abs(parseFloat(this.state.orgMarker.longitude) - parseFloat(this.state.orderInfo.customer_location[1])) + 1
                 }
                 this.setState({region: region})
+            } else {
+                this.setState({region: {
+                    latitude: 35.6804,
+                    longitude: 139.769,
+                    latitudeDelta: 0.4,
+                    longitudeDelta: 0.4
+                }})
             }
         } else if(this.props.mapType == 'store_customer') {
             if(this.state.orderInfo.store_location && this.state.orderInfo.store_location.length > 0)
@@ -155,6 +169,13 @@ class CheckMap extends React.Component {
                     longitudeDelta: Math.abs(parseFloat(this.state.orderInfo.store_location[1]) - parseFloat(this.state.orderInfo.customer_location[1])) + 1
                 }
                 this.setState({region: region})
+            } else {
+                this.setState({region: {
+                    latitude: 35.6804,
+                    longitude: 139.769,
+                    latitudeDelta: 0.4,
+                    longitudeDelta: 0.4
+                }})
             }
         }
     }

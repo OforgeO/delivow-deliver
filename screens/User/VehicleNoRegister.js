@@ -69,7 +69,7 @@ class VehicleNoRegister extends React.Component {
         if(valid){
             this.setState({loaded: false})
             if(this.props.type == 'update') {
-                await updateVehicleImage(this.state.vehicleNoImage, this.state.vehicleNo)
+                await updateVehicleImage(this.state.vehicleNoImage && this.state.vehicleNoImage.includes("file://") ? this.state.vehicleNoImage : null, this.state.vehicleNo)
                 .then(async (response) => {
                     this.setState({loaded: true});
                     if(response.status == 1){
@@ -80,6 +80,7 @@ class VehicleNoRegister extends React.Component {
                     }
                 })
                 .catch((error) => {
+                    console.log(error)
                     this.setState({loaded: true});
                     showToast();
                 });
@@ -148,7 +149,8 @@ class VehicleNoRegister extends React.Component {
 
     _handleImagePicked = async pickerResult => {
         try {
-            this.setState({vehicleNoImage: pickerResult.uri})
+            if(pickerResult.uri)
+                this.setState({vehicleNoImage: pickerResult.uri})
         } catch (e) {
         }
     };
@@ -196,17 +198,17 @@ class VehicleNoRegister extends React.Component {
                                     </View>
                                     
                                     <RegularText style={[styles.label]}>ナンバープレートの写真</RegularText>
-                                    <View style={this.state.vehicleNoImageError ? [styles.licenseImg, styles.error] : styles.licenseImg}>
+                                    <TouchableOpacity onPress={() => this.chooseImage(1)} style={this.state.vehicleNoImageError ? [styles.licenseImg, styles.error] : styles.licenseImg}>
                                         {
                                             this.state.vehicleNoImage ?
                                             <Image source={{uri: this.state.vehicleNoImage, cache: 'force-cache'}} style={{width: '100%', height: '100%'}} resizeMode="contain" />
                                             :
-                                            <TouchableOpacity onPress={() => this.chooseImage(1)} style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
+                                            <View style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
                                                 <FontAwesome name={"upload"} color={Colors.secColor} size={40} />
                                                 <BoldText style={[fonts.size14, margin.mt2, {color: Colors.secColor}]}>ナンバープレートの写真</BoldText>
-                                            </TouchableOpacity>
+                                            </View>
                                         }
-                                    </View>
+                                    </TouchableOpacity>
                                 </View>
                                 <View style={{justifyContent: 'center', alignItems: 'center', width: '100%',bottom :30}}>
                                     <TouchableOpacity onPress={() => this.nextScreen()} style={[styles.nextBtn]}>

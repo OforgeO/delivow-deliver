@@ -103,9 +103,9 @@ class CardPhoto extends React.Component {
 
     _handleImagePicked = async pickerResult => {
         try {
-            if(this.state.insuranceSelect)
+            if(this.state.insuranceSelect && pickerResult.uri)
                 this.setState({insuranceImage: pickerResult.uri})
-            else if(this.state.anySelect)
+            else if(this.state.anySelect && pickerResult.uri)
                 this.setState({anyImage: pickerResult.uri})
         } catch (e) {
         }
@@ -135,29 +135,29 @@ class CardPhoto extends React.Component {
                             <View>
                                 <BoldText style={[fonts.size32, {marginTop: 20}]}>通帳またはキャッシュカードの写真</BoldText>
                                 <RegularText style={[margin.mb1, {paddingTop: 10}]}>通帳の表紙またはキャッシュカードの表の写真</RegularText>
-                                <View style={[styles.licenseImg, margin.mb1]}>
+                                <TouchableOpacity onPress={() => this.chooseImage(1)} style={[styles.licenseImg, margin.mb1]}>
                                     {
                                         this.state.insuranceImage ?
                                         <Image source={{uri: this.state.insuranceImage, cache: 'force-cache'}} style={{width: '100%', height: '100%'}} resizeMode="contain" />
                                         :
-                                        <TouchableOpacity onPress={() => this.chooseImage(1)} style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
+                                        <View style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
                                             <FontAwesome name={"upload"} color={Colors.secColor} size={40} />
                                             <BoldText style={[fonts.size14, margin.mt2, {color: Colors.secColor}]}>アップロード</BoldText>
-                                        </TouchableOpacity>
+                                        </View>
                                     }
-                                </View>
+                                </TouchableOpacity>
                                 <RegularText style={[margin.mb1, {paddingTop: 10}]}>通帳の見開き1ページ目またはキャッシュカードの裏の写真</RegularText>
-                                <View style={styles.licenseImg}>
+                                <TouchableOpacity onPress={() => this.chooseImage(2)} style={styles.licenseImg}>
                                     {
                                         this.state.anyImage ?
                                         <Image source={{uri: this.state.anyImage, cache: 'force-cache'}} style={{width: '100%', height: '100%'}} resizeMode="contain" />
                                         :
-                                        <TouchableOpacity onPress={() => this.chooseImage(2)} style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
+                                        <View style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
                                             <FontAwesome name={"upload"} color={Colors.secColor} size={40} />
                                             <BoldText style={[fonts.size14, margin.mt2, {color: Colors.secColor}]}>アップロード</BoldText>
-                                        </TouchableOpacity>
+                                        </View>
                                     }
-                                </View>
+                                </TouchableOpacity>
                             </View>
                             <View style={{justifyContent: 'center', alignItems: 'center', width: '100%',flex: 1, marginVertical: 30}}>
                                 <TouchableOpacity onPress={() => this.nextScreen()} style={this.state.insuranceImage && this.state.anyImage ? [styles.nextBtn] : [styles.nextBtn, {backgroundColor: '#D3D3D3'}]}>

@@ -51,9 +51,11 @@ class LicenseRegister extends React.Component {
                     this.setState({licenseNo: response.user.license_number})
                     this.setState({imageFront: response.user.license_image_front})
                     this.setState({imageBack: response.user.license_image_back})
-                    this.setState({licenseExpireYear: response.user.license_expire_date ? moment(response.user.license_expire_date).format("YYYY") : ''})
-                    this.setState({licenseExpireMonth: response.user.license_expire_date ? moment(response.user.license_expire_date).format("MM") : ''})
-                    this.setState({licenseExpireDay: response.user.license_expire_date ? moment(response.user.license_expire_date).format("DD") : ''})
+                    if(response.user.license_expire_date && moment(response.user.license_expire_date).isValid()) {
+                        this.setState({licenseExpireYear: response.user.license_expire_date ? moment(response.user.license_expire_date).format("YYYY") : ''})
+                        this.setState({licenseExpireMonth: response.user.license_expire_date ? moment(response.user.license_expire_date).format("MM") : ''})
+                        this.setState({licenseExpireDay: response.user.license_expire_date ? moment(response.user.license_expire_date).format("DD") : ''})
+                    }
                 } else {
                     showToast(response.message)
                 }
@@ -107,8 +109,9 @@ class LicenseRegister extends React.Component {
         if(valid){
             this.setState({loaded: false})
             if(this.props.type == 'update') {
-                await updateLicense(this.state.imageFront, this.state.imageBack, this.state.licenseNo, this.state.licenseExpireYear+'-'+this.state.licenseExpireMonth+'-'+this.state.licenseExpireDay)
+                await updateLicense(this.state.imageFront && this.state.imageFront.includes("file://") ? this.state.imageFront : null, this.state.imageBack && this.state.imageBack.includes("file://") ? this.state.imageBack : null, this.state.licenseNo, this.state.licenseExpireYear+'-'+this.state.licenseExpireMonth+'-'+this.state.licenseExpireDay)
                 .then(async (response) => {
+                    console.log(response)
                     this.setState({loaded: true});
                     if(response.status == 1){
                         Actions.pop() 
@@ -118,6 +121,7 @@ class LicenseRegister extends React.Component {
                         showToast(response.message)
                 })
                 .catch((error) => {
+                    console.log(error)
                     this.setState({loaded: true});
                     showToast();
                 });
@@ -194,9 +198,9 @@ class LicenseRegister extends React.Component {
 
     _handleImagePicked = async pickerResult => {
         try {
-            if(this.state.licenseModalF)
+            if(this.state.licenseModalF && pickerResult.uri)
                 this.setState({imageFront: pickerResult.uri})
-            else if(this.state.licenseModalB)
+            else if(this.state.licenseModalB && pickerResult.uri)
                 this.setState({imageBack: pickerResult.uri})
         } catch (e) {
         }
@@ -308,29 +312,29 @@ class LicenseRegister extends React.Component {
                                         </View>
                                     </View>
                                     <RegularText style={margin.mb1}>免許証(表) または 身分証明書の写真　※顔写真のあるもの</RegularText>
-                                    <View style={this.state.imageFrontError ? [styles.licenseImg, styles.error] : styles.licenseImg}>
+                                    <TouchableOpacity onPress={() => this.chooseImage(1)} style={this.state.imageFrontError ? [styles.licenseImg, styles.error] : styles.licenseImg}>
                                         {
                                             this.state.imageFront ?
                                             <Image source={{uri: this.state.imageFront, cache: 'force-cache'}} style={{width: '100%', height: '100%'}} resizeMode="contain" />
                                             :
-                                            <TouchableOpacity onPress={() => this.chooseImage(1)} style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
+                                            <View style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
                                                 <FontAwesome name={"upload"} color={Colors.secColor} size={40} />
                                                 <BoldText style={[fonts.size14, margin.mt2, {color: Colors.secColor}]}>免許証の写真(表)</BoldText>
-                                            </TouchableOpacity>
+                                            </View>
                                         }
-                                    </View>
+                                    </TouchableOpacity>
                                     <RegularText style={[margin.mb1, margin.mt3]}>免許証(裏)の写真　※免許証で登録の場合　</RegularText>
-                                    <View style={this.state.imageBackError ? [styles.licenseImg, styles.error] : styles.licenseImg}>
+                                    <TouchableOpacity onPress={() => this.chooseImage(2)} style={this.state.imageBackError ? [styles.licenseImg, styles.error] : styles.licenseImg}>
                                         {
                                             this.state.imageBack ?
                                             <Image source={{uri: this.state.imageBack, cache: 'force-cache'}} style={{width: '100%', height: '100%'}} resizeMode="contain" />
                                             :
-                                            <TouchableOpacity onPress={() => this.chooseImage(2)} style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
+                                            <View style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
                                                 <FontAwesome name={"upload"} color={Colors.secColor} size={40} />
                                                 <BoldText style={[fonts.size14, margin.mt2, {color: Colors.secColor}]}>免許証の写真(裏)</BoldText>
-                                            </TouchableOpacity>
+                                            </View>
                                         }
-                                    </View>
+                                    </TouchableOpacity>
                                 </View>
                                 <View style={{justifyContent: 'center', alignItems: 'center', width: '100%',flex: 1, marginVertical: 30}}>
                                     <TouchableOpacity onPress={() => this.nextScreen()} style={[styles.nextBtn]}>

@@ -80,7 +80,6 @@ class VehicleNoRegister extends React.Component {
                     }
                 })
                 .catch((error) => {
-                    console.log(error)
                     this.setState({loaded: true});
                     showToast();
                 });

@@ -52,7 +52,6 @@ class InsuranceRegister extends React.Component {
             this.setState({ loaded: false })
             await getUser()
             .then(async (response) => {
-                console.log(response.user)
                 if(response.status == 1) {
                     this.setState({insuranceImage: response.user.insurance_image})
                     this.setState({anyImage: response.user.voluntary_image})
@@ -142,7 +141,6 @@ class InsuranceRegister extends React.Component {
                     }
                 })
                 .catch((error) => {
-                    console.log(error)
                     this.setState({loaded: true});
                     showToast();
                 });

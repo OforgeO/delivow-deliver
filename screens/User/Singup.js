@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Image, View, TouchableOpacity, Text, Platform, Linking } from 'react-native';
+import { StyleSheet, Image, View, TouchableOpacity, Text, Platform, Linking, AsyncStorage } from 'react-native';
 import Images from "../../assets/Images";
 import { normalize, fonts,margin } from '../../assets/styles';
 import { connect } from "react-redux";
@@ -12,6 +12,7 @@ import { RegularText, BoldText } from '../../components/StyledText';
 import * as Linking1 from 'expo-linking'
 import * as SecureStore from 'expo-secure-store';
 import * as Notifications from 'expo-notifications';
+import { updatePushToken } from '../../api';
 TouchableOpacity.defaultProps = { activeOpacity: 0.8 };
 
 class Signup extends React.Component {
@@ -22,6 +23,7 @@ class Signup extends React.Component {
         };
     }
     async componentDidMount(){
+        await this.registerForPushNotificationsAsync();
         const receiveNoti = Notifications.addNotificationReceivedListener(notification => {
             let notify_data = notification.request.content.data
             this.handleNotification(notify_data, 'fore')
@@ -48,6 +50,27 @@ class Signup extends React.Component {
         }
     }
 
+    registerForPushNotificationsAsync = async () => {
+        try {
+          let token = await Notifications.getExpoPushTokenAsync();
+          this.updateToken(token.data)
+        } catch (error) {
+            this.updateToken('')
+        }
+    };
+
+    async updateToken(token) {
+        let pushToken = await AsyncStorage.getItem("push_token")
+        if(pushToken != token) {
+            await AsyncStorage.setItem("push_token", token)
+            updatePushToken(token)
+            .then(async (response) => {
+            })
+            .catch((error) => {
+            });
+        }
+    }
+
     handleNotification(notify_data, type) {
         console.log(notify_data)
         if(notify_data.type == "terms" || notify_data.type == "commercial" || notify_data.type == "personal") {
@@ -67,8 +90,10 @@ class Signup extends React.Component {
                 Actions.refresh();
         } else if(notify_data.type == "delivery_before_attend" || notify_data.type == "delivery_order_request" || notify_data.type == "delivery_order_car" || notify_data.type == "delivery_request_attend" || notify_data.type == "delivery_order_cancel") {
             let notify = store.getState().notify
-            notify.title = notify_data.aps.alert.title
-            notify.subtitle = notify_data.aps.alert.body
+            if(notify_data.aps) {
+                notify.title = notify_data.aps.alert.title
+                notify.subtitle = notify_data.aps.alert.body
+            }
             if(notify_data.type == "delivery_before_attend"){
                 notify.delivery_before_attend = true
             }

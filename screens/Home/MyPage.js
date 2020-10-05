@@ -59,7 +59,7 @@ class MyPage extends React.Component {
                 showsBackgroundLocationIndicator : false,
                 timeInterval: 60000,
                 deferredUpdatesInterval : 60000,
-                deferredUpdatesDistance : 3
+                deferredUpdatesDistance : 5
             });*/
             Location.watchPositionAsync({
                 accuracy: 6,
@@ -131,6 +131,11 @@ class MyPage extends React.Component {
                 socket.on('handle_reserve', data => {
                     this.setState({noDeliverCnt : data.count})
                 })
+                socket.on("update_weather",data => {
+                    let info = this.state.todayInfo
+                    info.weather = data
+                    this.setState({todayInfo: info})
+                })
             });
         }
     }
@@ -167,7 +172,7 @@ class MyPage extends React.Component {
             if(response.status == 1) {
                 let noDeliverCnt = 0
                 response.list.map((order) => {
-                    if(!order.deliver_uid && (order.status == 'accepted' || order.status == 'verified')) {
+                    if(!order.deliver_uid && (order.status == 'accepted' || order.status == 'verified' || order.status == 'created')) {
                         noDeliverCnt++;
                     }
                 })

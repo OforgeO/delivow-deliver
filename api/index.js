@@ -754,3 +754,16 @@ export async function getAreas() {
         null, null, 'GET'
     );
 }
+
+export async function updatePushToken(push_id) {
+    let token = await SecureStore.getItemAsync("token")
+    if(token) {
+        return createCall(
+            'delivery/update_push_token',
+            { push_id },
+            { Authorization: 'Bearer '+token }
+        );
+    } else {
+        return;
+    }
+}

@@ -50,7 +50,7 @@ class BookRequest extends React.Component {
                 this.setState({bookList: response.list})
                 let noDeliverCnt = 0
                 response.list.map((order) => {
-                    if(!order.deliver_uid && (order.status == 'accepted' || order.status == 'verified')) {
+                    if(!order.deliver_uid && (order.status == 'accepted' || order.status == 'verified' || order.status == 'created')) {
                         noDeliverCnt++;
                     }
                 })

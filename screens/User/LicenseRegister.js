@@ -111,7 +111,6 @@ class LicenseRegister extends React.Component {
             if(this.props.type == 'update') {
                 await updateLicense(this.state.imageFront && this.state.imageFront.includes("file://") ? this.state.imageFront : null, this.state.imageBack && this.state.imageBack.includes("file://") ? this.state.imageBack : null, this.state.licenseNo, this.state.licenseExpireYear+'-'+this.state.licenseExpireMonth+'-'+this.state.licenseExpireDay)
                 .then(async (response) => {
-                    console.log(response)
                     this.setState({loaded: true});
                     if(response.status == 1){
                         Actions.pop() 
@@ -121,7 +120,6 @@ class LicenseRegister extends React.Component {
                         showToast(response.message)
                 })
                 .catch((error) => {
-                    console.log(error)
                     this.setState({loaded: true});
                     showToast();
                 });

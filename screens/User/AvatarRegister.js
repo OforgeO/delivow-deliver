@@ -43,7 +43,6 @@ class AvatarRegister extends React.Component {
             this.setState({loaded: false})
             await registerFace(this.state.imagePath, this.props.phone, 'face')
                 .then(async (response) => {
-                    console.log(response)
                 this.setState({loaded: true});
                 if(response.status == 1)
                     Actions.push("vehicleregister", {phone: this.props.phone, type: 'register'})
@@ -51,7 +50,6 @@ class AvatarRegister extends React.Component {
                     showToast(response.message)
             })
             .catch((error) => {
-                console.log(error)
                 this.setState({loaded: true});
                 showToast();
             });

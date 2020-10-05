@@ -70,9 +70,10 @@ class EditAccount extends React.Component {
             })
             this.setState({deliverArea: tempArea})
         }
-        
+        console.log('here')
         await getUser()
         .then(async (response) => {
+            console.log(response)
             if(response.status == 1) {
                 this.setState({myInfo: response.user})
             } else {
@@ -81,6 +82,7 @@ class EditAccount extends React.Component {
             this.setState({ loaded: true })
         })
         .catch((error) => {
+            console.log(error)
             this.setState({ loaded: true })
             showToast();
         });
@@ -150,7 +152,6 @@ class EditAccount extends React.Component {
                             _self.setState({ loaded: true });
                         })
                         .catch((error) => {
-                            console.log(error)
                             _self.setState({ loaded: true });
                             showToast();
                         });

@@ -70,8 +70,8 @@ class PhoneLogin extends React.Component {
         if(valid){
             this.setState({phoneError: false})
             this.setState({passwordError: false})
-            await this.registerForPushNotificationsAsync();
             this.setState({loaded: false})
+            await this.registerForPushNotificationsAsync();
             await login(this.state.phone, this.state.password, this.state.token)
             .then(async (response) => {
                 this.setState({loaded: true});
@@ -117,7 +117,7 @@ class PhoneLogin extends React.Component {
                             <View style={[shared.container, {paddingHorizontal: normalize(20)}]}>
                                 <View style={{flex: 2, justifyContent: 'center'}}>
                                     <BoldText style={fonts.size32}>ログイン</BoldText>
-                                    <Item rounded style={this.state.phoneError ? [form.item, styles.error ] : [form.item] }>
+                                    <Item rounded style={this.state.phoneError ? [form.item, styles.error, margin.mt1 ] : [form.item, margin.mt1] }>
                                         <Input
                                             placeholder = "携帯電話番号を入力…"
                                             value = { this.state.phone }

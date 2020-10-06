@@ -13,7 +13,7 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import Back from '../../components/Back';
 import Spinner_bar from 'react-native-loading-spinner-overlay';
 import { showToast } from '../../shared/global';
-import { updateShift } from '../../api';
+import { updateTodayShift } from '../../api';
 import OrderConfirm from '../../components/OrderConfirm';
 import store from '../../store/configuteStore';
 export default class TodayShiftTime extends React.Component {
@@ -28,12 +28,9 @@ export default class TodayShiftTime extends React.Component {
         }
     }
     componentDidMount() {
-        if(this.props.shift_hours) {
-            let todayTime = this.props.shift_hours[moment().format('d')]
-            if (todayTime && todayTime.length > 0) {
-                this.setState({ startTime: todayTime[0] })
-                this.setState({ endTime: todayTime[1] })
-            }
+        if(this.props.shift_hours && this.props.shift_hours.length > 0) {
+            this.setState({ startTime: this.props.shift_hours[0] })
+            this.setState({ endTime: this.props.shift_hours[1] })
         }
     }
     hideDatePicker = () => {
@@ -55,19 +52,11 @@ export default class TodayShiftTime extends React.Component {
     }
 
     async nextScreen() {
-        let shift = this.props.shift_hours
-        if(shift == null ) {
-            shift = [[], [], [], [], [], [], []];
-        }
-        shift[moment().format('d')] = [this.state.startTime, this.state.endTime]
         this.setState({ loaded: false })
-        await updateShift(shift)
+        await updateTodayShift(this.state.startTime, this.state.endTime)
             .then(async (response) => {
                 if (response.status == 1) {
-                    Actions.pop({refresh: {shift_hours : shift}})
-                    setTimeout(function () {
-                        Actions.refresh({shift_hours : shift})
-                    }, 10);
+                    Actions.reset("root")
                 } else {
                     showToast(response.message)
                 }

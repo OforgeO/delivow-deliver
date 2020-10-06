@@ -122,11 +122,18 @@ class AlertModal extends React.Component {
         }
         this.props.setNotify(notify)
     }
+    hideModal() {
+        if(store.getState().notify.delivery_order_request) {
+            let temp = store.getState().notify
+            temp.delivery_order_request = false
+            this.props.setNotify(temp)
+        }
+    }
     render() {
         return (
             <Modal
                 isVisible={store.getState().notify.delivery_before_attend || store.getState().notify.delivery_order_request || store.getState().notify.delivery_decide || store.getState().notify.delivery_no_entry || store.getState().notify.delivery_order_car || store.getState().notify.delivery_order_serveral || store.getState().notify.delivery_request_attend || store.getState().notify.delivery_order_cancel || store.getState().notify.cancel_delivering}
-                onBackdropPress={() => this.setState({visible: false})}
+                onBackdropPress={() => this.hideModal()}
                 style={styles.modal}
             >
                 <View style={styles.modalContainer}>

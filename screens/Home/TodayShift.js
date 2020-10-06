@@ -3,7 +3,7 @@ import { StyleSheet, View, Platform, Text, Image, TouchableOpacity, StatusBar, S
 import { shared, fonts, margin, normalize } from '../../assets/styles';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Actions } from 'react-native-router-flux';
-import Layout from '../../constants/Layout';
+import Spinner_bar from 'react-native-loading-spinner-overlay';
 import { FontAwesome, FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Container, Content, Col } from 'native-base';
 import Colors from '../../constants/Colors';
@@ -21,21 +21,19 @@ export default class TodayShift extends React.Component {
         this.state = {
             tabType: 1,
             shift_hours: this.props.shift_hours,
-            today_time: null
+            today_time: null,
+            loaded: true
         }
     }
     componentDidMount() {
+        
         this.refresh()
     }
     UNSAFE_componentWillReceiveProps() {
         this.refresh()
     }
     refresh() {
-        if(this.props.shift_hours) {
-            let today_time = this.props.shift_hours[moment().format("d")]
-            this.setState({today_time : today_time})
-        }
-        
+        this.setState({today_time : this.props.shift_hours})
     }
     nextScreen() {
         Actions.pop();
@@ -44,15 +42,17 @@ export default class TodayShift extends React.Component {
         }, 10)
     }
     async changeStatus(type) {
-        this.setState({ loaded: false })
-        if(type == 'now' || type == 'finish'|| (type == 'pause' && this.state.today_time && moment().format("HH:mm") >= this.state.today_time[0])) {
-            if(type == 'now' && !this.state.today_time) {
+        
+        if(type == 'now' || type == 'finish'|| (type == 'pause' && this.state.today_time && this.state.today_time.length > 0 && moment().format("HH:mm") >= this.state.today_time[0] && moment().format("HH:mm") <= this.state.today_time[1])) {
+            if((type == 'now' || type == 'finish') && this.state.today_time.length == 0) {
                 Alert.alert(_e.noWorkTime)
             } else {
+                this.setState({ loaded: false })
                 await setDeliveryStatus(type, this.state.today_time && this.state.today_time[0] ? this.state.today_time[0] : '', this.state.today_time && this.state.today_time[1] ? this.state.today_time[1] : '')
                 .then(async (response) => {
+                    console.log(response)
                     if(response.status == 1) {
-                        
+                        Actions.reset("root")
                     } else {
                         showToast(response.message)
                     }
@@ -85,7 +85,7 @@ export default class TodayShift extends React.Component {
                                 <RegularText style={[{color: '#848484'}, fonts.size14, margin.ml1]}>本日のシフト</RegularText>
                             </View>
 
-                            <TouchableOpacity onPress={() => Actions.push("todayshifttime", {shift_hours: this.props.shift_hours})}>
+                            <TouchableOpacity onPress={() => Actions.push("todayshifttime", {shift_hours: this.state.today_time})}>
                                 <RegularText style={[margin.mt2, {color: Colors.secColor, fontSize: 50}]}>{this.state.today_time && this.state.today_time.length > 0 ? this.state.today_time[0]+"-"+this.state.today_time[1] : '登録なし'}</RegularText>
                             </TouchableOpacity>
                         </View>
@@ -101,8 +101,8 @@ export default class TodayShift extends React.Component {
                                 <BoldText style={[fonts.size14, {color: Colors.secColor}]}>今から配達可能</BoldText>
                             </TouchableOpacity>
                             <View style={[shared.flexCenter, margin.mt4, {justifyContent: 'space-between'}]}>
-                                <TouchableOpacity onPress={() => this.changeStatus('pause')} style={this.state.today_time && moment().format("HH:mm") >= this.state.today_time[0] ? [styles.btn, {borderColor: Colors.secColor, borderWidth: 1, width: '48%'}] : [styles.btn, {borderColor: '#B5B5B5', borderWidth: 1, width: '48%'}]}>
-                                    <BoldText style={[fonts.size14, {color: this.state.today_time && moment().format("HH:mm") >= this.state.today_time[0] ? Colors.secColor : '#B5B5B5'}]}>本日のシフトを終了</BoldText>
+                                <TouchableOpacity onPress={() => this.changeStatus('pause')} style={this.state.today_time && this.state.today_time.length > 0 && moment().format("HH:mm") >= this.state.today_time[0] && moment().format("HH:mm") <= this.state.today_time[1] ? [styles.btn, {borderColor: Colors.secColor, borderWidth: 1, width: '48%'}] : [styles.btn, {borderColor: '#B5B5B5', borderWidth: 1, width: '48%'}]}>
+                                    <BoldText style={[fonts.size14, {color: this.state.today_time && this.state.today_time.length > 0 && moment().format("HH:mm") >= this.state.today_time[0] && moment().format("HH:mm") <= this.state.today_time[1] ? Colors.secColor : '#B5B5B5'}]}>本日のシフトを終了</BoldText>
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={() => this.changeStatus('finish')} style={[styles.btn, {borderColor: '#CE092E', borderWidth: 1, width: '48%'}]}>
                                     <BoldText style={[fonts.size14, {color: '#CE092E'}]}>本日は配送できません</BoldText>
@@ -116,6 +116,7 @@ export default class TodayShift extends React.Component {
                         <RegularText style={[styles.btnText , fonts.size15]}>登録完了</RegularText>
                     </TouchableOpacity>
                 </View>
+                <Spinner_bar color={'#27cccd'} visible={!this.state.loaded} textContent={""} overlayColor={"rgba(0, 0, 0, 0.5)"} />
             </SafeAreaView>
         </Container>
       );

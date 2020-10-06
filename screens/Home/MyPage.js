@@ -34,7 +34,6 @@ let socket = io.connect(SOCKET_URL, {
 const LOCATION_TASK_NAME = 'background-location-task';
 var curTimeInterval = null;
 class MyPage extends React.Component {
-    
 
     constructor(props) {
         super(props);
@@ -45,7 +44,8 @@ class MyPage extends React.Component {
             pushSetting: '',
             userInfo: null,
             shift_hours: null, 
-            noDeliverCnt: 0
+            noDeliverCnt: 0,
+            today_hours: null
         }
     }
     async componentDidMount() {
@@ -63,7 +63,6 @@ class MyPage extends React.Component {
             });*/
             Location.watchPositionAsync({
                 accuracy: 6,
-                timeInterval: 1500,
                 distanceInterval : 5
             }, (result) => {
                 if(result && result.coords){
@@ -82,6 +81,7 @@ class MyPage extends React.Component {
                 let shift_hours = response.info.shift_hours
                 shift_hours = JSON.parse(shift_hours)
                 this.setState({shift_hours})
+                this.setState({today_hours: response.info.today_shift})
             }
             else 
                 showToast(response.message)
@@ -157,6 +157,7 @@ class MyPage extends React.Component {
                 let shift_hours = response.info.shift_hours
                 shift_hours = JSON.parse(shift_hours)
                 this.setState({shift_hours})
+                this.setState({today_hours: response.info.today_shift})
             }
             else 
                 showToast(response.message)
@@ -203,7 +204,7 @@ class MyPage extends React.Component {
         Actions.push("editaccount")
     }
     goTodayShift() {
-        Actions.push("todayshift", { shift_hours : this.state.shift_hours})
+        Actions.push("todayshift", { shift_hours : this.state.today_hours && this.state.today_hours.length > 0 ? this.state.today_hours : this.state.shift_hours[moment().format('d')]})
     }
     notify() {
         Actions.push("allownotification")
@@ -295,6 +296,8 @@ class MyPage extends React.Component {
                                 <TouchableOpacity style={[styles.detail, { paddingVertical: 10 }]} onPress={() => this.goTodayShift()}>
                                     <BoldText style={[fonts.size40, { color: Colors.secColor, paddingTop: 0 }]}>
                                         {
+                                            this.state.today_hours && this.state.today_hours.length > 0 ?
+                                            this.state.today_hours[0] + " - " + this.state.today_hours[1] :
                                             this.state.shift_hours && this.state.shift_hours.length > 0 && this.state.shift_hours[moment().format('d')].length > 0 ?
                                             this.state.shift_hours[moment().format('d')][0] + " - " + this.state.shift_hours[moment().format('d')][1]
                                             :
@@ -309,7 +312,7 @@ class MyPage extends React.Component {
                                         <BoldText style={[fonts.size14, { color: Colors.secColor }]}>シフトを編集</BoldText>
                                     </TouchableOpacity>
                                     {
-                                        this.state.shift_hours && this.state.shift_hours.length > 0 && this.state.shift_hours[moment().format('d')].length > 0 ?
+                                        this.state.today_hours && this.state.today_hours.length > 0 || this.state.shift_hours && this.state.shift_hours.length > 0 && this.state.shift_hours[moment().format('d')].length > 0 ?
                                         <TouchableOpacity style={styles.btn} onPress={() => this.deliverNow()}>
                                             <BoldText style={[fonts.size14, { color: Colors.secColor }]}>今すぐ配達</BoldText>
                                         </TouchableOpacity>

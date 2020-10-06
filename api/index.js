@@ -767,3 +767,12 @@ export async function updatePushToken(push_id) {
         return;
     }
 }
+
+export async function updateTodayShift(start_time, end_time) {
+    let token = await SecureStore.getItemAsync("token")
+    return createCall(
+        'delivery/update_today_shift',
+        { start_time, end_time },
+        { Authorization: 'Bearer '+token }
+    );
+}

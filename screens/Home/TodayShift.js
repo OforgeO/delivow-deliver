@@ -50,7 +50,6 @@ export default class TodayShift extends React.Component {
                 this.setState({ loaded: false })
                 await setDeliveryStatus(type, this.state.today_time && this.state.today_time[0] ? this.state.today_time[0] : '', this.state.today_time && this.state.today_time[1] ? this.state.today_time[1] : '')
                 .then(async (response) => {
-                    console.log(response)
                     if(response.status == 1) {
                         Actions.reset("root")
                     } else {

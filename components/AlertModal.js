@@ -89,6 +89,7 @@ class AlertModal extends React.Component {
                 orderUid: orderUid,
                 orderBookUid: store.getState().showDeliver.orderBookUid
             })
+            Actions.refresh();
         }
         this.disable(type)
     }

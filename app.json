@@ -47,16 +47,19 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.delivow.deliver.jp",
-      "buildNumber" : "41",
+      "buildNumber" : "44",
       "config" : {
         "googleMapsApiKey" : "AIzaSyDKnoMsrfivglgqGV875Q-emWYkIBHvBWs"
       },
       "infoPlist": {
         "UIBackgroundModes": [
           "location",
-          "fetch",
-          "remote-notification"
+          "fetch"
         ],
+        "NSUserNotificationAlertStyle" : "Notification",
+        "NSCameraUsageDescription" : "Camera Usage",
+        "NSPhotoLibraryUsageDescription" : "Photo Library Usage",
+        "NSLocationUsageDescription" : "Location for tracking",
         "NSAllowsArbitraryLoads": true,
         "CFBundleAllowMixedLocalizations" : true,
         "CFBundleLocalizations" : ["ja"],

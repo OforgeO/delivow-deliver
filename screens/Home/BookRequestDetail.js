@@ -64,6 +64,7 @@ class BookRequestDetail extends React.Component {
 
         await getOrderDetails(this.props.order_uid)
         .then(async (response) => {
+            console.log(response)
             if (response.status == 1) {
                 this.setState({ orderInfo: response.info })
                 if(response.info.status == 'delivering')
@@ -95,7 +96,7 @@ class BookRequestDetail extends React.Component {
                 let orderUid = status.orderUid
                 let orderBookUid = status.orderBookUid
                 if(orderUid.length > 0) {
-                    exist = 0;
+                    let exist = 0;
                     for(var i = 0;i< orderUid.length;i++) {
                         if(orderUid[i] == this.props.order_uid) {
                             exist = 1;
@@ -104,8 +105,9 @@ class BookRequestDetail extends React.Component {
                     }
                     if(exist == 0)
                         orderUid.push(this.props.order_uid)
-                } else 
+                } else {
                     orderUid.push(this.props.order_uid)
+                }
                 if(orderBookUid.length > 0) {
                     for(var i = 0;i<orderBookUid.length;i++) {
                         if(orderBookUid[i] == this.props.order_uid){
@@ -227,7 +229,7 @@ class BookRequestDetail extends React.Component {
                     }
                 }
                 if (checkAll == 1){
-                    this.setState({ orderStauts: 3 })
+                    
                     Alert.alert(
                         "飲食店を出発しましたか？",
                         "お客様に出発の通知が送られます。",
@@ -239,6 +241,7 @@ class BookRequestDetail extends React.Component {
                             },
                             {
                                 text: "はい", onPress: () => {
+                                    this.setState({ orderStauts: 3 })
                                     this.departStore()
                                 }
                             }
@@ -791,7 +794,7 @@ class BookRequestDetail extends React.Component {
                                 <List icon="comment" font5={false} title="飲食店とチャット" chat={'store'} clickEvent={this.chat.bind(this)} />
                                 <List icon="phone" phone={this.state.orderInfo ? this.state.orderInfo.mobile_phone : null} font5={true} title="飲食店と電話" clickEvent={this.phoneCall.bind(this)} />
                                 {
-                                    this.props.type == 'confirm' ?
+                                    this.props.type == 'confirm' && this.state.orderInfo && this.state.orderInfo.deliver_uid != store.getState().user.uid ?
                                     null
                                     :
                                     <View>

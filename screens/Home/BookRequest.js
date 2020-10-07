@@ -132,23 +132,23 @@ class BookRequest extends React.Component {
                             <BoldText style={fonts.size14}>注文管理ナンバー</BoldText>
                             <RegularText style={fonts.size14}>{deliver.order_uid}</RegularText>
                         </View>
-                        <View style={[shared.flexCenter, margin.mt2]}>
-                            <View style={[shared.flexCenter, {width: 180}]}>
+                        <View style={[shared.flexCenter, margin.mt2, {alignItems: 'flex-start'}]}>
+                            <View style={[shared.flexCenter, {width: 180, alignItems: 'flex-start'}]}>
                                 <BoldText style={[fonts.size14, {width: 80}]}>エリア</BoldText>
-                                <RegularText style={{color: '#848484'}}>{deliver.area}</RegularText>
+                                <RegularText style={{color: '#848484', flex: 1}}>{deliver.area}</RegularText>
                             </View>
-                            <View style={[shared.flexCenter, margin.ml4]}>
+                            <View style={[shared.flexCenter, margin.ml4, {alignItems: 'flex-start'}]}>
                                 <BoldText style={fonts.size14}>配達距離</BoldText>
                                 <RegularText style={[{color: '#848484'}, margin.ml2]}>{parseFloat(deliver.delivery_distance.distance/1000).toFixed(1)}km</RegularText>
                             </View>
                         </View>
-                        <View style={[shared.flexCenter, margin.mt2]}>
+                        <View style={[shared.flexCenter, margin.mt2, {alignItems: 'flex-start'}]}>
                             <BoldText style={[fonts.size14, {width: 80}]}>店舗名</BoldText>
-                            <RegularText numberOfLines={1} style={[fonts.size14, {color: '#848484'}]}>{deliver.store_name}</RegularText>
+                            <RegularText numberOfLines={1} style={[fonts.size14, {color: '#848484', flex: 1}]}>{deliver.store_name}</RegularText>
                         </View>
-                        <View style={[shared.flexCenter, margin.mt2]}>
+                        <View style={[shared.flexCenter, margin.mt2, {alignItems: 'flex-start'}]}>
                             <BoldText style={[fonts.size14, {width: 80}]}>お届け先</BoldText>
-                            <RegularText numberOfLines={1} style={[fonts.size14, {color: '#848484'}]}>{deliver.customer_address.address}</RegularText>
+                            <RegularText numberOfLines={1} style={[fonts.size14, {color: '#848484', flex: 1}]}>{deliver.customer_address.address}</RegularText>
                         </View>
                         <View style={[shared.flexCenter, margin.mt4, {justifyContent: 'space-between', alignItems: 'flex-end'}]}>
                             {

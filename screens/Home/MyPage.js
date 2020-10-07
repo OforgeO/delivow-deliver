@@ -52,6 +52,7 @@ class MyPage extends React.Component {
         if(!store.getState().user.uid) {
             Actions.reset("signup")
         }
+        this.setState({ loaded: false })
         const { status } = await Location.requestPermissionsAsync();
         if (status === 'granted') {
             /*await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
@@ -71,11 +72,10 @@ class MyPage extends React.Component {
             })
         }
         this.onConnectSocket();
-        this.setState({ loaded: false })
+        
         this.setState({ userInfo: store.getState().user })
         await getDeliveryInfos()
         .then(async (response) => {
-            this.setState({ loaded: true });
             if(response.status == 1){
                 this.setState({ todayInfo: response.info })
                 let shift_hours = response.info.shift_hours
@@ -85,6 +85,7 @@ class MyPage extends React.Component {
             }
             else 
                 showToast(response.message)
+            this.setState({ loaded: true });
         })
         .catch((error) => {
             Actions.reset("signup")

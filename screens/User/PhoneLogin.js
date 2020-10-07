@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, SafeAreaView, View, TouchableOpacity, Platform } from 'react-native';
+import { StyleSheet, SafeAreaView, View, TouchableOpacity, Platform, AsyncStorage } from 'react-native';
 import { Container, Content, Item, Input, Text } from 'native-base';
 import { normalize, fonts, margin, form, shared} from '../../assets/styles';
 import { login } from '../../api';

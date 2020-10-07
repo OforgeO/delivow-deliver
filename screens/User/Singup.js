@@ -42,7 +42,7 @@ class Signup extends React.Component {
         }
         //SecureStore.deleteItemAsync("token")
         let token = await SecureStore.getItemAsync("token")
-        if(token && store.getState().user.uid) {
+        if(token && store.getState().user && store.getState().user.uid) {
             this.setState({is_login: true})
             Actions.reset("root")
         } else {
@@ -60,15 +60,11 @@ class Signup extends React.Component {
     };
 
     async updateToken(token) {
-        let pushToken = await AsyncStorage.getItem("push_token")
-        if(pushToken != token) {
-            await AsyncStorage.setItem("push_token", token)
-            updatePushToken(token)
-            .then(async (response) => {
-            })
-            .catch((error) => {
-            });
-        }
+        await updatePushToken(token)
+        .then(async (response) => {
+        })
+        .catch((error) => {
+        });
     }
 
     handleNotification(notify_data, type) {
@@ -119,11 +115,32 @@ class Signup extends React.Component {
             notify.title = notify_data.aps.alert.title
             notify.subtitle = '';
             this.props.setNotify(notify)
+            
+            let orderUid = store.getState().showDeliver.orderUid
+            let orderBookUid = store.getState().showDeliver.orderBookUid
+            
+            if(orderBookUid.length > 0) {
+                for(var i = 0;i<orderBookUid.length;i++) {
+                    if(orderBookUid[i] == notify_data.order_uid){
+                        orderBookUid.splice(i, 1)
+                        break;
+                    }
+                }
+            }
+            if(orderUid.length > 0) {
+                for(var i = 0;i<orderUid.length;i++) {
+                    if(orderUid[i] == notify_data.order_uid){
+                        orderUid.splice(i, 1)
+                        break;
+                    }
+                }
+            }
+
             this.props.setShowDeliver({
-                showDeliver: false,
-                showBookDeliver: store.getState().showDeliver.showBookDeliver,
-                orderUid: [],
-                orderBookUid: store.getState().showDeliver.orderBookUid
+                showDeliver: orderUid.length > 0 ? true : false,
+                showBookDeliver: orderBookUid.length > 0 ? true : false,
+                orderUid: orderUid,
+                orderBookUid: orderBookUid
             })
         } else if(notify_data.body  && (notify_data.body.type == "delivery_decide" || notify_data.body.type == "delivery_no_entry")) {
             let notify = store.getState().notify

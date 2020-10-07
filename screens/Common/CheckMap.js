@@ -269,16 +269,22 @@ class CheckMap extends React.Component {
                                         <Entypo name="triangle-down" color="#0E1D3B" size={30} style={{ position: 'absolute', top: -10 }} />
                                     </View>
                                 </Marker>
-                                <MapViewDirections
-                                    origin={this.state.orgMarker}
-                                    destination={this.state.targetMarker}
-                                    apikey={GoogleMapKey}
-                                    language="ja"
-                                    strokeWidth={3}
-                                    resetOnChange={false}
-                                    mode={this.state.vehicle_type}
-                                    strokeColor={Colors.mainColor}
-                                />
+                                {
+                                    this.props.mapType != 'store_customer' ?
+                                    <MapViewDirections
+                                        origin={this.state.orgMarker}
+                                        destination={this.state.targetMarker}
+                                        apikey={GoogleMapKey}
+                                        language="ja"
+                                        strokeWidth={3}
+                                        resetOnChange={false}
+                                        mode={this.state.vehicle_type}
+                                        strokeColor={Colors.mainColor}
+                                    />
+                                    :
+                                    null
+                                }
+                                
                             </MapView>
                             :
                             null

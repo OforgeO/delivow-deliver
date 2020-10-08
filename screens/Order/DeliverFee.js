@@ -48,7 +48,7 @@ export default class DeliverFee extends React.Component {
 
                             <View style={[styles.whiteSection, {padding: 0}]}>
                                 {
-                                    this.renderFee()
+                                    //this.renderFee()
                                 }
                             </View>
                         </View>

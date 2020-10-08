@@ -117,6 +117,7 @@ class AlertModal extends React.Component {
             notify.delivery_order_cancel = false
         else if(type == "cancel_delivering"){
             notify.cancel_delivering = false
+            this.props.setNotify(notify)
             setTimeout(function() {
                 Actions.reset("root")
             }, 200)

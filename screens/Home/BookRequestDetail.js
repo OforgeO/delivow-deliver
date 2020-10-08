@@ -18,7 +18,7 @@ import Back from '../../components/Back';
 import { _e } from '../../lang';
 import { connect } from "react-redux";
 import store from '../../store/configuteStore';
-import { setShowDeliver } from '../../actions';
+import { setShowDeliver, setNotify } from '../../actions';
 import firebase from '../../Fire';
 export const usersRef = firebase.database().ref('Users')
 export const chatsRef = firebase.database().ref('Chats')
@@ -67,6 +67,8 @@ class BookRequestDetail extends React.Component {
             console.log(response)
             if (response.status == 1) {
                 this.setState({ orderInfo: response.info })
+                if(response.info.status == 'cancelling' || response.info.status == 'cancel')
+                    Actions.reset("mypage")
                 if(response.info.status == 'delivering')
                     this.setState({orderStauts: 4})
                 if(!response.info.is_cutlery){
@@ -90,6 +92,7 @@ class BookRequestDetail extends React.Component {
         this.setState({ loaded: false })
         await departStore(this.props.order_uid)
         .then(async (response) => {
+            console.log(response)
             if (response.status == 1) {
                 this.setState({ orderStauts: 4 })
                 let status = store.getState().showDeliver
@@ -124,7 +127,15 @@ class BookRequestDetail extends React.Component {
                 })
 
             } else {
-                showToast(response.message)
+                if(response.refresh && response.refresh == 1) {
+                    let notify = store.getState().notify
+                    notify.cancel_delivering = true
+                    notify.title = "配達中の商品が飲食店の承認により\n\nキャンセル処理されました。"
+                    notify.subtitle = '';
+                    this.props.setNotify(notify)
+                } else {
+                    showToast(response.message)
+                }
             }
             this.setState({ loaded: true });
         })
@@ -541,6 +552,7 @@ class BookRequestDetail extends React.Component {
         this.setState({ loaded: false })
         await completeDelivery(this.props.order_uid)
         .then(async (response) => {
+            console.log(response)
             this.setState({ loaded: true });
             if (response.status == 1) {
                 this.removeFromFB(response.store_uid, response.customer_uid, response.deliver_uid)
@@ -559,7 +571,15 @@ class BookRequestDetail extends React.Component {
                     ]);
                 }, 500)
             } else {
-                showToast(response.message)
+                if(response.refresh == 1) {
+                    let notify = store.getState().notify
+                    notify.cancel_delivering = true
+                    notify.title = "配達中の商品が飲食店の承認により\n\nキャンセル処理されました。"
+                    notify.subtitle = '';
+                    this.props.setNotify(notify)
+                } else {
+                    showToast(response.message)
+                }
             }
         })
         .catch((error) => {
@@ -844,7 +864,8 @@ BookRequestDetail.navigationOptions = {
 }
 const mapDispatchToProps = dispatch => {
     return {
-        setShowDeliver : showDeliver => { dispatch(setShowDeliver(showDeliver))}
+        setShowDeliver : showDeliver => { dispatch(setShowDeliver(showDeliver))},
+        setNotify : notify => { dispatch(setNotify(notify)) }
     }
 }
 const mapStateToProps = (state) => {

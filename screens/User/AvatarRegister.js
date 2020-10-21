@@ -182,7 +182,7 @@ class AvatarRegister extends React.Component {
                                                 this.state.imagePath ?
                                                 <TouchableOpacity style={[{paddingLeft: 10, flexWrap: 'wrap', flex: 1, alignItems: 'center',justifyContent: 'center'}]} onPress={() => this.chooseAvatar()}>
                                                     <FontAwesome name={"upload"} color={Colors.secColor} size={18} />
-                                                    <BoldText style={[fonts.size14, margin.mt2, {color: Colors.secColor, textAlign: 'center'}]}>画像を変更</BoldText>
+                                                    <BoldText style={[fonts.size14, margin.mt2, {color: Colors.secColor, textAlign: 'center', lineHeight: 17}]}>画像を変更</BoldText>
                                                 </TouchableOpacity>
                                                 :
                                                 null

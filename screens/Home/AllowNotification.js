@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, SafeAreaView, View, TouchableOpacity, Alert, Linking } from 'react-native';
+import { StyleSheet, SafeAreaView, View, TouchableOpacity, Platform, Linking } from 'react-native';
 import { Container, Content, Item, Input, Text } from 'native-base';
 import { normalize, fonts, margin, form, shared} from '../../assets/styles';
 import {Actions} from 'react-native-router-flux';
@@ -34,7 +34,10 @@ export default class AllowNotification extends React.Component {
     }
 
     async nextScreen() {
-        Linking.openURL('app-settings:');
+        if(Platform.OS == 'ios')
+            Linking.openURL('app-settings');
+        else
+            Linking.openSettings();
     }
     
     render(){

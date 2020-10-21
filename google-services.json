@@ -1,0 +1,105 @@
+{
+  "project_info": {
+    "project_number": "890985068857",
+    "firebase_url": "https://delivow.firebaseio.com",
+    "project_id": "delivow",
+    "storage_bucket": "delivow.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:890985068857:android:bc834d44a11a4795dc90e8",
+        "android_client_info": {
+          "package_name": "com.delivow.deliver.jp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "890985068857-qbvcui6vhb7nj5j5arf813im7r40cv75.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.delivow.deliver.jp",
+            "certificate_hash": "fd6f56638eac2505b8e6dd1699cd47b085ac827d"
+          }
+        },
+        {
+          "client_id": "890985068857-ta5paieo9rh7i67bt754rvgi2kk3m6fr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBXplopD94llbU1eWEjlPdonENRFC82fR0"
+        },
+        {
+          "current_key": "AIzaSyB1BEoFuobx6dnvTYqkmHsoAhjE_WTuYrg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "890985068857-ta5paieo9rh7i67bt754rvgi2kk3m6fr.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "890985068857-5la53jijd9qjhampgf5qbsuv9ku6br2j.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.delivow.jp"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:890985068857:android:f3d7a1b2353e2520dc90e8",
+        "android_client_info": {
+          "package_name": "com.delivow.jp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "890985068857-h9dp8nusennfr0cqcbcl7m3adfd3579g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.delivow.jp",
+            "certificate_hash": "f443232c7b8495851470ad272055525528fe0fc3"
+          }
+        },
+        {
+          "client_id": "890985068857-ta5paieo9rh7i67bt754rvgi2kk3m6fr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBXplopD94llbU1eWEjlPdonENRFC82fR0"
+        },
+        {
+          "current_key": "AIzaSyB1BEoFuobx6dnvTYqkmHsoAhjE_WTuYrg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "890985068857-ta5paieo9rh7i67bt754rvgi2kk3m6fr.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "890985068857-5la53jijd9qjhampgf5qbsuv9ku6br2j.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.delivow.jp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

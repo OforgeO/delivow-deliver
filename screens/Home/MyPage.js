@@ -236,7 +236,7 @@ class MyPage extends React.Component {
                 {Platform.OS === 'ios' && <StatusBar barStyle="dark-content" backgroundColor="white" />}
                 <OrderConfirm />
                 <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
-                    <ScrollView ref={ref => this.scrollRef = ref} contentContainerStyle={{backgroundColor: '#f2f2f2',flex: 1, paddingTop: store.getState().showDeliver.showDeliver && store.getState().showDeliver.showBookDeliver ? 100 : (store.getState().showDeliver.showDeliver || store.getState().showDeliver.showBookDeliver) ? 50 : 0}} >
+                    <ScrollView ref={ref => this.scrollRef = ref} contentContainerStyle={{backgroundColor: '#f2f2f2', paddingTop: store.getState().showDeliver.showDeliver && store.getState().showDeliver.showBookDeliver ? 100 : (store.getState().showDeliver.showDeliver || store.getState().showDeliver.showBookDeliver) ? 50 : 0}} >
                         <View style={{backgroundColor: 'white'}}>
                             <View style={[styles.avatarSection]}>
                                 <Image source={this.state.userInfo && this.state.userInfo.photo ? { uri: this.state.userInfo.photo, cache: 'force-cache' } : Images.avatar} style={{ width: 58, height: 58, borderRadius: 29 }} />

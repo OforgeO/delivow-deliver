@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, StyleSheet, TouchableOpacity, AsyncStorage } from "react-native";
+import { View, StyleSheet, TouchableOpacity, Platform } from "react-native";
 import Colors from '../constants/Colors';
 import { normalize, fonts, margin, form } from './../assets/styles';
 import { BoldText } from './StyledText';
@@ -20,6 +20,7 @@ class OrderConfirm extends React.Component {
         //this.props.setShowDeliver({showDeliver: false})
     }
     async confirmStatus(type) {
+        console.log(type)
         let status = store.getState().showDeliver
         if(status.orderBookUid && status.orderBookUid.length > 1 && type == 'book')
             Actions.push("bookrequest")
@@ -30,7 +31,7 @@ class OrderConfirm extends React.Component {
     }
     render() {
         return (
-            <View style={{flex: 1, position: 'absolute', zIndex: 999, width: '100%'}}>
+            <View style={{flex: 1, position: 'absolute', zIndex: 999, width: '100%', backgroundColor: 'white'}}>
                 <TouchableOpacity style={store.getState().showDeliver.showDeliver ? styles.container: {height: 0}} onPress={() => this.confirmStatus('delivering')}>
                     <View>
                         <BoldText style={[{ color: 'white' }, fonts.size14]}>現在の依頼内容を確認 »</BoldText>
@@ -38,7 +39,7 @@ class OrderConfirm extends React.Component {
                 </TouchableOpacity>
                 {
                     this.props.page != 'bookrequest' ?
-                    <TouchableOpacity style={store.getState().showDeliver.showBookDeliver ? [styles.container, {backgroundColor: '#D93DCD', marginTop: store.getState().showDeliver.showDeliver ? 50 : 0}]: {height: 0}} onPress={() => this.confirmStatus('book')}>
+                    <TouchableOpacity style={store.getState().showDeliver.showBookDeliver ? [styles.container, {backgroundColor: '#D93DCD', marginTop: store.getState().showDeliver.showDeliver ? 2 : 0}]: {height: 0}} onPress={() => this.confirmStatus('book')}>
                         <View>
                             <BoldText style={[{ color: 'white' }, fonts.size14]}>予約の依頼内容を確認 »</BoldText>
                         </View>
@@ -46,7 +47,6 @@ class OrderConfirm extends React.Component {
                     :
                     null
                 }
-                
             </View>
         );
     }
@@ -68,11 +68,10 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.secColor,
         alignSelf: 'flex-start',
         alignItems: 'center',
-        position: 'absolute',
         width: '100%',
-        zIndex: 1,
+        zIndex: 9999991,
         paddingVertical: 15,
         paddingHorizontal: 13,
-        top: Constants.statusBarHeight
+        top: Platform.OS == 'ios' ? Constants.statusBarHeight : 0
     }
 });

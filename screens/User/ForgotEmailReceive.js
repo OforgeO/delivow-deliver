@@ -45,7 +45,7 @@ class ForgotEmailReceive extends React.Component {
             <Container>
                 <SafeAreaView style={[styles.contentBg]}>
                     <View style={{flex: 1, justifyContent: 'center', marginBottom: 70, paddingHorizontal: normalize(20)}}>
-                        <BoldText style={fonts.size32}>デリボから送られたメールを確認</BoldText>
+                        <BoldText style={[fonts.size32, {lineHeight: 36}]}>デリボから送られたメールを確認</BoldText>
                         <RegularText style={[fonts.siz16, margin.mt4]}>本文に添付されているリンクから、パスワードの再設定をしてください。</RegularText>
                         <TouchableOpacity style={styles.goDliever} onPress={() => this.resendEmail()}>
                             <Ionicons name="ios-arrow-dropright-circle" size={24} color={Colors.secColor} />

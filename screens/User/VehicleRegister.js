@@ -137,7 +137,7 @@ export default class VehicleRegister extends React.Component {
                 <View style={option.note ? [shared.flexCenter] : [shared.flexCenter, margin.mb2]}>
                     <FontAwesome name="check-circle" size={20} color={option.selected ? Colors.secColor : '#D3D3D3'} />
                     <View>
-                        <RegularText style={option.selected ? [fonts.size14, margin.ml1] : [fonts.size14, margin.ml1, {color: '#d3d3d3'}]}>{option.text}</RegularText>
+                        <RegularText style={option.selected ? [fonts.size14, margin.ml1, {color: 'black'}] : [fonts.size14, margin.ml1, {color: '#d3d3d3'}]}>{option.text}</RegularText>
                     </View>
                     {
                         option.input ?
@@ -157,7 +157,7 @@ export default class VehicleRegister extends React.Component {
                 </View>
             {
                 option.note ?
-                <RegularText style={option.selected ? {marginLeft: 30,paddingTop: 0 } : {marginLeft: 30,paddingTop: 0, color: '#d3d3d3'}}>{option.note}</RegularText>
+                <RegularText style={option.selected ? {marginLeft: 30,paddingTop: 0, color: 'black' } : {marginLeft: 30,paddingTop: 0, color: '#d3d3d3'}}>{option.note}</RegularText>
                 :
                 null
             }
@@ -193,10 +193,10 @@ export default class VehicleRegister extends React.Component {
     
     render(){
         return (
-            <Container>
+            <Container style={[shared.mainContainer]}>
                 <SafeAreaView style={[styles.contentBg]}>
                     <ScrollView style={{backgroundColor: '#f2f2f2'}}>
-                        <View style={[shared.bodyContainer]}>
+                        
                             <View style={[styles.whiteSection, {paddingTop: 20}]}>
                                 <BoldText style={[fonts.size32]}>
                                     {
@@ -218,14 +218,14 @@ export default class VehicleRegister extends React.Component {
                             {
                                 this.renderOptionList()
                             }
-                            <View style={[styles.greySection, {paddingTop: 30}]}>
+                            <View style={[styles.greySection, {paddingTop: 30, paddingBottom: 30}]}>
                                 <View style={{justifyContent: 'center', alignItems: 'center', width: '100%'}}>
                                     <TouchableOpacity onPress={() => this.nextScreen()} style={[styles.nextBtn]}>
                                         <BoldText style={[styles.btnText , fonts.size14]}>{this.props.type == 'update' ? '変更' : '次へ'}</BoldText>
                                     </TouchableOpacity>
                                 </View>
                             </View>
-                        </View>
+                        
                         <Spinner_bar color={'#27cccd'} visible={!this.state.loaded} textContent={""} overlayColor={"rgba(0, 0, 0, 0.5)"} />
                     </ScrollView>
                 </SafeAreaView>

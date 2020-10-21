@@ -249,7 +249,7 @@ class InsuranceRegister extends React.Component {
                         >
                             <View style={{flex: 1, paddingHorizontal: normalize(20)}}>
                                 <View>
-                                    <BoldText style={[fonts.size32, {marginTop: 30}]}>保険証書をアップロード</BoldText>
+                                    <BoldText style={[fonts.size32, {marginTop: 30, lineHeight: 36}]}>保険証書をアップロード</BoldText>
                                     <View style={margin.mt3}>
                                         <RegularText style={styles.label}>自賠責保険の有効期限</RegularText>
                                         <View style={{flexDirection: 'row', alignItems: 'center'}}>

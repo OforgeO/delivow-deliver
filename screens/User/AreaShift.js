@@ -139,7 +139,7 @@ class AreaShift extends React.Component {
                     <View style={[shared.flexCenter]}>
                     <FontAwesome name="check-circle" size={20} color={option.selected ? Colors.secColor : '#D3D3D3'} />
                     <View>
-                        <RegularText style={option.selected ? [fonts.size14, margin.ml1] : [fonts.size14, margin.ml1, {color: '#d3d3d3'}]}>{option.text}</RegularText>
+                        <RegularText style={option.selected ? [fonts.size14, margin.ml1, {color: 'black'}] : [fonts.size14, margin.ml1, {color: '#d3d3d3'}]}>{option.text}</RegularText>
                     </View>
                 </View>
             </TouchableOpacity>
@@ -167,7 +167,7 @@ class AreaShift extends React.Component {
             return <View style={[shared.flexCenter, {justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: '#f2f2f2', paddingVertical: 10}]}>
                     <TouchableOpacity style={[shared.flexCenter]} onPress={() => this.checkDate(option.id)}>
                     <FontAwesome name="check-circle" size={20} color={option.selected ? Colors.secColor : '#D3D3D3'} />
-                    <BoldText style={option.selected ? [fonts.size22, margin.ml1] : [fonts.size22, margin.ml1, {color: '#d3d3d3'}]}>{option.date}</BoldText>
+                    <BoldText style={option.selected ? [fonts.size22, margin.ml1, {color: 'black'}] : [fonts.size22, margin.ml1, {color: '#d3d3d3'}]}>{option.date}</BoldText>
                 </TouchableOpacity>
                 {
                     option.selected ?
@@ -229,7 +229,7 @@ class AreaShift extends React.Component {
                                     <View style={[shared.flexCenter]}>
                                         <FontAwesome name="check-circle" size={20} color={this.state.checkAll ? Colors.secColor : '#D3D3D3'} />
                                         <View>
-                                            <RegularText style={this.state.checkAll ? [fonts.size14, margin.ml1] : [fonts.size14, margin.ml1, {color: '#d3d3d3'}]}>全域</RegularText>
+                                            <RegularText style={this.state.checkAll ? [fonts.size14, margin.ml1, {color: 'black'}] : [fonts.size14, margin.ml1, {color: '#d3d3d3'}]}>全域</RegularText>
                                         </View>
                                     </View>
                                 </TouchableOpacity>

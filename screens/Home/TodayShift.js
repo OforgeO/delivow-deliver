@@ -71,9 +71,9 @@ export default class TodayShift extends React.Component {
         <Container style={[shared.mainContainer]}>
             {Platform.OS === 'ios' && <StatusBar barStyle="dark-content" backgroundColor="white" />}
             <OrderConfirm />
-            <SafeAreaView style={{ flex:1, backgroundColor: '#f2f2f2', marginTop: Constants.statusBarHeight}}>
+            <SafeAreaView style={{ flex:1, backgroundColor: '#f2f2f2', marginTop: Platform.OS == 'ios' ? Constants.statusBarHeight : 0 }}>
                 <ScrollView ref={ref => this.scrollRef = ref} contentContainerStyle={{paddingTop: store.getState().showDeliver.showDeliver && store.getState().showDeliver.showBookDeliver ? 100 : (store.getState().showDeliver.showDeliver || store.getState().showDeliver.showBookDeliver) ? 50 : 0}}>
-                    <View style={{flex: 1, backgroundColor: 'white'}}>
+                    <View style={{flex: 1, backgroundColor: 'white', marginBottom: store.getState().showDeliver.showDeliver && store.getState().showDeliver.showBookDeliver ? 100 : (store.getState().showDeliver.showDeliver || store.getState().showDeliver.showBookDeliver) ? 50 : 0}}>
                         <Back color={"#d3d3d3"} />
                         <View style={[styles.header]}>
                             <BoldText style={[fonts.size32]}>本日のシフト登録</BoldText>

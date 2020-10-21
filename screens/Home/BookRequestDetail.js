@@ -64,7 +64,6 @@ class BookRequestDetail extends React.Component {
 
         await getOrderDetails(this.props.order_uid)
         .then(async (response) => {
-            console.log(response)
             if (response.status == 1) {
                 this.setState({ orderInfo: response.info })
                 if(response.info.status == 'cancelling' || response.info.status == 'cancel')
@@ -92,7 +91,6 @@ class BookRequestDetail extends React.Component {
         this.setState({ loaded: false })
         await departStore(this.props.order_uid)
         .then(async (response) => {
-            console.log(response)
             if (response.status == 1) {
                 this.setState({ orderStauts: 4 })
                 let status = store.getState().showDeliver
@@ -552,7 +550,6 @@ class BookRequestDetail extends React.Component {
         this.setState({ loaded: false })
         await completeDelivery(this.props.order_uid)
         .then(async (response) => {
-            console.log(response)
             this.setState({ loaded: true });
             if (response.status == 1) {
                 this.removeFromFB(response.store_uid, response.customer_uid, response.deliver_uid)
@@ -596,7 +593,7 @@ class BookRequestDetail extends React.Component {
         return (
             <Container style={[shared.mainContainer]}>
                 {Platform.OS === 'ios' && <StatusBar barStyle="dark-content" backgroundColor="white" />}
-                <SafeAreaView style={{ flex: 1, backgroundColor: '#f2f2f2', marginTop: Constants.statusBarHeight }}>
+                <SafeAreaView style={{ flex: 1, backgroundColor: '#f2f2f2', marginTop: Platform.OS == 'ios' ? Constants.statusBarHeight : 0 }}>
                     <ScrollView ref={ref => this.scrollRef = ref} >
                         <View style={{ flex: 1, backgroundColor: 'white' }}>
                             <Back color="#d3d3d3" />

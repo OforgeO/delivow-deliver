@@ -87,7 +87,7 @@ export default class DeliverHistory extends React.Component {
         <Container style={[shared.mainContainer]}>
             {Platform.OS === 'ios' && <StatusBar barStyle="dark-content" backgroundColor="white" />}
             <OrderConfirm />
-            <SafeAreaView style={{ flex:1, marginTop: Platform.OS == 'ios' ? 0 : Constants.statusBarHeight}}>
+            <SafeAreaView style={{ flex:1}}>
                 <ScrollView ref={ref => this.scrollRef = ref} contentContainerStyle={{paddingTop: store.getState().showDeliver.showDeliver && store.getState().showDeliver.showBookDeliver ? 100 : (store.getState().showDeliver.showDeliver || store.getState().showDeliver.showBookDeliver) ? 50 : 0}}>
                     <Back color="#d3d3d3" />
                     <View style={styles.header}>

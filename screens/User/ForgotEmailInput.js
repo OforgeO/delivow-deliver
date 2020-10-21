@@ -62,7 +62,7 @@ class ForgotEmailInput extends React.Component {
                     >
                         <View style={[shared.container, {paddingHorizontal: normalize(20)}]}>
                             <View style={{flex: 3, justifyContent: 'center'}}>
-                                <BoldText style={fonts.size32}>登録したメールアドレスを入力</BoldText>
+                                <BoldText style={[fonts.size32, {lineHeight: 36}]}>登録したメールアドレスを入力</BoldText>
                                 <Item rounded style={ this.state.emailError ? [form.item , styles.error, margin.mt6] : [form.item, margin.mt6] }>
                                     <Input
                                         placeholder = "メールアドレスを入力"

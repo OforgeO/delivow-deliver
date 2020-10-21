@@ -19,7 +19,7 @@ class Signup extends React.Component {
     constructor(props){
         super(props);
         this.state = {
-            is_login: true
+            is_login: false
         };
     }
     async componentDidMount(){

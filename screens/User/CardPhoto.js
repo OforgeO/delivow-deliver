@@ -133,7 +133,7 @@ class CardPhoto extends React.Component {
                     <ScrollView>
                         <View style={{flex: 1, paddingHorizontal: normalize(20)}}>
                             <View>
-                                <BoldText style={[fonts.size32, {marginTop: 20}]}>通帳またはキャッシュカードの写真</BoldText>
+                                <BoldText style={[fonts.size32, {marginTop: 20, lineHeight: 36}]}>通帳またはキャッシュカードの写真</BoldText>
                                 <RegularText style={[margin.mb1, {paddingTop: 10}]}>通帳の表紙またはキャッシュカードの表の写真</RegularText>
                                 <TouchableOpacity onPress={() => this.chooseImage(1)} style={[styles.licenseImg, margin.mb1]}>
                                     {

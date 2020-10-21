@@ -15,6 +15,7 @@
           "apiKey": "AIzaSyBXplopD94llbU1eWEjlPdonENRFC82fR0"
         }
       },
+      "googleServicesFile": "./google-services.json",
       "intentFilters": [
         {
           "action": "VIEW",
